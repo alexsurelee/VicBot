@@ -144,7 +144,7 @@ client.on('message', async message => {
 client.on('messageReactionAdd', async reaction => {
     if(!forbiddenChannels.includes(reaction.message.channel.name)){
         if(reaction.emoji.name === "📌"){
-            if(reaction.count >= 3){
+            if(reaction.count >= 3 && !reaction.message.pinned){
                 await reaction.message.pin();
             }
         }
