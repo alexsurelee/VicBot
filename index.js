@@ -69,7 +69,7 @@ client.on('message', async message => {
             await message.guild.channels.find("name", args[0]).setParent(papersCategory);
 
             // sort the thing now that you've added a role
-            await organise(message.guild);
+            await organise(message);
             return message.channel.send(`Created ${args[0]}.`);
         }
     }
@@ -151,28 +151,29 @@ client.on('message', async message => {
 
     // organises the papers category alphabetically
     else if(command === 'organise'){
-       return organise(message.guild);
+       return organise(message);
     }
 });
 
 // organises the papers category
-async function organise(guild){
-    let channelArray = guild.channels.array();
-    let paperArray = [];
+async function organise(message){
+    let channelArray = message.guild.channels.array();
+    let paperLength = 0;
     let paperNameArray = [];
 
     channelArray.forEach(function(item, index, array){
         if(item.parent != null){
             if(item.parent.name === "papers"){
-                paperArray.push(item);
+                paperLength++;
                 paperNameArray.push(item.name);
             }
         }
     })
     await paperNameArray.sort();
-    for(i = 0 ; i < paperArray.length ; i++){
-        await guild.channels.find("name", paperNameArray.shift()).setPosition(i);
+    for(i = 0 ; i < paperLength ; i++){
+        await message.guild.channels.find("name", paperNameArray.shift()).setPosition(i);
     }
+    message.channel.send("Sorted, hopefully.");
 }
 
 // checking for 3+ pin reactions to pin a message
