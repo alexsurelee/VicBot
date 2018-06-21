@@ -60,8 +60,16 @@ client.on('message', async message => {
                 {
                 id: message.guild.roles.find("name", args[0]).id,
                 allow: ['READ_MESSAGES'],
-            }]);
+                },
+                {
+                    id: message.guild.roles.find("name", "bots").id,
+                    allow: ['READ_MESSAGES'],
+                }
+        ]);
             await message.guild.channels.find("name", args[0]).setParent(papersCategory);
+
+            // sort the thing now that you've added a role
+            await organise(message.guild);
             return message.channel.send(`Created ${args[0]}.`);
         }
     }
@@ -130,7 +138,8 @@ client.on('message', async message => {
         }
     }
 
-    //TODO: Implement a rank list.
+    // prints out a rank list
+    //TODO: Make it pretty.
     else if(command === 'ranks'){
         let rankArray = message.guild.roles.array();
         let rankString = "";
@@ -139,7 +148,32 @@ client.on('message', async message => {
         })
         return message.channel.send(rankString);
     }
+
+    // organises the papers category alphabetically
+    else if(command === 'organise'){
+       return organise(message.guild);
+    }
 });
+
+// organises the papers category
+async function organise(guild){
+    let channelArray = guild.channels.array();
+    let paperArray = [];
+    let paperNameArray = [];
+
+    channelArray.forEach(function(item, index, array){
+        if(item.parent != null){
+            if(item.parent.name === "papers"){
+                paperArray.push(item);
+                paperNameArray.push(item.name);
+            }
+        }
+    })
+    await paperNameArray.sort();
+    for(i = 0 ; i < paperArray.length ; i++){
+        await guild.channels.find("name", paperNameArray.shift()).setPosition(i);
+    }
+}
 
 // checking for 3+ pin reactions to pin a message
 client.on('messageReactionAdd', async reaction => {
