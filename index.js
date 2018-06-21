@@ -2,7 +2,11 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const { prefix, token } = require('./config.json');
 
-let forbiddenFruit = [];
+let forbiddenRanks = [];
+forbiddenRanks.push("Admins", "Vanity", "baaa-admin", "vuwbotbestbot", "Dyno", "Mr. Upsy, Your Lifting Friend", "Lord/Lady of Java", "Hero of the Purge", "bots", "Muted");
+
+let forbiddenChannels = [];
+forbiddenChannels.push("general", "media", "memes", "bots");
 
 client.on('ready', () => {
     console.log('Ready!');
@@ -115,6 +119,15 @@ client.on('message', async message => {
     }
 });
 
+client.on('messageReactionAdd', async reaction => {
+    if(!forbiddenChannels.includes(reaction.message.channel.name)){
+        if(reaction.emoji.name === "📌"){
+            if(reaction.count >= 3){
+                await reaction.message.pin();
+            }
+        }
+    }
+});
 
 // actually log in
 client.login(token);
