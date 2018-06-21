@@ -132,11 +132,12 @@ client.on('message', async message => {
 
     //TODO: Implement a rank list.
     else if(command === 'ranks'){
-        let ranks = "";
-        for(rank in message.guild.roles.values.name){
-            ranks += rank;
-        }
-        return message.channel.send(ranks);
+        let rankArray = message.guild.roles.array();
+        let rankString = "";
+        rankArray.forEach(function(item, index, array){
+            if(item.name.includes("-")) rankString += item.name + `\n`;
+        })
+        return message.channel.send(rankString);
     }
 });
 
