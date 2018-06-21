@@ -2,6 +2,8 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const { prefix, token } = require('./config.json');
 
+let forbiddenFruit = [];
+
 client.on('ready', () => {
     console.log('Ready!');
 });
@@ -16,9 +18,9 @@ client.on('message', async message => {
     let adminRole = message.guild.roles.find("name", "Admins");
     let papersCategory = message.guild.channels.find("name", "papers");
 
-    if (command === 'addclass') {  
+    if (command === 'addrank') {  
         if(!message.member.roles.has(adminRole.id)){
-            return message.channel.send(`Gotta be an admin fam`);
+            return message.channel.send(`This requires admin permissions.`);
         }      
         else if (!args.length) {
             return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
@@ -59,7 +61,25 @@ client.on('message', async message => {
         }
     }
 
-    else if(command === 'class'){
+    else if(command === 'forbid'){
+        if(!message.member.roles.has(adminRole.id)){
+            return message.channel.send(`This requires admin permissions.`);
+        }      
+        else if (!args.length) {
+            return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
+        }
+    
+        else if(args.length > 1){
+            return message.channel.send(`Should only contain one argument.`);
+        }
+
+        else{
+            forbiddenFruit.push(args[0]);
+            return message.channel.send(`Added to forbidden list.`);
+        }
+    }
+
+    else if(command === 'rank'){
         if (!args.length) {
             return message.channel.send(`You didn't provide a class to join!`);
         }
@@ -68,8 +88,8 @@ client.on('message', async message => {
             return message.channel.send(`Should only contain one class.`);
         }
 
-        else if(!args[0].includes('-')){
-            return message.channel.send(`Classes should include the - symbol`);
+        else if(forbiddenFruit.includes(args[0])){
+            return message.channel.send(`You cannot add this rank.`);
         }
 
         else if(message.guild.roles.find("name", args[0]) == null){
@@ -84,6 +104,14 @@ client.on('message', async message => {
             await message.member.addRole(message.guild.roles.find("name", args[0]));
             return message.reply(`Added you to ${args[0]} successfully!`);
         }
+    }
+
+    else if(command === 'ranks'){
+        let ranks = "";
+        for(rank in message.guild.roles.values.name){
+            ranks += rank;
+        }
+        return message.channel.send(ranks);
     }
 });
 
