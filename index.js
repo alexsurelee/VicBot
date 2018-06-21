@@ -22,6 +22,7 @@ client.on('message', async message => {
     let adminRole = message.guild.roles.find("name", "Admins");
     let papersCategory = message.guild.channels.find("name", "papers");
 
+    // creating a rank
     if (command === 'addrank') {  
         if(!message.member.roles.has(adminRole.id)){
             return message.channel.send(`This requires admin permissions.`);
@@ -61,11 +62,11 @@ client.on('message', async message => {
                 allow: ['READ_MESSAGES'],
             }]);
             await message.guild.channels.find("name", args[0]).setParent(papersCategory);
-            return message.channel.send(`Success!`);
+            return message.channel.send(`Created ${args[0]}.`);
         }
     }
 
-    else if(command === 'forbid'){
+    else if (command === 'delrank') {  
         if(!message.member.roles.has(adminRole.id)){
             return message.channel.send(`This requires admin permissions.`);
         }      
@@ -77,12 +78,26 @@ client.on('message', async message => {
             return message.channel.send(`Should only contain one argument.`);
         }
 
+        else if(!args[0].includes('-')){
+            return message.channel.send(`Channels/ranks should include the - symbol`);
+        }
+
+        else if(message.guild.roles.find("name", args[0]) == null){
+            return message.channel.send(`Role doesn't exist!`);
+        }
+
+        else if(message.guild.channels.find("name", args[0]) == null){
+            return message.channel.send(`Channel doesn't exist!`);
+        }
+
         else{
-            forbiddenFruit.push(args[0]);
-            return message.channel.send(`Added to forbidden list.`);
+            await message.guild.roles.find("name", args[0]).delete();
+            await message.guild.channels.find("name", args[0]).delete();
+            return message.channel.send(`Deleted ${args[0]}.`);
         }
     }
 
+    // adding or removing a rank depending on whether they have the role assigned.
     else if(command === 'rank'){
         if (!args.length) {
             return message.channel.send(`You didn't provide a class to join!`);
@@ -92,7 +107,7 @@ client.on('message', async message => {
             return message.channel.send(`Should only contain one class.`);
         }
 
-        else if(forbiddenFruit.includes(args[0])){
+        else if(forbiddenRanks.includes(args[0])){
             return message.channel.send(`You cannot add this rank.`);
         }
 
@@ -104,12 +119,18 @@ client.on('message', async message => {
             return message.channel.send(`Channel doesn't exist! If this isn't a typo, ask an admin to create it!`);
         }
 
-        else{
+        else if(!message.guild.roles.find("name", args[0]).members.has(message.author.id)){
             await message.member.addRole(message.guild.roles.find("name", args[0]));
             return message.reply(`Added you to ${args[0]} successfully!`);
         }
+
+        else{
+            await message.member.removeRole(message.guild.roles.find("name", args[0]));
+            return message.reply(`Removed you from ${args[0]} successfully!`);
+        }
     }
 
+    //TODO: Implement a rank list.
     else if(command === 'ranks'){
         let ranks = "";
         for(rank in message.guild.roles.values.name){
@@ -119,6 +140,7 @@ client.on('message', async message => {
     }
 });
 
+// checking for 3+ pin reactions to pin a message
 client.on('messageReactionAdd', async reaction => {
     if(!forbiddenChannels.includes(reaction.message.channel.name)){
         if(reaction.emoji.name === "📌"){
