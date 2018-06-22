@@ -171,7 +171,8 @@ async function organise(message){
     })
     await paperNameArray.sort();
     for(i = 0 ; i < paperLength ; i++){
-        await message.guild.channels.find("name", paperNameArray.shift()).setPosition(i);
+        //if(message.guild.channels.find("name", paperNameArray[i]).position != i)
+            await message.guild.channels.find("name", paperNameArray[i]).setPosition(i);
     }
     message.channel.send("Sorted, hopefully.");
 }
