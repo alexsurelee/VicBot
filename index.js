@@ -54,12 +54,12 @@ client.on('message', async message => {
                     mentionable: false,
             });
             await message.guild.createChannel(args[0], "text", [{
-                id: message.guild.id,
-                deny: ['READ_MESSAGES'],
+                    id: message.guild.id,
+                    deny: ['READ_MESSAGES'],
                 },
                 {
-                id: message.guild.roles.find("name", args[0]).id,
-                allow: ['READ_MESSAGES'],
+                    id: message.guild.roles.find("name", args[0]).id,
+                    allow: ['READ_MESSAGES'],
                 },
                 {
                     id: message.guild.roles.find("name", "bots").id,
@@ -68,8 +68,34 @@ client.on('message', async message => {
         ]);
             await message.guild.channels.find("name", args[0]).setParent(papersCategory);
 
-            // sort the thing now that you've added a role
-            // await organise(message);
+
+            // pull the course title to be extra af
+            let name = args[0].slice(0, 4) + args[0].slice(5, args[0].length);
+            let title = "";
+            const https = require('https');
+            https.get(`https://www.victoria.ac.nz/_service/courses/2.1/courses/${name}?year=2018`, (resp) => {
+                let data = '';
+ 
+                // A chunk of data has been recieved.
+                resp.on('data', (chunk) => {
+                    data += chunk;
+                });
+ 
+                // The whole response has been received. Print out the result.
+                resp.on('end', () => {
+                    JSON.parse(data, function(key, value){
+                        if(key === "title"){
+                            console.log(value); title = value;
+                        }
+                    })
+                });
+ 
+                }).on("error", (err) => {
+                console.log("Error: " + err.message);
+            });
+            console.log(title);
+            
+            
             return message.channel.send(`Created ${args[0]}.`);
         }
     }
