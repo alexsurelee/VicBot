@@ -146,7 +146,11 @@ client.on('message', async message => {
         rankArray.forEach(function(item, index, array){
             if(item.name.includes("-") && item.name.length === 8) rankString += item.name + `\n`;
         })
-        return message.channel.send(rankString);
+        // return message.channel.send(rankString);
+        return message.channel.send({embed: {
+            color: 115737,
+            description: rankString
+        }});
     }
 
     // organises the papers category alphabetically
