@@ -85,7 +85,7 @@ client.on('message', async message => {
                 resp.on('end', () => {
                     JSON.parse(data, function(key, value){
                         if(key === "title"){
-                            console.log(value); title = value;
+                            message.guild.channels.find("name", args[0]).setTopic(value);
                         }
                     })
                 });
@@ -116,17 +116,13 @@ client.on('message', async message => {
             return message.channel.send(`Channels/ranks should include the - symbol`);
         }
 
-        else if(message.guild.roles.find("name", args[0]) == null){
-            return message.channel.send(`Role doesn't exist!`);
-        }
-
-        else if(message.guild.channels.find("name", args[0]) == null){
-            return message.channel.send(`Channel doesn't exist!`);
+        else if((message.guild.roles.find("name", args[0]) == null) && (message.guild.channels.find("name", args[0]) == null)){
+            return message.channel.send(`Role & channel don't exist!`);
         }
 
         else{
-            await message.guild.roles.find("name", args[0]).delete();
-            await message.guild.channels.find("name", args[0]).delete();
+            if(message.guild.roles.find("name", args[0]) != null) await message.guild.roles.find("name", args[0]).delete();
+            if(message.guild.channels.find("name", args[0]) != null) await message.guild.channels.find("name", args[0]).delete();
             return message.channel.send(`Deleted ${args[0]}.`);
         }
     }
