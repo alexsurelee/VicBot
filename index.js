@@ -139,16 +139,26 @@ client.on('message', async message => {
     }
 
     // prints out a rank list
-    //TODO: Make it pretty.
     else if(command === 'ranks'){
         let rankArray = message.guild.roles.array();
-        let rankString = "";
+        let rankStringArray = new Array();
         rankArray.forEach(function(item, index, array){
-            if(item.name.includes("-") && item.name.length === 8) rankString += item.name + `\n`;
+            if((item.name.includes("-") && item.name.length === 8) || item.name === "ethics"){
+                rankStringArray.push(item.name);
+            }
         })
+        rankStringArray.sort();
+        let rankString = "\`\`\`\n";
+        let count = 1;
+        rankStringArray.forEach(function(item, index, array){
+            rankString += item + `\t`;
+            if(count % 3 === 0) rankString += `\n`; 
+            count++;
+        })
+        rankString += "\n\`\`\`";
         // return message.channel.send(rankString);
         return message.channel.send({embed: {
-            color: 115737,
+            color: 0x004834,
             description: rankString
         }});
     }
