@@ -144,7 +144,7 @@ client.on('message', async message => {
         let rankArray = message.guild.roles.array();
         let rankString = "";
         rankArray.forEach(function(item, index, array){
-            if(item.name.includes("-")) rankString += item.name + `\n`;
+            if(item.name.includes("-") && item.name.length === 8) rankString += item.name + `\n`;
         })
         return message.channel.send(rankString);
     }
