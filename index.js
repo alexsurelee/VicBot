@@ -69,7 +69,7 @@ client.on('message', async message => {
             await message.guild.channels.find("name", args[0]).setParent(papersCategory);
 
             // sort the thing now that you've added a role
-            await organise(message);
+            // await organise(message);
             return message.channel.send(`Created ${args[0]}.`);
         }
     }
