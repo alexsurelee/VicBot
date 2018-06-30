@@ -161,7 +161,12 @@ client.on('message', async message => {
 
     // organises the papers category alphabetically
     else if(command === 'organise'){
-       return organise(message);
+        if(!message.member.roles.has(adminRole.id)){
+            return message.channel.send(`This requires admin permissions.`);
+        }
+        else{ 
+            return organise(message);
+        }
     }
 });
 
