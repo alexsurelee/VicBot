@@ -3,7 +3,7 @@ const client = new Discord.Client();
 const { prefix, token } = require('./config.json');
 
 let forbiddenRanks = [];
-forbiddenRanks.push("Admins", "Vanity", "baaa-admin", "vuwbotbestbot", "Dyno", "Mr. Upsy, Your Lifting Friend", "Lord/Lady of Java", "Hero of the Purge", "bots", "Muted");
+forbiddenRanks.push("Admins", "Vanity", "baaa-admin", "vuwbotbestbot", "Dyno", "Mr. Upsy, Your Lifting Friend", "Lord/Lady of Java", "Hero of the Purge", "bots", "Muted", "the-swamp");
 
 let forbiddenChannels = [];
 forbiddenChannels.push("general", "media", "memes", "bots");
@@ -28,75 +28,54 @@ client.on('message', async message => {
             return message.channel.send(`This requires admin permissions.`);
         }      
         else if (!args.length) {
-            return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
+            return message.channel.send(`Please include the name of the rank you wish to create.`);
         }
     
         else if(args.length > 1){
-            return message.channel.send(`Should only contain one argument.`);
+            return message.channel.send(`Please only include one rank to create (no spaces).`);
         }
 
         else if(!args[0].includes('-')){
-            return message.channel.send(`Channels/ranks should include the - symbol`);
+            return message.channel.send(`Classes should include the - symbol`);
         }
 
         else if(message.guild.roles.find("name", args[0]) != null){
-            return message.channel.send(`Role already exists!`);
+            return message.channel.send(`Couldn't create class - role already exists.`);
         }
 
         else if(message.guild.channels.find("name", args[0]) != null){
-            return message.channel.send(`Channel already exists!`);
+            return message.channel.send(`Couldn't create class - channel already exists.`);
         }
 
         else{
-            await message.guild.createRole({
-                    name: args[0],
-                    hoist: false,
-                    mentionable: false,
-            });
-            await message.guild.createChannel(args[0], "text", [{
-                    id: message.guild.id,
-                    deny: ['READ_MESSAGES'],
-                },
-                {
-                    id: message.guild.roles.find("name", args[0]).id,
-                    allow: ['READ_MESSAGES'],
-                },
-                {
-                    id: message.guild.roles.find("name", "bots").id,
-                    allow: ['READ_MESSAGES'],
-                }
-        ]);
-            await message.guild.channels.find("name", args[0]).setParent(papersCategory);
+            createRank(message, args, papersCategory);
+            return message.channel.send(`Created ${args[0]} successfully.`);
+        }
+    }
 
+    else if(command === 'reset'){
+        if(!message.member.roles.has(adminRole.id)){
+            return message.channel.send(`This requires admin permissions.`);
+        }      
+        else if (!args.length) {
+            return message.channel.send(`Please include the name of the channel you wish to reset.`);
+        }
+    
+        else if(args.length > 1){
+            return message.channel.send(`Please only include one rank to reset (no spaces).`);
+        }
 
-            // pull the course title to be extra af
-            let name = args[0].slice(0, 4) + args[0].slice(5, args[0].length);
-            let title = "";
-            const https = require('https');
-            https.get(`https://www.victoria.ac.nz/_service/courses/2.1/courses/${name}?year=2018`, (resp) => {
-                let data = '';
- 
-                // A chunk of data has been recieved.
-                resp.on('data', (chunk) => {
-                    data += chunk;
-                });
- 
-                // The whole response has been received. Print out the result.
-                resp.on('end', () => {
-                    JSON.parse(data, function(key, value){
-                        if(key === "title"){
-                            message.guild.channels.find("name", args[0]).setTopic(value);
-                        }
-                    })
-                });
- 
-                }).on("error", (err) => {
-                console.log("Error: " + err.message);
-            });
-            console.log(title);
-            
-            
-            return message.channel.send(`Created ${args[0]}.`);
+        else if((message.guild.roles.find("name", args[0]) == null) && (message.guild.channels.find("name", args[0]) == null)){
+            return message.channel.send(`Cannot find rank to reset.`);
+        }
+
+        else if(forbiddenRanks.includes(args[0])){
+            return message.channel.send(`You probably shouldn't reset this, and at the moment I'm not going to let you.`);
+        }
+
+        else{
+            await deleteRank(message, args);
+            await createRank(message, args, papersCategory);
         }
     }
 
@@ -105,24 +84,19 @@ client.on('message', async message => {
             return message.channel.send(`This requires admin permissions.`);
         }      
         else if (!args.length) {
-            return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
+            return message.channel.send(`Please provide a rank to delete. Type !ranks for a list.`);
         }
     
         else if(args.length > 1){
-            return message.channel.send(`Should only contain one argument.`);
-        }
-
-        else if(!args[0].includes('-')){
-            return message.channel.send(`Channels/ranks should include the - symbol`);
+            return message.channel.send(`Please only list one rank to delete.`);
         }
 
         else if((message.guild.roles.find("name", args[0]) == null) && (message.guild.channels.find("name", args[0]) == null)){
-            return message.channel.send(`Role & channel don't exist!`);
+            return message.channel.send(`Cannot find rank to delete.`);
         }
 
         else{
-            if(message.guild.roles.find("name", args[0]) != null) await message.guild.roles.find("name", args[0]).delete();
-            if(message.guild.channels.find("name", args[0]) != null) await message.guild.channels.find("name", args[0]).delete();
+            deleteRank(message, args);
             return message.channel.send(`Deleted ${args[0]}.`);
         }
     }
@@ -130,33 +104,33 @@ client.on('message', async message => {
     // adding or removing a rank depending on whether they have the role assigned.
     else if(command === 'rank'){
         if (!args.length) {
-            return message.channel.send(`You didn't provide a class to join!`);
+            return message.channel.send(`Please provide a class to join. Type !ranks for a list.`);
         }
     
         else if(args.length > 1){
-            return message.channel.send(`Should only contain one class.`);
+            return message.channel.send(`Please only include one class.`);
         }
 
         else if(forbiddenRanks.includes(args[0])){
-            return message.channel.send(`You cannot add this rank.`);
+            return message.channel.send(`Sorry, you cannot add this rank.`);
         }
 
         else if(message.guild.roles.find("name", args[0]) == null){
-            return message.channel.send(`Role doesn't exist! If this isn't a typo, ask an admin to create it!`);
+            return message.channel.send(`Role doesn't exist. Consider asking an @admin to create it.`);
         }
 
         else if(message.guild.channels.find("name", args[0]) == null){
-            return message.channel.send(`Channel doesn't exist! If this isn't a typo, ask an admin to create it!`);
+            return message.channel.send(`Channel doesn't exist. Consider asking an @admin to create it.`);
         }
 
         else if(!message.guild.roles.find("name", args[0]).members.has(message.author.id)){
             await message.member.addRole(message.guild.roles.find("name", args[0]));
-            return message.reply(`Added you to ${args[0]} successfully!`);
+            return message.reply(`Added you to ${args[0]} successfully.`);
         }
 
         else{
             await message.member.removeRole(message.guild.roles.find("name", args[0]));
-            return message.reply(`Removed you from ${args[0]} successfully!`);
+            return message.reply(`Removed you from ${args[0]} successfully.`);
         }
     }
 
@@ -223,6 +197,64 @@ client.on('messageReactionAdd', async reaction => {
         }
     }
 });
+
+async function deleteRank(message, args){
+    if(message.guild.roles.find("name", args[0]) != null) await message.guild.roles.find("name", args[0]).delete();
+            if(message.guild.channels.find("name", args[0]) != null) await message.guild.channels.find("name", args[0]).delete();
+            return;
+}
+
+async function createRank(message, args, papersCategory){
+    await message.guild.createRole({
+        name: args[0],
+        hoist: false,
+        mentionable: false,
+    });
+    await message.guild.createChannel(args[0], "text", [{
+        id: message.guild.id,
+        deny: ['READ_MESSAGES'],
+    },
+    {
+        id: message.guild.roles.find("name", args[0]).id,
+        allow: ['READ_MESSAGES'],
+    },
+    {
+        id: message.guild.roles.find("name", "bots").id,
+        allow: ['READ_MESSAGES'],
+    }
+    ]);
+    await message.guild.channels.find("name", args[0]).setParent(papersCategory);
+
+
+    // pull the course title to be extra af
+    let name = args[0].slice(0, 4) + args[0].slice(5, args[0].length);
+    let title = "";
+    let currentYear = (new Date()).getFullYear();
+    const https = require('https');
+    https.get(`https://www.victoria.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`, (resp) => {
+    let data = '';
+
+    // A chunk of data has been recieved.
+    resp.on('data', (chunk) => {
+        data += chunk;
+    });
+
+    // The whole response has been received. Print out the result.
+    resp.on('end', () => {
+        JSON.parse(data, function(key, value){
+            if(key === "title"){
+                message.guild.channels.find("name", args[0]).setTopic(value);
+            }
+        })
+    });
+
+    }).on("error", (err) => {
+    console.log("Error: " + err.message);
+    });
+    console.log(title);
+
+    return;
+}
 
 // actually log in
 client.login(token);
