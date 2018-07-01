@@ -11,7 +11,7 @@ forbiddenChannels.push("general", "media", "memes", "bots");
 
 client.on('ready', () => {
     client.user.setUsername("VicBot");
-    client.user.setActivity('Bugs by SaltySheep', { type: 'LISTENING'});
+    client.user.setActivity('bugs, probably.', { type: 'STREAMING'});
     console.log('Ready!');
 });
 // actually log in
