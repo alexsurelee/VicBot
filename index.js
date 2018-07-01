@@ -177,14 +177,21 @@ async function organise(message){
     let paperNameArray = [];
 
     channelArray.forEach(function(item, index, array){
+        console.log(`name: ${item.name}`)
         if(item.parent != null){
             if(item.parent.name === "papers"){
                 paperLength++;
                 paperNameArray.push(item.name);
+                console.log(`if it's in papers: ${item.name}`);
             }
         }
+        console.log(`parent name: ${item.parent}`)
     })
+    console.log(`\n`);
     await paperNameArray.sort();
+    paperNameArray.forEach(function(item, index, array){
+        console.log(item);
+    })
     for(i = 0 ; i < paperLength ; i++){
         //if(message.guild.channels.find("name", paperNameArray[i]).position != i)
             await message.guild.channels.find("name", paperNameArray[i]).setPosition(i);
