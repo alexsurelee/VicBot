@@ -3,13 +3,15 @@ const client = new Discord.Client();
 const { prefix, token } = require('./config.json');
 
 let forbiddenRanks = [];
-forbiddenRanks.push("Admins", "Vanity", "baaa-admin", "vuwbotbestbot", "Dyno", "Mr. Upsy, Your Lifting Friend", "Lord/Lady of Java", "Hero of the Purge", "bots", "Muted", "the-swamp");
+forbiddenRanks.push("Admins", "Vanity", "baaa-admin", "vuwbotbestbot", 
+"Dyno", "Mr. Upsy, Your Lifting Friend", "Lord/Lady of Java", "Hero of the Purge", "bots", "Muted", "the-swamp");
 
 let forbiddenChannels = [];
 forbiddenChannels.push("general", "media", "memes", "bots");
 
 client.on('ready', () => {
     client.user.setUsername("VicBot");
+    client.user.setActivity('Bugs by SaltySheep', { type: 'LISTENING'});
     console.log('Ready!');
 });
 // actually log in
