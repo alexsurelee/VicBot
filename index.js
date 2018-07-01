@@ -59,6 +59,7 @@ client.on('message', async message => {
         }
     }
 
+    /*
     else if(command === 'play'){
         if(message.channel.type !== 'text') return;
 
@@ -77,6 +78,7 @@ client.on('message', async message => {
             dispatcher.on('end', () => voiceChannel.leave());
         })};
     }
+    */
 
     else if(command === 'reset'){
         if(!message.member.roles.has(adminRole.id)){
