@@ -24,8 +24,8 @@ client.on('message', async message => {
     const args = message.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
 
-    let adminRole = message.guild.roles.find("name", "Admins");
-    let papersCategory = message.guild.channels.find("name", "papers");
+    let adminRole = message.guild.roles.find(role => role.name === 'Admins');
+    let papersCategory = message.guild.channels.find(category => category.name === 'papers');
 
     // creating a rank
     if (command === 'addrank') {  
@@ -44,11 +44,11 @@ client.on('message', async message => {
             return message.channel.send(`Classes should include the - symbol`);
         }
 
-        else if(message.guild.roles.find("name", args[0]) != null){
+        else if(message.guild.roles.find(role => role.name === args[0]) != null){
             return message.channel.send(`Couldn't create class - role already exists.`);
         }
 
-        else if(message.guild.channels.find("name", args[0]) != null){
+        else if(message.guild.channels.find(role => role.name === args[0]) != null){
             return message.channel.send(`Couldn't create class - channel already exists.`);
         }
 
@@ -70,11 +70,11 @@ client.on('message', async message => {
             return message.channel.send(`Please only include one rank to reset (no spaces).`);
         }
 
-        else if((message.guild.roles.find("name", args[0]) == null) && (message.guild.channels.find("name", args[0]) == null)){
+        else if((message.guild.roles.find(role => role.name === args[0]) == null) && (message.guild.channels.find(channel => channel.name === args[0]) == null)){
             return message.channel.send(`Cannot find rank to reset.`);
         }
 
-        else if(message.guild.channels.find("name", args[0]).parent !== papersCategory){
+        else if(message.guild.channels.find(channel => channel.name === args[0]).parent !== papersCategory){
             return message.channel.send(`You can only reset channels in the papers category.`);
         }
 
@@ -100,7 +100,7 @@ client.on('message', async message => {
             return message.channel.send(`Please only list one rank to delete.`);
         }
 
-        else if((message.guild.roles.find("name", args[0]) == null) && (message.guild.channels.find("name", args[0]) == null)){
+        else if((message.guild.roles.find(role => role.name === args[0]) == null) && (message.guild.channels.find(channel => channel.name === args[0]) == null)){
             return message.channel.send(`Cannot find rank to delete.`);
         }
 
@@ -124,21 +124,21 @@ client.on('message', async message => {
             return message.channel.send(`Sorry, you cannot add this rank.`);
         }
 
-        else if(message.guild.roles.find("name", args[0]) == null){
+        else if(message.guild.roles.find(role => role.name === args[0]) == null){
             return message.channel.send(`Role doesn't exist. Consider asking an @admin to create it.`);
         }
 
-        else if(message.guild.channels.find("name", args[0]) == null){
+        else if(message.guild.channels.find(channel => channel.name === args[0]) == null){
             return message.channel.send(`Channel doesn't exist. Consider asking an @admin to create it.`);
         }
 
-        else if(!message.guild.roles.find("name", args[0]).members.has(message.author.id)){
-            await message.member.addRole(message.guild.roles.find("name", args[0]));
+        else if(!message.guild.roles.find(role => role.name === args[0]).members.has(message.author.id)){
+            await message.member.roles.add(message.guild.roles.find(role => role.name === args[0]));
             return message.reply(`Added you to ${args[0]} successfully.`);
         }
 
         else{
-            await message.member.removeRole(message.guild.roles.find("name", args[0]));
+            await message.member.roles.remove(message.guild.roles.find(role => role.name === args[0]));
             return message.reply(`Removed you from ${args[0]} successfully.`);
         }
     }
@@ -174,7 +174,8 @@ client.on('message', async message => {
             return message.channel.send(`This requires admin permissions.`);
         }
         else{ 
-            return organise(message);
+            await organise(message);
+            return message.channel.send("Sorted, hopefully.");
         }
     }
 });
@@ -203,9 +204,8 @@ async function organise(message){
     })
     for(i = 0 ; i < paperLength ; i++){
         //if(message.guild.channels.find("name", paperNameArray[i]).position != i)
-            await message.guild.channels.find("name", paperNameArray[i]).setPosition(i);
+            await message.guild.channels.find(channel => channel.name === paperNameArray[i]).setPosition(i);
     }
-    message.channel.send("Sorted, hopefully.");
 }
 
 // checking for 3+ pin reactions to pin a message
@@ -220,32 +220,38 @@ client.on('messageReactionAdd', async reaction => {
 });
 
 async function deleteRank(message, args){
-    if(message.guild.roles.find("name", args[0]) != null) await message.guild.roles.find("name", args[0]).delete();
-            if(message.guild.channels.find("name", args[0]) != null) await message.guild.channels.find("name", args[0]).delete();
-            return;
+    if(message.guild.roles.find(role => role.name === args[0]) != null) await message.guild.roles.find(role => role.name === args[0]).delete();
+    if(message.guild.channels.find(channel => channel.name === args[0]) != null) await message.guild.channels.find(channel => channel.name === args[0]).delete();
+    return;
 }
 
 async function createRank(message, args, papersCategory){
-    await message.guild.createRole({
-        name: args[0],
-        hoist: false,
-        mentionable: false,
+    await message.guild.roles.create({
+        data: {
+            name: args[0],
+            hoist: false,
+            mentionable: false,
+        }
     });
-    await message.guild.createChannel(args[0], "text", [{
-        id: message.guild.id,
-        deny: ['READ_MESSAGES'],
-    },
-    {
-        id: message.guild.roles.find("name", args[0]).id,
-        allow: ['READ_MESSAGES'],
-    },
-    {
-        id: message.guild.roles.find("name", "bots").id,
-        allow: ['READ_MESSAGES'],
-    }
-    ]);
-    await message.guild.channels.find("name", args[0]).setParent(papersCategory);
-
+    await message.guild.channels.create( args[0], {
+        type: 'text',
+        overwrites: [
+        {
+            id: message.guild.id,
+            denied: ['VIEW_CHANNEL'],
+        },
+        {
+            id: message.guild.roles.find(role => role.name === args[0]).id,
+            allowed: ['VIEW_CHANNEL'],
+        },
+        {
+            id: message.guild.roles.find(role => role.name === 'bots').id,
+            allowed: ['VIEW_CHANNEL'],
+        },
+        ],
+        parent: papersCategory,
+    });
+    await organise(message);
 
     // pull the course title to be extra af
     let name = args[0].slice(0, 4) + args[0].slice(5, args[0].length);
@@ -264,7 +270,7 @@ async function createRank(message, args, papersCategory){
     resp.on('end', () => {
         JSON.parse(data, function(key, value){
             if(key === "title"){
-                message.guild.channels.find("name", args[0]).setTopic(value);
+                message.guild.channels.find(channel => channel.name === args[0]).setTopic(value);
             }
         })
     });
@@ -273,7 +279,6 @@ async function createRank(message, args, papersCategory){
     console.log("Error: " + err.message);
     });
     console.log(title);
-
     return;
 }
 
