@@ -140,7 +140,6 @@ client.on('message', async message => {
             count++;
         })
         rankString += "\n\`\`\`";
-        // return message.channel.send(rankString);
         return message.channel.send({embed: {
             color: 0x004834,
             description: rankString
@@ -155,7 +154,8 @@ client.on('message', async message => {
         else{ 
             message.react("🕦");
             await organise(message);
-            await message.reactions.removeAll();
+            // await message.reactions.sweep(new Function('return this === "🕦"'), 'this');
+            await message.reactions.deleteAll();
             return message.react("✅");
         }
     }
@@ -193,23 +193,17 @@ async function organise(message){
     let paperNameArray = [];
 
     channelArray.forEach(function(item, index, array){
-        console.log(`name: ${item.name}`)
         if(item.parent != null){
             if(item.parent.name === "papers"){
                 paperLength++;
                 paperNameArray.push(item.name);
-                console.log(`if it's in papers: ${item.name}`);
             }
         }
-        console.log(`parent name: ${item.parent}`)
     })
-    console.log(`\n`);
     await paperNameArray.sort();
-    paperNameArray.forEach(function(item, index, array){
-        console.log(item);
-    })
+
     for(i = 0 ; i < paperLength ; i++){
-        //if(message.guild.channels.find("name", paperNameArray[i]).position != i)
+        if(message.guild.channels.find(channel => channel.name === paperNameArray[i]).position != i)
             await message.guild.channels.find(channel => channel.name === paperNameArray[i]).setPosition(i);
     }
 }
