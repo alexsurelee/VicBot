@@ -115,31 +115,10 @@ client.on('message', async message => {
         if (!args.length) {
             return message.channel.send(`Please provide a class to join. Type !ranks for a list.`);
         }
-    
-        else if(args.length > 1){
-            return message.channel.send(`Please only include one class.`);
-        }
-
-        else if(forbiddenRanks.includes(args[0])){
-            return message.channel.send(`Sorry, you cannot add this rank.`);
-        }
-
-        else if(message.guild.roles.find(role => role.name === args[0]) == null){
-            return message.channel.send(`Role doesn't exist. Consider asking an @admin to create it.`);
-        }
-
-        else if(message.guild.channels.find(channel => channel.name === args[0]) == null){
-            return message.channel.send(`Channel doesn't exist. Consider asking an @admin to create it.`);
-        }
-
-        else if(!message.guild.roles.find(role => role.name === args[0]).members.has(message.author.id)){
-            await message.member.roles.add(message.guild.roles.find(role => role.name === args[0]));
-            return message.reply(`Added you to ${args[0]} successfully.`);
-        }
-
         else{
-            await message.member.roles.remove(message.guild.roles.find(role => role.name === args[0]));
-            return message.reply(`Removed you from ${args[0]} successfully.`);
+            args.forEach(function(item, index, array){
+                addRank(message, item);
+            });
         }
     }
 
@@ -174,11 +153,38 @@ client.on('message', async message => {
             return message.channel.send(`This requires admin permissions.`);
         }
         else{ 
+            message.react("🕦");
             await organise(message);
-            return message.channel.send("Sorted, hopefully.");
+            await message.reactions.removeAll();
+            return message.react("✅");
         }
     }
 });
+
+// adds user to a specified rank
+async function addRank(message, rank){
+    if(forbiddenRanks.includes(rank)){
+        return message.channel.send(`Sorry, you cannot join ${rank}.`);
+    }
+
+    else if(message.guild.roles.find(role => role.name === rank) == null){
+        return message.channel.send(`${rank} role doesn't exist. Consider asking an @admin to create it.`);
+    }
+
+    else if(message.guild.channels.find(channel => channel.name === rank) == null){
+        return message.channel.send(`${rank} channel doesn't exist. Consider asking an @admin to create it.`);
+    }
+
+    else if(!message.guild.roles.find(role => role.name === rank).members.has(message.author.id)){
+        await message.member.roles.add(message.guild.roles.find(role => role.name === rank));
+        return message.reply(`Added you to ${rank} successfully.`);
+    }
+
+    else{
+        await message.member.roles.remove(message.guild.roles.find(role => role.name === rank));
+        return message.reply(`Removed you from ${rank} successfully.`);
+    }
+}
 
 // organises the papers category
 async function organise(message){
