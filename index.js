@@ -15,6 +15,7 @@ client.on('ready', () => {
     client.user.setActivity('bugs, probably.', { type: 'STREAMING'});
     console.log('Ready!');
 });
+
 // actually log in
 client.login(token);
 
@@ -71,6 +72,7 @@ client.on('message', async message => {
         else if(!args.length){
             return message.channel.send(`Please add a youtube link`);
         }
+
         else{
         voiceChannel.join().then(connection => {
             const stream = ytdl(args[0], {filter: 'audioonly' });
@@ -198,9 +200,11 @@ async function addRank(message, rank){
         return message.channel.send(`${rank} role doesn't exist. Consider asking an @admin to create it.`);
     }
 
+    /*
     else if(message.guild.channels.find(channel => channel.name === rank) == null){
         return message.channel.send(`${rank} channel doesn't exist. Consider asking an @admin to create it.`);
     }
+    */
 
     else if(!message.guild.roles.find(role => role.name === rank).members.has(message.author.id)){
         await message.member.roles.add(message.guild.roles.find(role => role.name === rank));
