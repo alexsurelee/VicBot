@@ -73,7 +73,7 @@ client.on('message', async message => {
         else{
         voiceChannel.join().then(connection => {
             const stream = ytdl(args[0], {filter: 'audioonly' });
-            const dispatcher = connection.playStream(stream);
+            const dispatcher = connection.play(stream);
             dispatcher.on('end', () => voiceChannel.leave());
         })};
     }
