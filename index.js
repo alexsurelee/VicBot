@@ -70,11 +70,12 @@ client.on('message', async message => {
         else if(!args.length){
             return message.channel.send(`Please add a youtube link`);
         }
+        else{
         voiceChannel.join().then(connection => {
             const stream = ytdl(args[0], {filter: 'audioonly' });
             const dispatcher = connection.playStream(stream);
             dispatcher.on('end', () => voiceChannel.leave());
-        });
+        })};
     }
 
     else if(command === 'reset'){
