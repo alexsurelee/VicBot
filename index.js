@@ -9,8 +9,11 @@ let forbiddenChannels = [];
 forbiddenChannels.push("general", "media", "memes", "bots");
 
 client.on('ready', () => {
+    client.user.setUsername("VicBot");
     console.log('Ready!');
 });
+// actually log in
+client.login(token);
 
 
 // listening for messages
@@ -268,5 +271,3 @@ async function createRank(message, args, papersCategory){
     return;
 }
 
-// actually log in
-client.login(token);
