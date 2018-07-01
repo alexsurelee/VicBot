@@ -1,4 +1,6 @@
 {
     "prefix": "!",
-    "token": "NDU5MTQ4OTIyNzc1MDExMzI5.Dgx_fw.34zViwEOwVJ9xhBcYrQtX6RpYbk"
+    "token": "NDU5MTQ4OTIyNzc1MDExMzI5.Dgx_fw.34zViwEOwVJ9xhBcYrQtX6RpYbk",
+    "forbiddenRanks": ["Admins", "Vanity", "baaa-admin", "vuwbotbestbot", "Dyno", "Mr. Upsy, Your Lifting Friend", "Lord/Lady of Java", "Hero of the Purge", "bots", "Muted", "the-swamp"],
+    "forbiddenChannels": ["general", "media", "memes", "bots"]
 }

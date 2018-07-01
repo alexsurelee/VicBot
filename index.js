@@ -1,18 +1,15 @@
 const Discord = require('discord.js');
 const ytdl = require('ytdl-core');
 const client = new Discord.Client();
-const { prefix, token } = require('./config.json');
+const { prefix, token, forbiddenRanks, forbiddenChannels } = require('./config.json');
 
-let forbiddenRanks = [];
-forbiddenRanks.push("Admins", "Vanity", "baaa-admin", "vuwbotbestbot", 
-"Dyno", "Mr. Upsy, Your Lifting Friend", "Lord/Lady of Java", "Hero of the Purge", "bots", "Muted", "the-swamp");
+// let forbiddenRanks = ["Admins", "Vanity", "baaa-admin", "vuwbotbestbot", "Dyno", "Mr. Upsy, Your Lifting Friend", "Lord/Lady of Java", "Hero of the Purge", "bots", "Muted", "the-swamp"];
 
-let forbiddenChannels = [];
-forbiddenChannels.push("general", "media", "memes", "bots");
+// let forbiddenChannels = ["general", "media", "memes", "bots"];
 
 client.on('ready', () => {
     client.user.setUsername("VicBot");
-    client.user.setActivity('bugs, probably.', { type: 'STREAMING'});
+    client.user.setActivity('bugs, probably.', { type: 'PLAYING'});
     console.log('Ready!');
 });
 
