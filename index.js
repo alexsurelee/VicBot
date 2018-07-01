@@ -182,7 +182,7 @@ client.on('message', async message => {
     }
 
     else if(command === 'micropad'){
-        message.channel.send("<:micropad:339927818181935105> is the easy to use powerful notepad app developed by <@!125855147610865664>. Check it out at https://getmicropad.com");
+        message.channel.send("<:micropad:339927818181935105> is the easy to use powerful notepad app developed by our very own Nick. Check it out at https://getmicropad.com");
     }
 });
 
