@@ -68,8 +68,13 @@ client.on('message', async message => {
             return message.channel.send(`Please only include one rank to reset (no spaces).`);
         }
 
+
         else if((message.guild.roles.find("name", args[0]) == null) && (message.guild.channels.find("name", args[0]) == null)){
             return message.channel.send(`Cannot find rank to reset.`);
+        }
+
+        else if(message.guild.channels.find("name", args[0]).parent !== papersCategory){
+            return message.channel.send(`You can only reset channels in the papers category.`);
         }
 
         else if(forbiddenRanks.includes(args[0])){
