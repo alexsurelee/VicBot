@@ -11,7 +11,7 @@ forbiddenChannels.push("general", "media", "memes", "bots");
 
 client.on('ready', () => {
     client.user.setUsername("VicBot");
-    client.user.setActivity("yeet");
+    client.user.setStatus('online', 'Made by SaltySheep');;
     console.log('Ready!');
 });
 // actually log in
