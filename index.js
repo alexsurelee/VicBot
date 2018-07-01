@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const ytdl = require('ytdl-core');
 const client = new Discord.Client();
 const { prefix, token } = require('./config.json');
 
@@ -56,6 +57,24 @@ client.on('message', async message => {
             createRank(message, args, papersCategory);
             return message.channel.send(`Created ${args[0]} successfully.`);
         }
+    }
+
+    else if(command === 'play'){
+        if(message.channel.type !== 'text') return;
+
+        const { voiceChannel } = message.member;
+
+        if(!voiceChannel){
+            return message.reply('Please join a voice channel first.');
+        }
+        else if(!args.length){
+            return message.channel.send(`Please add a youtube link`);
+        }
+        voiceChannel.join().then(connection => {
+            const stream = ytdl(args[0], {filter: 'audioonly' });
+            const dispatcher = connection.playStream(stream);
+            dispatcher.on('end', () => voiceChannel.leave());
+        });
     }
 
     else if(command === 'reset'){
@@ -155,6 +174,7 @@ client.on('message', async message => {
             message.react("🕦");
             await organise(message);
             // await message.reactions.sweep(new Function('return this === "🕦"'), 'this');
+            await message.reactions.get("🕦").users.remove(client.id);
             await message.reactions.deleteAll();
             return message.react("✅");
         }
