@@ -61,19 +61,66 @@ client.on('message', async message => {
  * @param {Message} message 
  */
 async function help(message, adminRole){
-    helpString = "!rank \t \`!rank engr-101 engr-110\`\nAdd or remove class ranks.\n\n";
-    // helpString += "!play \t `!play https://www.youtube.com/watch?v=dQw4w9WgXcQ`\nPlay a song or add it to the queue.\n\n";
-    helpString += "!ranks \t \`!ranks\`\nList the available user ranks.\n\n";
-    helpString += "!micropad \t \`!micropad\`\nProvides information about micropad.\n\n";
-    if(message.member.roles.has(adminRole.id)){
-        helpString += "!addrank \t \`!addrank engr-101\`\nCreates a new class role and channel.\n\n";
-        helpString += "!delrank \t \`!delrank engr-101\`\nDeletes a classes' role and channel.\n\n";
-        helpString += "!organise \t \`!organise\`\nSorts the channels within the papers category.\n\n";
-        helpString += "!alias \t \`!alias swen-2017 engr-101 engr-110\`\nChanges the papers allocated to an alias.\n\n";
-    }
+    if(message.member.roles.has(adminRole.id))
     return message.channel.send({embed: {
         color: 0x004834,
-        description: helpString
+        title: "VicBot Commands",
+        fields: [{
+            name: "rank",
+            value: "\`!rank <course> [course ...]\`\nAdd or remove class ranks."
+        },
+        {
+            name: "ranks",
+            value: "\`!ranks\`\nList the available user ranks."
+        },
+        {
+            name: "micropad",
+            value: "\`!micropad\`\nProvides information about micropad."
+        },
+        {
+            name: "play",
+            value: "\`!play <url>\`\nPlays audio from a YouTube video or queues it accordingly."
+        },
+        {
+            name: "addrank",
+            value: "\`!addrank <course>\`\nCreates a new class role and channel."
+        },
+        {
+            name: "delrank",
+            value: "\`!delrank <course>\`\nDeletes a classes' role and channel."
+        },
+        {
+            name: "organise",
+            value: "\`!organise\`\nSorts the channels within the papers category."
+        },
+        {
+            name: "alias",
+            value: "\`!alias <alias> <course> [course ...]\`\nChanges the papers allocated to an alias."
+        }
+    ]
+    }});
+    
+    else
+    return message.channel.send({embed: {
+        color: 0x004834,
+        title: "VicBot Commands",
+        fields: [{
+            name: "rank",
+            value: "\`!rank <course> [course ...]\`\nAdd or remove class ranks."
+        },
+        {
+            name: "ranks",
+            value: "\`!ranks\`\nList the available user ranks."
+        },
+        {
+            name: "micropad",
+            value: "\`!micropad\`\nProvides information about micropad."
+        },
+        {
+            name: "play",
+            value: "\`!play <url>\`\nPlays audio from a YouTube video or queues it accordingly."
+        }
+    ]
     }});
 }
 
