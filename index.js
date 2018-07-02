@@ -3,7 +3,6 @@ const ytdl = require('ytdl-core');
 const client = new Discord.Client();
 const { prefix, token, forbiddenRanks, forbiddenChannels, aliasRanks } = require('./config.json');
 
-
 client.on('ready', () => {
     client.user.setUsername("VicBot");
     client.user.setActivity('bugs, probably.', { type: 'PLAYING'});
@@ -51,8 +50,33 @@ client.on('message', async message => {
         case 'alias':
             await alias(message, args, adminRole);
             break;
+        case 'help':
+            await help(message, adminRole);
+            break;
     }
 });
+
+/**
+ * Returns info about all the wonderful things the bot can do.
+ * @param {Message} message 
+ */
+async function help(message, adminRole){
+    helpString = "!rank \t \`!rank engr-101 engr-110\`\nAdd or remove class ranks.\n\n";
+    // helpString += "!play \t `!play https://www.youtube.com/watch?v=dQw4w9WgXcQ`\nPlay a song or add it to the queue.\n\n";
+    helpString += "!ranks \t \`!ranks\`\nList the available user ranks.\n\n";
+    helpString += "!micropad \t \`!micropad\`\nProvides information about micropad.\n\n";
+    if(message.member.roles.has(adminRole.id)){
+        helpString += "!addrank \t \`!addrank engr-101\`\nCreates a new class role and channel.\n\n";
+        helpString += "!delrank \t \`!delrank engr-101\`\nDeletes a classes' role and channel.\n\n";
+        helpString += "!organise \t \`!organise\`\nSorts the channels within the papers category.\n\n";
+        helpString += "!alias \t \`!alias swen-2017 engr-101 engr-110\`\nChanges the papers allocated to an alias.\n\n";
+    }
+    return message.channel.send({embed: {
+        color: 0x004834,
+        description: helpString
+    }});
+}
+
 /**
  * Sets the courses applicable to one of the multi-channel roles (e.g. swen-2017)
  * @param {Message} message 
