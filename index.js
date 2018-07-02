@@ -25,31 +25,31 @@ client.on('message', async message => {
 
     switch(command){
         case 'addrank':
-            createRank(message, args);
+            await createRank(message, args);
             break;
         case 'reset':
-            reset(message, args);
+            await reset(message, args);
             break;
         case 'delrank':
-            delRank(message, args);
+            await delRank(message, args);
             break;
         case 'rank':
-            rank(message, args);
+            await rank(message, args);
             break;
         case 'ranks':
-            ranks(message, args);
+            await ranks(message, args);
             break;
         case 'organise':
-            sort(message, args);
+            await sort(message, args);
             break;
         case 'micropad':
-            micropad(message);
+            await micropad(message);
             break;
-        case 'play':
-            play(message, args);
-            break;
+        // case 'play':
+        //     await play(message, args);
+        //     break;
         case 'alias':
-            alias(message, args, adminRole);
+            await alias(message, args, adminRole);
             break;
     }
 });
@@ -136,12 +136,6 @@ async function addRank(message, rank){
         return message.channel.send(`${rank} role doesn't exist. Consider asking an @admin to create it.`);
     }
 
-    /*
-    else if(message.guild.channels.find(channel => channel.name === rank) == null){
-        return message.channel.send(`${rank} channel doesn't exist. Consider asking an @admin to create it.`);
-    }
-    */
-
     else if(!message.guild.roles.find(role => role.name === rank).members.has(message.author.id)){
         await message.member.roles.add(message.guild.roles.find(role => role.name === rank));
         return message.reply(`Added you to ${rank} successfully.`);
@@ -226,7 +220,7 @@ async function rank(message, args){
     }
     else{
         args.forEach(function(item, index, array){
-            addRank(message, item);
+            await addRank(message, item);
         });
     }
 }
@@ -358,7 +352,7 @@ async function createRank(message, args){
     }
 
     else{
-        newRank(message, args, papersCategory);
+        await newRank(message, args, papersCategory);
         return message.channel.send(`Created ${args[0]} successfully.`);
     }
 }
