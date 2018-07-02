@@ -220,7 +220,7 @@ async function rank(message, args){
     }
     else{
         args.forEach(function(item, index, array){
-            await addRank(message, item);
+            addRank(message, item);
         });
     }
 }
