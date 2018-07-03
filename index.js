@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const ytdl = require('ytdl-core');
 const client = new Discord.Client();
-const { prefix, token, forbiddenRanks, forbiddenChannels, aliasRanks } = require('./config.json');
+const { prefix, token, forbiddenRanks, forbiddenChannels, aliasRanks, socialRanks } = require('./config.json');
 
 client.on('ready', () => {
     client.user.setUsername("VicBot");
@@ -36,7 +36,7 @@ client.on('message', async message => {
             await rank(message, args);
             break;
         case 'ranks':
-            await ranks(message, args);
+            await ranks(message, args, papersCategory);
             break;
         case 'organise':
             await sort(message, args);
@@ -304,27 +304,62 @@ async function rank(message, args){
  * @param {Message} message 
  * @param {string[]} args 
  */
-async function ranks(message, args){
+async function ranks(message, args, papersCategory){
     let rankArray = message.guild.roles.array();
-        let rankStringArray = new Array();
-        rankArray.forEach(function(item, index, array){
-            if((item.name.includes("-") && item.name.length === 8) || item.name === "ethics" || aliasRanks.indexOf(item.name) !== -1){
-                rankStringArray.push(item.name);
-            }
-        })
-        rankStringArray.sort();
-        let rankString = "\`\`\`\n";
-        let count = 1;
-        rankStringArray.forEach(function(item, index, array){
-            rankString += item + `\t`;
-            if(count % 3 === 0) rankString += `\n`; 
-            count++;
-        })
-        rankString += "\n\`\`\`";
-        return message.channel.send({embed: {
-            color: 0x004834,
-            description: rankString
-        }});
+    let paperStringArray = new Array();
+    let aliasStringArray = new Array();
+    let socialStringArray = new Array();
+    rankArray.forEach(function(item, index, array){
+        if(item.name.includes("-") && item.name.length === 8 && socialRanks.indexOf(item.name) === -1 && aliasRanks.indexOf(item.name) === -1){
+            paperStringArray.push(item.name);
+        }
+        else if(aliasRanks.indexOf(item.name) !== -1){
+            aliasStringArray.push(item.name);
+        }
+        else if(socialRanks.indexOf(item.name) !== -1){
+            socialStringArray.push(item.name);
+        }
+    });
+    paperStringArray.sort(); socialStringArray.sort(); aliasStringArray.sort();
+    let paperString = "\`\`\`\n"; let socialString = "\`\`\`\n"; let aliasString = "\`\`\`\n";
+    let count = 1;
+    paperStringArray.forEach(function(item, index, array){
+        paperString += item;
+        if(count % 4 === 0) paperString += `\n`; else paperString += `\t`;
+        count++;
+    });
+    paperString += "\n\`\`\`";
+    count = 1;
+    socialStringArray.forEach(function(item, index, array){
+        socialString += item;
+        if(count % 4 === 0) socialString += `\n`; else socialString += `\t`;
+        count++;
+    });
+    socialString += "\n\`\`\`";
+    count = 1;
+    aliasStringArray.forEach(function(item, index, array){
+        aliasString += item;
+        if(count % 4 === 0) aliasString += `\n`; else aliasString += `\t`;
+        count++;
+    });
+    aliasString += "\n\`\`\`";
+
+    return message.channel.send({embed: {
+        color: 0x004834,
+        title: "Ranks",
+        fields: [{
+            name: "Papers",
+            value: paperString
+        },
+        {
+            name: "Social",
+            value: socialString
+        },
+        {
+            name: "Aliases",
+            value: aliasString
+        }]
+    }});
 }
 
 /**
