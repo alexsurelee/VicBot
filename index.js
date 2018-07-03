@@ -24,13 +24,13 @@ client.on('message', async message => {
 
     switch(command){
         case 'addrank':
-            await createRank(message, args);
+            await createRank(message, args, adminRole);
             break;
         case 'reset':
             await reset(message, args);
             break;
         case 'delrank':
-            await delRank(message, args);
+            await delRank(message, args, adminRole);
             break;
         case 'rank':
             await rank(message, args);
@@ -223,7 +223,7 @@ async function addRank(message, rank){
  * @param {Message} message 
  * @param {string[]} args 
  */
-async function delRank(message, args){
+async function delRank(message, args, adminRole){
     if(!message.member.roles.has(adminRole.id)){
         return message.channel.send(`This requires admin permissions.`);
     }      
@@ -308,7 +308,7 @@ async function ranks(message, args){
     let rankArray = message.guild.roles.array();
         let rankStringArray = new Array();
         rankArray.forEach(function(item, index, array){
-            if((item.name.includes("-") && item.name.length === 8) || item.name === "ethics"){
+            if((item.name.includes("-") && item.name.length === 8) || item.name === "ethics" || aliasRanks.indexOf(item.name) !== -1){
                 rankStringArray.push(item.name);
             }
         })
@@ -398,7 +398,7 @@ client.on('messageReactionAdd', async reaction => {
  * @param {Message} message 
  * @param {string[]} args 
  */
-async function createRank(message, args){
+async function createRank(message, args, adminRole){
     if(!message.member.roles.has(adminRole.id)){
         return message.channel.send(`This requires admin permissions.`);
     }      
