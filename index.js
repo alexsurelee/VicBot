@@ -375,7 +375,7 @@ async function sort(message, args, adminRole){
         message.react("🕦");
         await organise(message);
         // await message.reactions.sweep(new Function('return this === "🕦"'), 'this');
-        await message.reactions.get("🕦").users.remove(client.id);
+        // await message.reactions.get("🕦").users.remove(client.id);
         await message.reactions.deleteAll();
         return message.react("✅");
     }
