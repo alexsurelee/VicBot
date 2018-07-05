@@ -39,7 +39,7 @@ client.on('message', async message => {
             await ranks(message, args, papersCategory);
             break;
         case 'organise':
-            await sort(message, args);
+            await sort(message, args, adminRole);
             break;
         case 'micropad':
             await micropad(message);
@@ -367,7 +367,7 @@ async function ranks(message, args, papersCategory){
  * @param {Message} message 
  * @param {string[]} args 
  */
-async function sort(message, args){
+async function sort(message, args, adminRole){
     if(!message.member.roles.has(adminRole.id)){
         return message.channel.send(`This requires admin permissions.`);
     }
