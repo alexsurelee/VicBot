@@ -374,9 +374,9 @@ async function sort(message, args, adminRole){
     else{ 
         message.react("🕦");
         await organise(message);
-        await message.reactions.sweep(reac => reac.emoji.toString() === "🕦");
+        // await message.reactions.sweep(reac => reac.emoji.toString() === "🕦");
         // await message.reactions.get("🕦").users.remove(client.id);
-        // await message.reactions.deleteAll();
+        await message.reactions.deleteAll();
         return message.react("✅");
     }
 }
