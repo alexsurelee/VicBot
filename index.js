@@ -158,7 +158,7 @@ async function alias(message, args) {
     else {
         const role = message.guild.roles.find(role => role.name === args[0]);
         for (let i = 1; i < args.length; i++)
-            await superRankSet(message, role, args[i]);
+            await aliasSet(message, role, args[i]);
 
     }
 }
@@ -168,7 +168,7 @@ async function alias(message, args) {
  * @param {Role} role
  * @param {string} change
  */
-async function superRankSet(message, role, change) {
+async function aliasSet(message, role, change) {
     if (role.guild.channels.find(channel => channel.name === null)) return message.channel.send(`Couldn't find ${change}`);
     const channel = role.guild.channels.find(ch => ch.name === change);
     if (role.permissionsIn(channel).has(`VIEW_CHANNEL`)) {
@@ -221,7 +221,7 @@ async function superRankSet(message, role, change) {
  * @param {Message} message
  * @param {Role} rank
  */
-async function addRank(message, rank) {
+async function rank(message, rank) {
     if (forbiddenRanks.includes(rank)) {
         return message.channel.send(`Sorry, you cannot join ${rank}.`);
     }
@@ -314,7 +314,7 @@ async function rank(message, args) {
 
     else
         args.forEach(function(item) {
-            addRank(message, item);
+            rank(message, item);
         });
 
 }
