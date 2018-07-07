@@ -47,6 +47,9 @@ client.on('message', async message => {
         // case 'play':
         //     await play(message, args);
         //     break;
+        // case 'pause':
+        //     await pause(message, args);
+        //     break;
         case 'alias':
             await alias(message, args, adminRole);
             break;
@@ -191,6 +194,15 @@ async function play(message, args){
             const dispatcher = connection.play(stream);
             dispatcher.on('end', () => voiceChannel.leave());
         })};
+}
+
+/**
+ * Pauses any music that is currently playing.
+ * @param {Message} message 
+ * @param {string[]} args 
+ */
+async function pause(message, args){
+
 }
 
 /**
