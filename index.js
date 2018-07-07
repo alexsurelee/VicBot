@@ -15,6 +15,9 @@ client.on(`ready`, () => {
 // actually log in
 client.login(token);
 
+// preventing some errors from killing the whole thing
+process.on(`unhandledRejection`, error => console.error(`Uncaught Promise Rejection:\n${error}`));
+
 
 // listening for messages
 client.on(`message`, async message => {
