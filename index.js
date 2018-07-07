@@ -1,7 +1,8 @@
 const Discord = require(`discord.js`);
 // const ytdl = require(`ytdl-core`);
 const client = new Discord.Client();
-const { prefix, token, forbiddenRanks, forbiddenChannels, aliasRanks, socialRanks } = require(`./config.json`);
+const { prefix, token } = require(`./botConfig.json`);
+const { forbiddenRanks, forbiddenChannels, aliasRanks, socialRanks } = require(`./config.json`);
 let papersCategory;
 let adminRole;
 
