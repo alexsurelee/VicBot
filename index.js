@@ -9,7 +9,7 @@ let adminRole;
 client.on(`ready`, () => {
     client.user.setUsername(`VicBot`);
     client.user.setActivity(`bugs, probably.`, { type: `PLAYING` });
-    console.log(`Ready!`);
+    console.log(`Instance started at ${new Date()}\n`);
 });
 
 // actually log in
@@ -50,12 +50,12 @@ client.on(`message`, async message => {
     case `micropad`:
         await micropad(message);
         break;
-        // case 'play':
-        //     await play(message, args);
-        //     break;
-        // case 'pause':
-        //     await pause(message, args);
-        //     break;
+    // case 'play':
+    //     await play(message, args);
+    //     break;
+    // case 'pause':
+    //     await pause(message, args);
+    //     break;
     case `alias`:
         await alias(message, args);
         break;
