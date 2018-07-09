@@ -1,10 +1,8 @@
 module.exports = {
     name: 'reset',
-    execute(message, args){
-        if (!message.member.roles.has(adminRole.id)) {
-            return message.channel.send(`This requires admin permissions.`);
-        }
-        else if (!args.length) {
+    admin: true,
+    async execute(message, args){
+        if (!args.length) {
             return message.channel.send(`Please include the name of the channel you wish to reset.`);
         }
     

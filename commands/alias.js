@@ -1,23 +1,32 @@
+const { aliasRanks } = require(`../config.json`);
+
 module.exports = {
-    name: 'alias',
-    execute(message, args){
-        if (!args.length) {
-            return message.channel.send(`Adds or removes accordingly the channels available to a given rank, e.g. \`!alias swen-2018 comp-102 comp-103\``);
-        }
-        else if (!message.member.roles.has(adminRole.id)) {
-            return message.channel.send(`This requires admin permissions.`);
-        }
-        else if (message.guild.roles.find(role => role.name === args[0]) == null) {
-            return message.channel.send(`Couldn't find ${args[0]}`);
-        }
-        else if (aliasRanks.indexOf(args[0]) === -1) {
-            return message.channel.send(`${args[0]} is not an appropriate rank.`);
-        }
-        else {
-            const role = message.guild.roles.find(role => role.name === args[0]);
-            for (let i = 1; i < args.length; i++)
-                await superRankSet(message, role, args[i]);
-    
-        }
-    }
-}
+	name: `alias`,
+	args: true,
+	admin: true,
+	usage: `<alias> <course> [course ...]`,
+	async execute(message, args){
+		if (message.guild.roles.find(role => role.name === args[0]) === null) {
+			return message.channel.send(`Couldn't find ${args[0]}`);
+		}
+		else if (aliasRanks.indexOf(args[0]) === -1) {
+			return message.channel.send(`${args[0]} is not an appropriate rank.`);
+		}
+		else {
+			const role = message.guild.roles.find(role => role.name === args[0]);
+			for (let i = 1; i < args.length; i++){
+				if (role.guild.channels.find(channel => channel.name === args[i]) === null) return message.channel.send(`Couldn't find ${args[i]}`);
+				const channel = role.guild.channels.find(ch => ch.name === args[i]);
+				if (role.permissionsIn(channel).has(`VIEW_CHANNEL`)) {
+					await channel.updateOverwrite(role, { VIEW_CHANNEL: null });
+					return message.channel.send(`Removed ${role.name} from ${args[i]}`);
+				}
+				else {
+					await channel.updateOverwrite(role, { VIEW_CHANNEL: true });
+					message.channel.send(`Added ${role.name} to ${args[i]}`);
+				}
+			}
+
+		}
+	},
+};

@@ -1,6 +1,8 @@
 module.exports = {
     name: `organise`,
-    execute(message, args){
+    args: false,
+    admin: true,
+    async execute(message, args){
         const channelArray = message.guild.channels.array();
         let paperLength = 0;
         const paperNameArray = [];

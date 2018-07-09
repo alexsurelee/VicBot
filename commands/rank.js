@@ -1,6 +1,8 @@
 module.exports = {
-    name: 'rank',
-    execute(message, args){
+    name: `rank`,
+    aliases: [`role`],
+    args: true,
+    async execute(message, args){
         if (forbiddenRanks.includes(rank)) {
         return message.channel.send(`Sorry, you cannot join ${rank}.`);
     }

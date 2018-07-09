@@ -1,6 +1,8 @@
 module.exports = {
     name: 'newRank',
-    execute(message, args){
+    args: true,
+    admin: true,
+    async execute(message, args){
         await message.guild.roles.create({
             data: {
                 name: args[0],
