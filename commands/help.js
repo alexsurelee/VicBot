@@ -2,7 +2,7 @@ const { prefix } = require(`../config.json`);
 
 module.exports = {
 	name: `help`,
-	description: `List all of my commands or info about a specific command.`,
+	description: `VicBot Commands`,
 	aliases: [`commands`],
 	usage: `[command name]`,
 	execute(message, args) {
@@ -10,19 +10,32 @@ module.exports = {
 		const { commands } = message.client;
 
 		if (!args.length) {
-			data.push(`Here's a list of all my commands:`);
-			data.push(commands.map(command => command.name).join(`, `));
-			data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
-
-			return message.author.send(data, { split: true })
-				.then(() => {
-					if (message.channel.type === `dm`) return;
-					message.reply(`I've sent you a DM with all my commands!`);
+			commands.array().forEach(function(item){
+				data.push({
+					name: command.name,
+					value: command.description
 				})
-				.catch(error => {
-					console.error(`Could not send help DM to ${message.author.tag}.\n`, error);
-					message.reply(`it seems like I can't DM you! Do you have DMs disabled?`);
-				});
+			})
+			data.push(commands.map(command => command.name).join(`, `));
+			data.push({
+				name: `further help`,
+				value: `\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`
+			});
+
+			return message.author.send({
+				embed: {
+					color: 0x004834,
+					title: description,
+					fields: data
+				}
+			}).then(() => {
+				if (message.channel.type === `dm`) return;
+				message.reply(`I've sent you a DM with all my commands!`);
+			})
+			.catch(error => {
+				console.error(`Could not send help DM to ${message.author.tag}.\n`, error);
+				message.reply(`it seems like I can't DM you! Do you have DMs disabled?`);
+			});
 		}
 
 		const name = args[0].toLowerCase();
