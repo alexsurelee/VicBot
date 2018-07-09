@@ -1,3 +1,4 @@
+const index = require("../index.js");
 module.exports = {
     name: 'reset',
     admin: true,
@@ -23,8 +24,8 @@ module.exports = {
         }
     
         else {
-            await deleteRank(message, args);
-            await newRank(message, args, papersCategory);
+            await index.deleteRank(message, args);
+            await index.newRank(message, args);
         }
     }
 }

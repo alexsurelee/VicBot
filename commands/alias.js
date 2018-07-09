@@ -5,6 +5,7 @@ module.exports = {
 	args: true,
 	admin: true,
 	usage: `<alias> <course> [course ...]`,
+	description: `Changes the papers allocated to an alias.`,
 	async execute(message, args){
 		if (message.guild.roles.find(role => role.name === args[0]) === null) {
 			return message.channel.send(`Couldn't find ${args[0]}`);

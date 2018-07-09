@@ -12,8 +12,9 @@ module.exports = {
 		if (!args.length) {
 			commands.array().forEach(function(item){
 				data.push({
-					name: command.name,
-					value: command.description
+					name: item.name,
+					usage: item.usage,
+					value: item.description
 				})
 			})
 			data.push(commands.map(command => command.name).join(`, `));

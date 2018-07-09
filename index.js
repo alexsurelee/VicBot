@@ -15,8 +15,8 @@ for (const file of commandFiles) {
 
 const { prefix, token } = require(`./botConfig.json`);
 const { forbiddenRanks, forbiddenChannels, aliasRanks, socialRanks } = require(`./config.json`);
-let papersCategory;
-let adminRole;
+var papersCategory;
+var adminRole;
 
 client.on(`ready`, () => {
 	client.user.setUsername(`VicBot`);
@@ -37,8 +37,8 @@ client.on(`message`, async message => {
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
 
-	const adminRole = message.guild.roles.find(role => role.name === `Admins`);
-	const papersCategory = message.guild.channels.find(category => category.name === `papers`);
+	adminRole = message.guild.roles.find(role => role.name === `Admins`);
+	papersCategory = message.guild.channels.find(category => category.name === `papers`);
 
 	const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 	if(!command) return;
@@ -411,7 +411,7 @@ async function sort(message) {
  * TODO: Sort the roles as well.
  * @param {Message} message
  */
-async function organise(message) {
+exports.organise = async function(message) {
 	const channelArray = message.guild.channels.array();
 	let paperLength = 0;
 	const paperNameArray = [];
@@ -433,14 +433,6 @@ async function organise(message) {
 }
 
 /**
- * Shills micropad for Nick.
- * @param {Message} message
- */
-async function micropad(message) {
-	message.channel.send(`<:micropad:339927818181935105> is the easy to use powerful notepad app developed by our very own Nick. Check it out at https://getmicropad.com`);
-}
-
-/**
  * Checks if three or more users have reacted with 📌, and pins the message.
  */
 client.on(`messageReactionAdd`, async reaction => {
@@ -454,112 +446,80 @@ client.on(`messageReactionAdd`, async reaction => {
 });
 
 /**
- * Checks permissions, then calls createRank.
- * @param {Message} message
- * @param {string[]} args
- */
-async function createRank(message, args) {
-	if (!message.member.roles.has(adminRole.id)) {
-		return message.channel.send(`This requires admin permissions.`);
-	}
-	else if (!args.length) {
-		return message.channel.send(`Please include the name of the rank you wish to create.`);
-	}
-
-	else if (args.length > 1) {
-		return message.channel.send(`Please only include one rank to create (no spaces).`);
-	}
-
-	else if (!args[0].includes(`-`)) {
-		return message.channel.send(`Classes should include the - symbol`);
-	}
-
-	else if (message.guild.roles.find(role => role.name === args[0]) != null) {
-		return message.channel.send(`Couldn't create class - role already exists.`);
-	}
-
-	else if (message.guild.channels.find(role => role.name === args[0]) != null) {
-		return message.channel.send(`Couldn't create class - channel already exists.`);
-	}
-
-	else {
-		await newRank(message, args, papersCategory);
-		return message.channel.send(`Created ${args[0]} successfully.`);
-	}
-}
-
-/**
- * Deletes the channel and/or role specified.
- * @param {Message} message
- * @param {string[]} args
- */
-async function deleteRank(message, args) {
-	if (message.guild.roles.find(role => role.name === args[0]) != null) await message.guild.roles.find(role => role.name === args[0]).delete();
-	if (message.guild.channels.find(channel => channel.name === args[0]) != null) await message.guild.channels.find(channel => channel.name === args[0]).delete();
-	return;
-}
-
-/**
  * Creates a role and channel for the course specified
  *  - Restricts it to the role created and bots
  *  - Pulls the course title from the victoria website and sets the category
  *  - Places the channel within the 'papers' category
  *  - Sorts the 'papers' category to ensure the channel is in the correct alphabetical location.
  */
-async function newRank(message, args, papersCategory) {
-	await message.guild.roles.create({
-		data: {
-			name: args[0],
-			hoist: false,
-			mentionable: false,
-		},
-	});
-	await message.guild.channels.create(args[0], {
-		type: `text`,
-		overwrites: [
-			{
-				id: message.guild.id,
-				denied: [`VIEW_CHANNEL`],
-			},
-			{
-				id: message.guild.roles.find(role => role.name === args[0]).id,
-				allowed: [`VIEW_CHANNEL`],
-			},
-			{
-				id: message.guild.roles.find(role => role.name === `bots`).id,
-				allowed: [`VIEW_CHANNEL`],
-			},
-		],
-		parent: papersCategory,
-	});
-	await organise(message);
 
-	// pull the course title to be extra af
-	const name = args[0].slice(0, 4) + args[0].slice(5, args[0].length);
-	const title = ``;
-	const currentYear = (new Date()).getFullYear();
-	const https = require(`https`);
-	https.get(`https://www.victoria.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`, (resp) => {
-		let data = ``;
-
-		// A chunk of data has been recieved.
-		resp.on(`data`, (chunk) => {
-			data += chunk;
+exports.newRank = async function(message, args) {
+		await message.guild.roles.create({
+			data: {
+				name: args[0],
+				hoist: false,
+				mentionable: false,
+			},
 		});
-
-		// The whole response has been received. Print out the result.
-		resp.on(`end`, () => {
-			JSON.parse(data, function(key, value) {
-				if (key === `title`)
-					message.guild.channels.find(channel => channel.name === args[0]).setTopic(value);
-
+		await message.guild.channels.create(args[0], {
+			type: `text`,
+			overwrites: [
+				{
+					id: message.guild.id,
+					denied: [`VIEW_CHANNEL`],
+				},
+				{
+					id: message.guild.roles.find(role => role.name === args[0]).id,
+					allowed: [`VIEW_CHANNEL`],
+				},
+				{
+					id: message.guild.roles.find(role => role.name === `bots`).id,
+					allowed: [`VIEW_CHANNEL`],
+				},
+			],
+			parent: papersCategory,
+		});
+		await organise(message);
+	
+		// pull the course title to be extra af
+		const name = args[0].slice(0, 4) + args[0].slice(5, args[0].length);
+		const title = ``;
+		const currentYear = (new Date()).getFullYear();
+		const https = require(`https`);
+		https.get(`https://www.victoria.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`, (resp) => {
+			let data = ``;
+	
+			// A chunk of data has been recieved.
+			resp.on(`data`, (chunk) => {
+				data += chunk;
 			});
+	
+			// The whole response has been received. Print out the result.
+			resp.on(`end`, () => {
+				JSON.parse(data, function(key, value) {
+					if (key === `title`)
+						message.guild.channels.find(channel => channel.name === args[0]).setTopic(value);
+	
+				});
+			});
+	
+		}).on(`error`, (err) => {
+			console.log(`Error: ` + err.message);
 		});
+		console.log(title);
+		return;
+	}
 
-	}).on(`error`, (err) => {
-		console.log(`Error: ` + err.message);
-	});
-	console.log(title);
+/**
+ * Deletes the channel and/or role specified.
+ * @param {Message} message
+ * @param {string[]} args
+ */
+exports.deleteRank = async function(message, args) {
+	if (message.guild.roles.find(role => role.name === args[0]) != null) await message.guild.roles.find(role => role.name === args[0]).delete();
+	if (message.guild.channels.find(channel => channel.name === args[0]) != null) await message.guild.channels.find(channel => channel.name === args[0]).delete();
 	return;
 }
+
+
 
