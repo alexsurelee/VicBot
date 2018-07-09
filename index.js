@@ -231,12 +231,12 @@ async function addRank(message, rank) {
     }
 
     else if (!message.guild.roles.find(role => role.name === rank).members.has(message.author.id)) {
-        await message.member.roles.add(message.guild.roles.find(role => role.name === rank));
+        await message.member.addRole(message.guild.roles.find(role => role.name === rank));
         return message.reply(`Added you to ${rank} successfully.`);
     }
 
     else {
-        await message.member.roles.remove(message.guild.roles.find(role => role.name === rank));
+        await message.member.removeRole(message.guild.roles.find(role => role.name === rank));
         return message.reply(`Removed you from ${rank} successfully.`);
     }
 }
