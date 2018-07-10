@@ -4,7 +4,7 @@ module.exports = {
 	name: `help`,
 	description: `VicBot Commands`,
 	aliases: [`commands`],
-	usage: `[command name]`,
+	usage: `\`!help\``,
 	execute(message, args) {
 		const data = [];
 		const { commands } = message.client;
@@ -13,20 +13,14 @@ module.exports = {
 			commands.array().forEach(function(item){
 				data.push({
 					name: item.name,
-					usage: item.usage,
-					value: item.description
+					value: item.usage + `\n` + item.description
 				})
 			})
-			data.push(commands.map(command => command.name).join(`, `));
-			data.push({
-				name: `further help`,
-				value: `\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`
-			});
 
 			return message.author.send({
 				embed: {
 					color: 0x004834,
-					title: description,
+					title: this.description,
 					fields: data
 				}
 			}).then(() => {

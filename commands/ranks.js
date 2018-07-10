@@ -1,5 +1,11 @@
+const { aliasRanks, socialRanks } = require(`../config.json`);
+
 module.exports = {
     name: 'ranks',
+    args: false,
+    admin: false,
+    description: `List the available user ranks.`,
+    usage: `\`!ranks\``,
     async execute(message){
         const rankArray = message.guild.roles.array();
         const paperStringArray = new Array();

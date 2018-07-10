@@ -3,6 +3,8 @@ module.exports = {
     name: 'addrank',
     args: true,
     admin: true,
+    description: `Creates a new class role and channel.`,
+    usage: `\`!addrank <course>\``,
     async execute(message, args){
         if (!args.length) {
             return message.channel.send(`Please include the name of the rank you wish to create.`);

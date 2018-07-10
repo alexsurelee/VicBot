@@ -29,7 +29,7 @@ client.login(token);
 
 // preventing some errors from killing the whole thing
 process.on(`unhandledRejection`, error => console.error(`Uncaught Promise Rejection:\n${error}`));
-
+process.on(`unhandledError`, error => console.error(`Unhandled Error:\n${error}`));
 
 // listening for messages
 client.on(`message`, async message => {
@@ -51,7 +51,7 @@ client.on(`message`, async message => {
 		let reply = `Please include the appropriate arguments, ${message.author}`;
 
 		if(command.usage)
-			reply += `\ne.g.: \`${prefix}${command.name} ${command.usage}\``;
+			reply += `\ne.g.: \`${command.usage}\``;
 
 		return message.channel.send(reply);
 	}
@@ -479,7 +479,7 @@ exports.newRank = async function(message, args) {
 			],
 			parent: papersCategory,
 		});
-		await organise(message);
+		await this.organise(message);
 	
 		// pull the course title to be extra af
 		const name = args[0].slice(0, 4) + args[0].slice(5, args[0].length);
