@@ -17,7 +17,7 @@ client.login(token);
 
 // preventing some errors from killing the whole thing
 process.on(`unhandledRejection`, error => console.error(`Uncaught Promise Rejection:\n${error}`));
-process.on(`unhandledError`, error => console.error(`Unhandled Error Exception:\n${error}`));
+// process.on(`unhandledError`, error => console.error(`Unhandled Error Exception:\n${error}`));
 
 
 // listening for messages
