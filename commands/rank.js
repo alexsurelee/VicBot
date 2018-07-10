@@ -7,8 +7,8 @@ module.exports = {
     description: `Add or remove class ranks.`,
     usage: `\`!rank <course> [course ...]\``,
     async execute(message, args){
-        args.forEach(function(item) {
-			index.rank(message, item);
+        args.forEach(function(rank) {
+			index.rank(message, rank);
 		});
     }
 }

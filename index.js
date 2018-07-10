@@ -221,7 +221,7 @@ async function aliasSet(message, role, change) {
  * @param {Message} message
  * @param {Role} rank
  */
-async function rank(message, rank) {
+exports.rank = async function(message, rank) {
 	if (forbiddenRanks.includes(rank)) {
 		return message.channel.send(`Sorry, you cannot join ${rank}.`);
 	}
