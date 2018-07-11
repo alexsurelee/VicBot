@@ -11,10 +11,12 @@ module.exports = {
 
 		if (!args.length) {
 			commands.array().forEach(function(item){
-				data.push({
-					name: item.name,
-					value: item.usage + `\n` + item.description
-				})
+				if((message.member.hasPermission(`ADMINISTRATOR`) && item.admin) || !item.admin){
+					data.push({
+						name: item.name,
+						value: item.usage + `\n` + item.description
+					})
+				}
 			})
 
 			return message.author.send({

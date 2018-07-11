@@ -51,15 +51,15 @@ module.exports = {
                 title: `Ranks`,
                 fields: [{
                     name: `Papers`,
-                    value: paperString,
+                    value: `Individual channels for each paper.` + `\n` + paperString,
                 },
                 {
                     name: `Social`,
-                    value: socialString,
+                    value: `Opt-in or out channels for particular social settings.` + `\n` + socialString,
                 },
                 {
                     name: `Aliases`,
-                    value: aliasString,
+                    value: `Global roles that will automatically place you in the default papers for your major, depending what year you started study.` + `\n` + aliasString,
                 }],
             },
         });

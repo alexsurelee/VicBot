@@ -15,7 +15,15 @@ module.exports = {
         }
     
         else if (!args[0].includes(`-`)) {
-            return message.channel.send(`Classes should include the - symbol`);
+            return message.channel.send(`Classes should include the \`-\` symbol`);
+        }
+        
+        else if (args[0].includes(`+`)){
+            return message.channel.send(`You cannot include the \`+\` symbol in a rank.`);
+        }
+
+        else if(args[0].length !== 8){
+            return message.channel.send(`Classes should be 8 characters long, e.g. \`engr-101\``);
         }
     
         else if (message.guild.roles.find(role => role.name === args[0]) != null) {
@@ -27,6 +35,10 @@ module.exports = {
         }
     
         else {
+            var letters = /^[0-9a-zA-Z]+$/; 
+            for(var i = 0 ; i < args[0].length ; i++){
+                if(!args[0].charAt(i).match(letters) && args[0].charAt(i) !== `-`) return message.channel.send(`Classes should only be alphanumeric and contain the \`-\` character.`);
+            };
             await index.newRank(message, args);
             return message.channel.send(`Created ${args[0]} successfully.`);
         }
