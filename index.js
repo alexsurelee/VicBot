@@ -65,121 +65,6 @@ client.on(`message`, async message => {
 	}
 });
 
-/**
- * Returns info about all the wonderful things the bot can do.
- * @param {Message} message
- */
-async function help(message) {
-	if (message.member.roles.has(adminRole.id))
-		return message.channel.send({
-			embed: {
-				color: 0x004834,
-				title: `VicBot Commands`,
-				fields: [{
-					name: `rank`,
-					value: `\`!rank <course> [course ...]\`\nAdd or remove class ranks.`,
-				},
-				{
-					name: `ranks`,
-					value: `\`!ranks\`\nList the available user ranks.`,
-				},
-				{
-					name: `micropad`,
-					value: `\`!micropad\`\nProvides information about micropad.`,
-				},
-				{
-					name: `play`,
-					value: `\`!play <url>\`\nPlays audio from a YouTube video or queues it accordingly.`,
-				},
-				{
-					name: `addrank`,
-					value: `\`!addrank <course>\`\nCreates a new class role and channel.`,
-				},
-				{
-					name: `delrank`,
-					value: `\`!delrank <course>\`\nDeletes a classes' role and channel.`,
-				},
-				{
-					name: `organise`,
-					value: `\`!organise\`\nSorts the channels within the papers category.`,
-				},
-				{
-					name: `alias`,
-					value: `\`!alias <alias> <course> [course ...]\`\nChanges the papers allocated to an alias.`,
-				},
-				],
-			},
-		});
-
-	else
-		return message.channel.send({
-			embed: {
-				color: 0x004834,
-				title: `VicBot Commands`,
-				fields: [{
-					name: `rank`,
-					value: `\`!rank <course> [course ...]\`\nAdd or remove class ranks.`,
-				},
-				{
-					name: `ranks`,
-					value: `\`!ranks\`\nList the available user ranks.`,
-				},
-				{
-					name: `micropad`,
-					value: `\`!micropad\`\nProvides information about micropad.`,
-				},
-				{
-					name: `play`,
-					value: `\`!play <url>\`\nPlays audio from a YouTube video or queues it accordingly.`,
-				},
-				],
-			},
-		});
-}
-
-/**
- * Sets the courses applicable to one of the multi-channel roles (e.g. swen-2017)
- * @param {Message} message
- * @param {string[]} args
- */
-async function alias(message, args) {
-	if (!args.length) {
-		return message.channel.send(`Adds or removes accordingly the channels available to a given rank, e.g. \`!alias swen-2018 comp-102 comp-103\``);
-	}
-	else if (!message.member.roles.has(adminRole.id)) {
-		return message.channel.send(`This requires admin permissions.`);
-	}
-	else if (message.guild.roles.find(role => role.name === args[0]) == null) {
-		return message.channel.send(`Couldn't find ${args[0]}`);
-	}
-	else if (aliasRanks.indexOf(args[0]) === -1) {
-		return message.channel.send(`${args[0]} is not an appropriate rank.`);
-	}
-	else {
-		const role = message.guild.roles.find(role => role.name === args[0]);
-		for (let i = 1; i < args.length; i++)
-			await aliasSet(message, role, args[i]);
-
-	}
-}
-
-/**
- * Swaps permissions of a role for a passed channel, allows viewing if previously disallowed, and vice-versa.
- * @param {Role} role
- * @param {string} change
- */
-async function aliasSet(message, role, change) {
-	if (role.guild.channels.find(channel => channel.name === null)) return message.channel.send(`Couldn't find ${change}`);
-	const channel = role.guild.channels.find(ch => ch.name === change);
-	if (role.permissionsIn(channel).has(`VIEW_CHANNEL`)) {
-		await channel.updateOverwrite(role, { VIEW_CHANNEL: null });
-		return message.channel.send(`Removed ${role.name} from ${change}`);
-	}
-	else {
-		await channel.updateOverwrite(role, { VIEW_CHANNEL: true });
-		return message.channel.send(`Added ${role.name} to ${change}`);
-	}
-}
 
 // /**
 //  * Plays music based on a YouTube video, with queueing as appropiate.
@@ -232,12 +117,14 @@ exports.rank = async function(message, rank) {
 
 	else if (!message.guild.roles.find(role => role.name === rank).members.has(message.author.id)) {
 		await message.member.roles.add(message.guild.roles.find(role => role.name === rank));
-		return message.reply(`Added you to ${rank} successfully.`);
+		const rankChannel = message.guild.channels.find(channel => channel.name === rank);
+		return message.reply(`Added you to ${rankChannel} successfully.`);
 	}
 
 	else {
 		await message.member.roles.remove(message.guild.roles.find(role => role.name === rank));
-		return message.reply(`Removed you from ${rank} successfully.`);
+		const rankChannel = message.guild.channels.find(channel => channel.name === rank);
+		return message.reply(`Removed you from ${rankChannel} successfully.`);
 	}
 }
 

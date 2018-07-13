@@ -3,31 +3,25 @@ const { aliasRanks } = require(`../config.json`);
 module.exports = {
 	name: `alias`,
 	args: true,
-	admin: true,
-	usage: `\`!alias <alias> <course> [course ...]\``,
-	description: `Changes the papers allocated to an alias.`,
+	admin: false,
+	usage: `\`!alias <alias>\``,
+	description: `Lists the papers allocated to an alias.`,
 	async execute(message, args){
-		if (!message.guild.roles.some(role => role.name === args[0])) {
-			return message.channel.send(`Couldn't find ${args[0]}`);
-		}
-		else if (aliasRanks.indexOf(args[0]) === -1) {
-			return message.channel.send(`${args[0]} is not an appropriate rank.`);
-		}
-		else {
-			var role = message.guild.roles.find(role => role.name === args[0]);
-			for (let i = 1; i < args.length; i++){
-				if (role.guild.channels.find(channel => channel.name === args[i]) === null){ message.channel.send(`Couldn't find ${args[i]}`); continue; }
-				var channel = role.guild.channels.find(ch => ch.name === args[i]);
-				if (role.permissionsIn(channel).has(`VIEW_CHANNEL`)) {
-					await channel.updateOverwrite(role, { VIEW_CHANNEL: null });
-					message.channel.send(`Removed ${role.name} from ${args[i]}`);
-				}
-				else {
-					await channel.updateOverwrite(role, { VIEW_CHANNEL: true });
-					message.channel.send(`Added ${role.name} to ${args[i]}`);
-				}
-			}
-
+		for (let i = 0; i < args.length; i++){
+            if(!message.guild.roles.some(role => role.name === args[i])){
+                message.channel.send(`Couldn't find ${args[i]}`);
+                continue;
+            }
+            if(aliasRanks.indexOf(args[i]) === -1){
+                message.channel.send(`${args[0]} is not an alias.`);
+                continue;
+            }
+            var role = message.guild.roles.find(role => role.name === args[i]);
+			let aliasChannels = `${role.name} currently includes: `;
+			message.guild.channels.array().forEach(element => {
+				if(role.permissionsIn(element).has(`VIEW_CHANNEL`) && element.parent !== null && element.parent === message.guild.channels.find(category => category.name === `papers`)) aliasChannels += `${element}` + `\t`
+			});
+			message.channel.send(aliasChannels);
 		}
 	},
 };
