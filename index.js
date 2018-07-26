@@ -30,6 +30,7 @@ client.login(token);
 // preventing some errors from killing the whole thing
 process.on(`unhandledRejection`, error => console.error(`Uncaught Promise Rejection:\n${error}`));
 process.on(`unhandledError`, error => console.error(`Unhandled Error:\n${error}`));
+client.on(`disconnect`, error => console.error(`Disconnected!`));
 
 // listening for messages
 client.on(`message`, async message => {
