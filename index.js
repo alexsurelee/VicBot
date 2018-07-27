@@ -31,6 +31,7 @@ client.login(token);
 process.on(`unhandledRejection`, error => console.error(`Uncaught Promise Rejection:\n${error}`));
 process.on(`unhandledError`, error => console.error(`Unhandled Error:\n${error}`));
 client.on(`disconnect`, error => console.error(`Disconnected!`));
+client.on(`error`, console.error);
 
 // listening for messages
 client.on(`message`, async message => {
