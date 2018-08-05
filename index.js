@@ -20,7 +20,7 @@ let adminRole;
 
 client.on(`ready`, () => {
 	client.user.setUsername(`VicBot`);
-	client.user.setActivity(`bugs, probably.`, { type: `PLAYING` });
+	client.user.setActivity(`!help`, { type: `PLAYING` });
 	console.log(`Instance started at ${new Date()}\n`);
 });
 
