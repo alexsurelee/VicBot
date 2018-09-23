@@ -35,7 +35,7 @@ module.exports = {
         }
     
         else {
-            var letters = /^[0-9a-zA-Z]+$/; 
+            var letters = /^[0-9a-zA-Z]+$/; // regex to ensure that they're alphanumeric
             for(var i = 0 ; i < args[0].length ; i++){
                 if(!args[0].charAt(i).match(letters) && args[0].charAt(i) !== `-`) return message.channel.send(`Classes should only be alphanumeric and contain the \`-\` character.`);
             };

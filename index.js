@@ -1,6 +1,5 @@
 const Discord = require(`discord.js`);
 const fs = require(`fs`);
-// const ytdl = require(`ytdl-core`);
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync(`./commands`).filter(file => file.endsWith(`.js`));
@@ -8,8 +7,7 @@ const commandFiles = fs.readdirSync(`./commands`).filter(file => file.endsWith(`
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 
-	// set a new item in the Collection
-	// with the key as the command name and the value as the exported module
+	// creates a map of command strings to their methods.
 	client.commands.set(command.name, command);
 }
 
@@ -37,9 +35,11 @@ client.on(`message`, async message => {
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
 
-	adminRole = message.guild.roles.find(role => role.name === `Admins`);
+	// hard-coded "admins" role.
+	adminRole = message.guild.roles.find(role => role.name === `admins`);
 	papersCategory = message.guild.channels.find(category => category.name === `papers`);
 
+	// checking to ensure the command or an alias of the command exists
 	const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 	if(!command) return;
 
@@ -64,42 +64,6 @@ client.on(`message`, async message => {
 		message.reply(`there was an error trying to execute that command!`);
 	}
 });
-
-
-// /**
-//  * Plays music based on a YouTube video, with queueing as appropiate.
-//  * @param {Message} message
-//  * @param {string[]} args
-//  */
-// async function play(message, args) {
-//     if (message.channel.type !== `text`) return;
-
-//     const { voiceChannel } = message.member;
-
-//     if (!voiceChannel)
-//         return message.reply(`Please join a voice channel first.`);
-
-//     else if (!args.length)
-//         return message.channel.send(`Please add a youtube link`);
-
-
-//     else
-//         voiceChannel.join().then(connection => {
-//             const stream = ytdl(args[0], { filter: `audioonly` });
-//             const dispatcher = connection.play(stream);
-//             dispatcher.on(`end`, () => voiceChannel.leave());
-//         })
-//         ;
-// }
-
-// /**
-//  * Pauses any music that is currently playing.
-//  * @param {Message} message
-//  * @param {string[]} args
-//  */
-// async function pause(message, args) {
-
-// }
 
 /**
  * Checks against permissions and forbidden roles, then adds the role to the user which sent the message.
@@ -140,14 +104,15 @@ exports.rank = async function(message, rank) {
 
 /**
  * Sorts the channels within the 'papers' category.
- * TODO: Sort the roles as well.
  * @param {Message} message
  */
 exports.organise = async function(message) {
+	//TODO: Sort the roles as well.
 	const channelArray = message.guild.channels.array();
 	let paperLength = 0;
 	const paperNameArray = [];
 
+	// places each channel into an array and sorts the array
 	channelArray.forEach(function(item) {
 		if (item.parent != null)
 			if (item.parent.name === `papers`) {
@@ -158,6 +123,7 @@ exports.organise = async function(message) {
 	});
 	await paperNameArray.sort();
 
+	// if the channel is not in the same location as its sorted array location, move it.
 	for (let i = 0; i < paperLength; i++)
 		if (message.guild.channels.find(channel => channel.name === paperNameArray[i]).position != i)
 			await message.guild.channels.find(channel => channel.name === paperNameArray[i]).setPosition(i);
@@ -169,11 +135,11 @@ exports.organise = async function(message) {
  */
 client.on(`messageReactionAdd`, async reaction => {
 	if (!forbiddenChannels.includes(reaction.message.channel.name))
-		if (reaction.emoji.name === `📌`) {
+		if (reaction.emoji.name === `📌`) 
 			if (reaction.count >= 3 && !reaction.message.pinned)
 				await reaction.message.pin();
 
-		}
+		
 
 });
 
@@ -184,7 +150,6 @@ client.on(`messageReactionAdd`, async reaction => {
  *  - Places the channel within the 'papers' category
  *  - Sorts the 'papers' category to ensure the channel is in the correct alphabetical location.
  */
-
 exports.newRank = async function(message, args) {
 	await message.guild.roles.create({
 		data: {
@@ -213,7 +178,7 @@ exports.newRank = async function(message, args) {
 	});
 	await this.organise(message);
 
-	// pull the course title to be extra af
+	// pull the course title and set the topic
 	const name = args[0].slice(0, 4) + args[0].slice(5, args[0].length);
 	const title = ``;
 	const currentYear = (new Date()).getFullYear();
@@ -221,12 +186,12 @@ exports.newRank = async function(message, args) {
 	https.get(`https://www.victoria.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`, (resp) => {
 		let data = ``;
 
-		// A chunk of data has been recieved.
+		// Adding the data chunks to the string
 		resp.on(`data`, (chunk) => {
 			data += chunk;
 		});
 
-		// The whole response has been received. Print out the result.
+		// Parsing the string for the course title
 		resp.on(`end`, () => {
 			JSON.parse(data, function(key, value) {
 				if (key === `title`)
@@ -238,7 +203,6 @@ exports.newRank = async function(message, args) {
 	}).on(`error`, (err) => {
 		console.log(`Error: ` + err.message);
 	});
-	console.log(title);
 	return;
 };
 
