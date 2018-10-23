@@ -31,11 +31,17 @@ process.on(`unhandledError`, error => console.error(`Unhandled Error:\n${error}`
 
 // listening for messages
 client.on(`message`, async message => {
+	// redirecting old commands
+	if(message.content.startsWith(`;rank`)) {
+		return message.channel.send(`Please use "!rank".`);
+	}
+	// limiting to predefined prefix
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
 
-	// hard-coded "admins" role.
+	// hard-coded "admins" role
+	//TODO: allow manual definition of role (not based on permission or name)
 	adminRole = message.guild.roles.find(role => role.name === `admins`);
 	papersCategory = message.guild.channels.find(category => category.name === `papers`);
 
@@ -66,9 +72,9 @@ client.on(`message`, async message => {
 });
 
 /**
- * Checks against permissions and forbidden roles, then adds the role to the user which sent the message.
- * @param {Message} message
- * @param {Role} rank
+ * Checks against permissions and forbidden roles, then adds or removes the role from the user which sent the message.
+ * @param {Message} message the message sent
+ * @param {Role} rank the rank to be added or removed
  */
 exports.rank = async function(message, rank) {
 	if (forbiddenRanks.includes(rank)) {
@@ -114,11 +120,12 @@ exports.organise = async function(message) {
 
 	// places each channel into an array and sorts the array
 	channelArray.forEach(function(item) {
-		if (item.parent != null)
+		if (item.parent != null){
 			if (item.parent.name === `papers`) {
 				paperLength++;
 				paperNameArray.push(item.name);
 			}
+		}
 
 	});
 	await paperNameArray.sort();
@@ -180,7 +187,6 @@ exports.newRank = async function(message, args) {
 
 	// pull the course title and set the topic
 	const name = args[0].slice(0, 4) + args[0].slice(5, args[0].length);
-	const title = ``;
 	const currentYear = (new Date()).getFullYear();
 	const https = require(`https`);
 	https.get(`https://www.victoria.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`, (resp) => {
