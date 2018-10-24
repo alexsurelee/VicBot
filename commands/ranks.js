@@ -50,6 +50,10 @@ module.exports = {
                 color: 0x004834,
                 title: `Ranks`,
                 fields: [{
+                    name: `Usage`,
+                    value: `You can add and/or remove multiple ranks in one \`!rank\` command \ne.g. \`!rank <course> [course ...]\``,
+                },
+                {
                     name: `Papers`,
                     value: `Individual channels for each paper.` + `\n` + paperString,
                 },

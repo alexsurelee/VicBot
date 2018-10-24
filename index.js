@@ -12,7 +12,11 @@ for (const file of commandFiles) {
 }
 
 const { prefix, token } = require(`./botConfig.json`);
+<<<<<<< HEAD
 const { forbiddenRanks, forbiddenChannels, aliasRanks } = require(`./config.json`);
+=======
+const { forbiddenRanks, forbiddenChannels, aliasRanks, socialRanks } = require(`./config.json`);
+>>>>>>> beta
 let papersCategory;
 let adminRole;
 
@@ -28,6 +32,8 @@ client.login(token);
 // preventing some errors from killing the whole thing
 process.on(`unhandledRejection`, error => console.error(`Uncaught Promise Rejection:\n${error}`));
 process.on(`unhandledError`, error => console.error(`Unhandled Error:\n${error}`));
+client.on(`disconnect`, error => console.error(`Disconnected!`));
+client.on(`error`, console.error);
 
 // listening for messages
 client.on(`message`, async message => {
@@ -87,7 +93,7 @@ exports.rank = async function(message, rank) {
 
 	else if (!message.guild.roles.find(role => role.name === rank).members.has(message.author.id)) {
 		await message.member.roles.add(message.guild.roles.find(role => role.name === rank));
-		if(!aliasRanks.includes(rank)){
+		if(!aliasRanks.includes(rank) && !socialRanks.includes(rank)){
 			const rankChannel = message.guild.channels.find(channel => channel.name === rank);
 			return message.reply(`Added you to ${rankChannel} successfully.`);
 		}
@@ -185,19 +191,33 @@ exports.newRank = async function(message, args) {
 	});
 	await this.organise(message);
 
+<<<<<<< HEAD
 	// pull the course title and set the topic
 	const name = args[0].slice(0, 4) + args[0].slice(5, args[0].length);
+=======
+	// pull the course title to be extra af
+	const name = args[0].slice(0, 4) + args[0].slice(5, args[0].length);
+	const title = ``;
+>>>>>>> beta
 	const currentYear = (new Date()).getFullYear();
 	const https = require(`https`);
 	https.get(`https://www.victoria.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`, (resp) => {
 		let data = ``;
 
+<<<<<<< HEAD
 		// Adding the data chunks to the string
+=======
+		// A chunk of data has been recieved.
+>>>>>>> beta
 		resp.on(`data`, (chunk) => {
 			data += chunk;
 		});
 
+<<<<<<< HEAD
 		// Parsing the string for the course title
+=======
+		// The whole response has been received. Print out the result.
+>>>>>>> beta
 		resp.on(`end`, () => {
 			JSON.parse(data, function(key, value) {
 				if (key === `title`)
@@ -209,6 +229,10 @@ exports.newRank = async function(message, args) {
 	}).on(`error`, (err) => {
 		console.log(`Error: ` + err.message);
 	});
+<<<<<<< HEAD
+=======
+	console.log(title);
+>>>>>>> beta
 	return;
 };
 
