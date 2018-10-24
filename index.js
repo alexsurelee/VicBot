@@ -12,11 +12,7 @@ for (const file of commandFiles) {
 }
 
 const { prefix, token } = require(`./botConfig.json`);
-<<<<<<< HEAD
-const { forbiddenRanks, forbiddenChannels, aliasRanks } = require(`./config.json`);
-=======
 const { forbiddenRanks, forbiddenChannels, aliasRanks, socialRanks } = require(`./config.json`);
->>>>>>> beta
 let papersCategory;
 let adminRole;
 
@@ -191,33 +187,21 @@ exports.newRank = async function(message, args) {
 	});
 	await this.organise(message);
 
-<<<<<<< HEAD
+
 	// pull the course title and set the topic
 	const name = args[0].slice(0, 4) + args[0].slice(5, args[0].length);
-=======
-	// pull the course title to be extra af
-	const name = args[0].slice(0, 4) + args[0].slice(5, args[0].length);
-	const title = ``;
->>>>>>> beta
+
 	const currentYear = (new Date()).getFullYear();
 	const https = require(`https`);
 	https.get(`https://www.victoria.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`, (resp) => {
 		let data = ``;
 
-<<<<<<< HEAD
 		// Adding the data chunks to the string
-=======
-		// A chunk of data has been recieved.
->>>>>>> beta
 		resp.on(`data`, (chunk) => {
 			data += chunk;
 		});
 
-<<<<<<< HEAD
 		// Parsing the string for the course title
-=======
-		// The whole response has been received. Print out the result.
->>>>>>> beta
 		resp.on(`end`, () => {
 			JSON.parse(data, function(key, value) {
 				if (key === `title`)
@@ -229,10 +213,6 @@ exports.newRank = async function(message, args) {
 	}).on(`error`, (err) => {
 		console.log(`Error: ` + err.message);
 	});
-<<<<<<< HEAD
-=======
-	console.log(title);
->>>>>>> beta
 	return;
 };
 
