@@ -9,7 +9,7 @@ module.exports = {
         await index.organise(message);
         // await message.reactions.sweep(reac => reac.emoji.toString() === "🕦");
         // await message.reactions.get("🕦").users.remove(client.id);
-        await message.reactions.deleteAll();
+        await message.reactions.removeAll();
         return message.react(`✅`);
     }
 }

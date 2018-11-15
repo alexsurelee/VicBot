@@ -13,7 +13,10 @@ for (const file of commandFiles) {
 
 const { prefix, token } = require(`./botConfig.json`);
 const { forbiddenRanks, forbiddenChannels, aliasRanks, socialRanks } = require(`./config.json`);
-let papersCategory;
+let oneCategory;
+let twoCategory;
+let threeCategory;
+let fourCategory;
 let adminRole;
 
 client.on(`ready`, () => {
@@ -28,32 +31,35 @@ client.login(token);
 // preventing some errors from killing the whole thing
 process.on(`unhandledRejection`, error => console.error(`Uncaught Promise Rejection:\n${error}`));
 process.on(`unhandledError`, error => console.error(`Unhandled Error:\n${error}`));
-client.on(`disconnect`, error => console.error(`Disconnected!`));
+client.on(`disconnect`, error => console.error(`Disconnected! \n${error}`));
 client.on(`error`, console.error);
 
 // listening for messages
 client.on(`message`, async message => {
 	// redirecting old commands
-	if(message.content.startsWith(`;rank`)) {
+	if(message.content.startsWith(`;rank`))
 		return message.channel.send(`Please use "!rank".`);
-	}
+
 	// limiting to predefined prefix
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
 
 	// hard-coded "admins" role
-	//TODO: allow manual definition of role (not based on permission or name)
+	// TODO: allow manual definition of role (not based on permission or name)
 	adminRole = message.guild.roles.find(role => role.name === `admins`);
-	papersCategory = message.guild.channels.find(category => category.name === `papers`);
+	oneCategory = message.guild.channels.find(category => category.name === `100-level`);
+	twoCategory = message.guild.channels.find(category => category.name === `200-level`);
+	threeCategory = message.guild.channels.find(category => category.name === `300-level`);
+	fourCategory = message.guild.channels.find(category => category.name === `400-level`);
+
 
 	// checking to ensure the command or an alias of the command exists
 	const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 	if(!command) return;
 
-	if (command.admin && !message.member.roles.has(adminRole.id)) 
+	if (command.admin && !message.member.roles.has(adminRole.id))
 		return message.channel.send(`This requires admin permissions.`);
-	
 
 	if(command.args && !args.length){
 		let reply = `Please include the appropriate arguments, ${message.author}`;
@@ -79,6 +85,10 @@ client.on(`message`, async message => {
  * @param {Role} rank the rank to be added or removed
  */
 exports.rank = async function(message, rank) {
+	if (message.guild.roles.find(role => role.name === rank) == null) {
+		rank = rank.toLowerCase();
+	}
+
 	if (forbiddenRanks.includes(rank)) {
 		return message.channel.send(`Sorry, you cannot join ${rank}.`);
 	}
@@ -115,27 +125,62 @@ exports.rank = async function(message, rank) {
  * @param {Message} message
  */
 exports.organise = async function(message) {
-	//TODO: Sort the roles as well.
+	function isClass(word) {
+		return word.charAt(5) === `1` || word.charAt(5) === `2` || word.charAt(5) === `3` || word.charAt(5) === `4`;
+	}
 	const channelArray = message.guild.channels.array();
-	let paperLength = 0;
-	const paperNameArray = [];
+	const roles = message.guild.roles.array(); 
+	roles.filter(role => isClass(role.name));
+	let oneLength = 0;
+	let twoLength = 0;
+	let threeLength = 0;
+	let fourLength = 0;
+	const oneNameArray = [];
+	const twoNameArray = [];
+	const threeNameArray = [];
+	const fourNameArray = [];
 
 	// places each channel into an array and sorts the array
 	channelArray.forEach(function(item) {
-		if (item.parent != null){
-			if (item.parent.name === `papers`) {
-				paperLength++;
-				paperNameArray.push(item.name);
+		if (item.parent != null)
+			if(item.parent.name === `100-level`) {
+				oneLength++;
+				oneNameArray.push(item.name);
 			}
-		}
-
+			else if(item.parent.name === `200-level`) {
+				twoLength++;
+				twoNameArray.push(item.name);
+			}
+			else if(item.parent.name === `300-level`) {
+				threeLength++;
+				threeNameArray.push(item.name);
+			}
+			else {
+				fourLength++;
+				fourNameArray.push(item.name);
+			}
 	});
-	await paperNameArray.sort();
+	await oneNameArray.sort();
+	await twoNameArray.sort();
+	await threeNameArray.sort();
+	await fourNameArray.sort();
 
 	// if the channel is not in the same location as its sorted array location, move it.
-	for (let i = 0; i < paperLength; i++)
-		if (message.guild.channels.find(channel => channel.name === paperNameArray[i]).position != i)
-			await message.guild.channels.find(channel => channel.name === paperNameArray[i]).setPosition(i);
+	for (let i = 0; i < oneLength; i++)
+		if (message.guild.channels.find(channel => channel.name === oneNameArray[i]).position != i)
+			await message.guild.channels.find(channel => channel.name === oneNameArray[i]).setPosition(i);
+
+	for (let i = 0; i < twoLength; i++)
+		if (message.guild.channels.find(channel => channel.name === twoNameArray[i]).position != i)
+			await message.guild.channels.find(channel => channel.name === twoNameArray[i]).setPosition(i);
+
+	for (let i = 0; i < threeLength; i++)
+		if (message.guild.channels.find(channel => channel.name === threeNameArray[i]).position != i)
+			await message.guild.channels.find(channel => channel.name === threeNameArray[i]).setPosition(i);
+
+	for (let i = 0; i < fourLength; i++)
+		if (message.guild.channels.find(channel => channel.name === fourNameArray[i]).position != i)
+			await message.guild.channels.find(channel => channel.name === fourNameArray[i]).setPosition(i);
 
 };
 
@@ -147,9 +192,6 @@ client.on(`messageReactionAdd`, async reaction => {
 		if (reaction.emoji.name === `📌`) 
 			if (reaction.count >= 3 && !reaction.message.pinned)
 				await reaction.message.pin();
-
-		
-
 });
 
 /**
@@ -167,6 +209,12 @@ exports.newRank = async function(message, args) {
 			mentionable: false,
 		},
 	});
+	let levelParent;
+	if(args[0].charAt(5) === `1`) levelParent = oneCategory;
+	else if(args[0].charAt(5) === `2`) levelParent = twoCategory;
+	else if(args[0].charAt(5) === `3`) levelParent = threeCategory;
+	else if(args[0].charAt(5) === `4`) levelParent = fourCategory;
+
 	await message.guild.channels.create(args[0], {
 		type: `text`,
 		overwrites: [
@@ -183,7 +231,7 @@ exports.newRank = async function(message, args) {
 				allowed: [`VIEW_CHANNEL`],
 			},
 		],
-		parent: papersCategory,
+		parent: levelParent,
 	});
 	await this.organise(message);
 

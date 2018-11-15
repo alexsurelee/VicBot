@@ -6,6 +6,7 @@ module.exports = {
     description: `Creates a new class role and channel.`,
     usage: `\`!addrank <course>\``,
     async execute(message, args){
+        args[0] = args[0].toLowerCase();
         if (!args.length) {
             return message.channel.send(`Please include the name of the rank you wish to create.`);
         }
@@ -40,7 +41,8 @@ module.exports = {
                 if(!args[0].charAt(i).match(letters) && args[0].charAt(i) !== `-`) return message.channel.send(`Classes should only be alphanumeric and contain the \`-\` character.`);
             };
             await index.newRank(message, args);
-            return message.channel.send(`Created ${args[0]} successfully.`);
+            const rankChannel = message.guild.channels.find(channel => channel.name === args[0]);
+            return message.channel.send(`Created ${rankChannel} successfully.`);
         }
     }
 }

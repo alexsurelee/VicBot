@@ -6,6 +6,7 @@ module.exports = {
 	usage: `\`!delrank <course>\``,
 	description: `Deletes a class's role and channel.`,
 	async execute(message, args){
+		args[0] = args[0].toLowerCase();
 		if (!args.length) {
 			return message.channel.send(`Please provide a rank to delete. Type !ranks for a list.`);
         }
