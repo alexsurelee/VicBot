@@ -47,7 +47,7 @@ client.on(`message`, async message => {
 
 	// hard-coded "admins" role
 	// TODO: allow manual definition of role (not based on permission or name)
-	adminRole = message.guild.roles.find(role => role.name === `admins`);
+	adminRole = message.guild.roles.find(role => role.name === `Admins`);
 	oneCategory = message.guild.channels.find(category => category.name === `100-level`);
 	twoCategory = message.guild.channels.find(category => category.name === `200-level`);
 	threeCategory = message.guild.channels.find(category => category.name === `300-level`);
@@ -81,13 +81,12 @@ client.on(`message`, async message => {
 
 /**
  * Checks against permissions and forbidden roles, then adds or removes the role from the user which sent the message.
- * @param {Message} message the message sent
- * @param {Role} rank the rank to be added or removed
+ * @param {Discord.Message} message the message sent
+ * @param {string} rank the rank to be added or removed
  */
 exports.rank = async function(message, rank) {
-	if (message.guild.roles.find(role => role.name === rank) == null) {
+	if (message.guild.roles.find(role => role.name === rank) == null)
 		rank = rank.toLowerCase();
-	}
 
 	if (forbiddenRanks.includes(rank)) {
 		return message.channel.send(`Sorry, you cannot join ${rank}.`);
@@ -122,14 +121,14 @@ exports.rank = async function(message, rank) {
 
 /**
  * Sorts the channels within the 'papers' category.
- * @param {Message} message
+ * @param {Discord.Message} message the message sent
  */
 exports.organise = async function(message) {
 	function isClass(word) {
 		return word.charAt(5) === `1` || word.charAt(5) === `2` || word.charAt(5) === `3` || word.charAt(5) === `4`;
 	}
 	const channelArray = message.guild.channels.array();
-	const roles = message.guild.roles.array(); 
+	const roles = message.guild.roles.array();
 	roles.filter(role => isClass(role.name));
 	let oneLength = 0;
 	let twoLength = 0;
@@ -142,23 +141,47 @@ exports.organise = async function(message) {
 
 	// places each channel into an array and sorts the array
 	channelArray.forEach(function(item) {
-		if (item.parent != null)
-			if(item.parent.name === `100-level`) {
-				oneLength++;
-				oneNameArray.push(item.name);
-			}
-			else if(item.parent.name === `200-level`) {
-				twoLength++;
-				twoNameArray.push(item.name);
-			}
-			else if(item.parent.name === `300-level`) {
-				threeLength++;
-				threeNameArray.push(item.name);
-			}
-			else {
-				fourLength++;
-				fourNameArray.push(item.name);
-			}
+		// if (item.parent != null)
+		// if(item.parent.name === `100-level`) {
+		// 	oneLength++;
+		// 	oneNameArray.push(item.name);
+		// }
+		// else if(item.parent.name === `200-level`) {
+		// 	twoLength++;
+		// 	twoNameArray.push(item.name);
+		// }
+		// else if(item.parent.name === `300-level`) {
+		// 	threeLength++;
+		// 	threeNameArray.push(item.name);
+		// }
+		// else if(item.parent.name === `400-level`) {
+		// 	fourLength++;
+		// 	fourNameArray.push(item.name);
+		// }
+		if (item.name.charAt(5) === `1`) {
+			if (item.parent.name !== `100-level`)
+				item.setParent(oneCategory);
+			oneLength++;
+			oneNameArray.push(item.name);
+		}
+		else if (item.name.charAt(5) === `2`) {
+			if (item.parent.name !== `200-level`)
+				item.setParent(twoCategory);
+			twoLength++;
+			twoNameArray.push(item.name);
+		}
+		else if (item.name.charAt(5) === `3`) {
+			if (item.parent.name !== `300-level`)
+				item.setParent(threeCategory);
+			threeLength++;
+			threeNameArray.push(item.name);
+		}
+		else if (item.name.charAt(5) === `4`) {
+			if (item.parent.name !== `400-level`)
+				item.setParent(fourCategory);
+			fourLength++;
+			fourNameArray.push(item.name);
+		}
 	});
 	await oneNameArray.sort();
 	await twoNameArray.sort();
@@ -189,7 +212,7 @@ exports.organise = async function(message) {
  */
 client.on(`messageReactionAdd`, async reaction => {
 	if (!forbiddenChannels.includes(reaction.message.channel.name))
-		if (reaction.emoji.name === `📌`) 
+		if (reaction.emoji.name === `📌`)
 			if (reaction.count >= 3 && !reaction.message.pinned)
 				await reaction.message.pin();
 });
@@ -200,6 +223,8 @@ client.on(`messageReactionAdd`, async reaction => {
  *  - Pulls the course title from the victoria website and sets the category
  *  - Places the channel within the 'papers' category
  *  - Sorts the 'papers' category to ensure the channel is in the correct alphabetical location.
+ * @param {Discord.Message} message the message sent
+ * @param {string[]} args array of strings in the message
  */
 exports.newRank = async function(message, args) {
 	await message.guild.roles.create({
@@ -266,8 +291,8 @@ exports.newRank = async function(message, args) {
 
 /**
  * Deletes the channel and/or role specified.
- * @param {Message} message
- * @param {string[]} args
+ * @param {Message} message the message sent
+ * @param {string[]} args array of strings in the message
  */
 exports.deleteRank = async function(message, args) {
 	if (message.guild.roles.find(role => role.name === args[0]) != null) await message.guild.roles.find(role => role.name === args[0]).delete();

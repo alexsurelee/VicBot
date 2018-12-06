@@ -1,4 +1,3 @@
-
 module.exports = {
 	name: `delrank`,
 	args: true,
@@ -9,22 +8,22 @@ module.exports = {
 		args[0] = args[0].toLowerCase();
 		if (!args.length) {
 			return message.channel.send(`Please provide a rank to delete. Type !ranks for a list.`);
-        }
-    
-        else if (args.length > 1) {
-			return message.channel.send(`Please only list one rank to delete.`);
-        }
-    
-        else if (!args[0].includes(`-`)) {
-            return message.channel.send(`Classes should include the \`-\` symbol`);
-        }
-        
-        else if (args[0].includes(`+`)){
-            return message.channel.send(`You cannot include the \`+\` symbol in a rank.`);
-        }
+		}
 
-        else if(args[0].length !== 8){
-            return message.channel.send(`Classes should be 8 characters long, e.g. \`engr-101\``);
+		else if (args.length > 1) {
+			return message.channel.send(`Please only list one rank to delete.`);
+		}
+
+		else if (!args[0].includes(`-`)) {
+			return message.channel.send(`Classes should include the \`-\` symbol`);
+		}
+
+		else if (args[0].includes(`+`)){
+			return message.channel.send(`You cannot include the \`+\` symbol in a rank.`);
+		}
+
+		else if(args[0].length !== 8){
+			return message.channel.send(`Classes should be 8 characters long, e.g. \`engr-101\``);
 		}
 
 		else if ((message.guild.roles.find(role => role.name === args[0]) == null) && (message.guild.channels.find(channel => channel.name === args[0]) == null)) {
