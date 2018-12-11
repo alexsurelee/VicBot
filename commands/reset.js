@@ -20,10 +20,6 @@ module.exports = {
             return message.channel.send(`Cannot find rank to reset.`);
         }
     
-        else if (message.guild.channels.find(channel => channel.name === args[0]).parent !== message.guild.channels.find(category => category.name === `100-level` || category.name === `200-level` || category.name === `300-level` || category.name === `400-level`)) {
-            return message.channel.send(`You can only reset channels in the papers category.`);
-        }
-    
         else if (forbiddenRanks.includes(args[0])) {
             return message.channel.send(`You probably shouldn't reset this, and at the moment I'm not going to let you.`);
         }
