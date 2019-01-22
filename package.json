@@ -1,0 +1,26 @@
+{
+  "name": "vicbot",
+  "version": "1.0.0",
+  "description": "A bot designed specifically for the Engineering and Computer Science (ECS) Discord server at Victoria University of Wellington.",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "ajv": "^5.0.0",
+    "eslint": "^5.12.1",
+    "prettier": "^1.16.1",
+    "prettier-eslint": "^8.8.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexsurelee/VicBot.git"
+  },
+  "author": "alexsurelee",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexsurelee/VicBot/issues"
+  },
+  "homepage": "https://github.com/alexsurelee/VicBot#readme"
+}

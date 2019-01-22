@@ -14,13 +14,13 @@ module.exports = {
 			return message.channel.send(`${args[0]} is not an appropriate rank.`);
 		}
 		else {
-			var role = message.guild.roles.find(role => role.name === args[0]);
+			const role = message.guild.roles.find(role => role.name === args[0]);
 			for (let i = 1; i < args.length; i++){
-				if (role.guild.channels.find(channel => channel.name === args[i]) === null || role.guild.channels.find(ch => ch.name === args[i]) === null){ 
-					message.channel.send(`Couldn't find ${args[i]}`); 
-					continue; 
+				if (role.guild.channels.find(channel => channel.name === args[i]) === null || role.guild.channels.find(ch => ch.name === args[i]) === null){
+					message.channel.send(`Couldn't find ${args[i]}`);
+					continue;
 				}
-				var channel = role.guild.channels.find(ch => ch.name === args[i]);
+				const channel = role.guild.channels.find(ch => ch.name === args[i]);
 				if (role.permissionsIn(channel).has(`VIEW_CHANNEL`)) {
 					await channel.updateOverwrite(role, { VIEW_CHANNEL: null });
 					message.channel.send(`Removed ${role.name} from ${args[i]}`);

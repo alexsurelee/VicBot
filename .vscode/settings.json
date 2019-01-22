@@ -1,3 +1,4 @@
 {
+    "eslint.autoFixOnSave": true,
     "git.ignoreLimitWarning": true
 }
