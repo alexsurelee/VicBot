@@ -12,7 +12,7 @@ for (const file of commandFiles) {
 }
 
 const { prefix, token } = require(`./botConfig.json`);
-const { forbiddenRanks, forbiddenChannels, aliasRanks, socialRanks } = require(`./config.json`);
+const { forbiddenRanks, forbiddenChannels, aliasRanks, socialRanks, adminRank } = require(`./config.json`);
 let oneCategory;
 let twoCategory;
 let threeCategory;
@@ -45,9 +45,8 @@ client.on(`message`, async message => {
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
 
-	// hard-coded "admins" role
-	// TODO: allow manual definition of role (not based on permission or name)
-	adminRole = message.guild.roles.find(role => role.name === `Admins`);
+	// hard-coded "admins" role from config
+	adminRole = message.guild.roles.find(role => role.name === adminRank);
 	oneCategory = message.guild.channels.find(category => category.name === `100-level`);
 	twoCategory = message.guild.channels.find(category => category.name === `200-level`);
 	threeCategory = message.guild.channels.find(category => category.name === `300-level`);
