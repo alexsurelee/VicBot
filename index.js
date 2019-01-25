@@ -12,7 +12,7 @@ for (const file of commandFiles) {
 }
 
 const { prefix, token } = require(`./botConfig.json`);
-const { forbiddenRanks, forbiddenChannels, aliasRanks, socialRanks, adminRank } = require(`./config.json`);
+const { forbiddenRanks, forbiddenChannels, aliasRanks, socialRanks, adminRank, username } = require(`./config.json`);
 let oneCategory;
 let twoCategory;
 let threeCategory;
@@ -20,8 +20,8 @@ let fourCategory;
 let adminRole;
 
 client.on(`ready`, () => {
-	client.user.setUsername(`VicBot`);
-	client.user.setActivity(`!help`, { type: `PLAYING` });
+	client.user.setUsername(username);
+	client.user.setActivity(`${prefix}help`, { type: `PLAYING` });
 	console.log(`Instance started at ${new Date()}\n`);
 });
 
@@ -37,8 +37,8 @@ client.on(`error`, console.error);
 // listening for messages
 client.on(`message`, async message => {
 	// redirecting old commands
-	if(message.content.startsWith(`;rank`))
-		return message.channel.send(`Please use "!rank".`);
+	if(!message.content.startsWith(prefix) && message.content.startsWith(`;rank`))
+		return message.channel.send(`Please use "${prefix}rank".`);
 
 	// limiting to predefined prefix
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
@@ -57,16 +57,16 @@ client.on(`message`, async message => {
 	const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 	if(!command) return;
 
-	if (command.admin && !message.member.roles.has(adminRole.id))
+	if (command.admin && (!message.member.roles.has(adminRole.id) && !message.member.hasPermission(`ADMINISTRATOR`)))
 		return message.channel.send(`This requires admin permissions.`);
 
 	if(command.args && !args.length){
-		let reply = `Please include the appropriate arguments, ${message.author}`;
+		let reply = `Please include the appropriate arguments`;
 
 		if(command.usage)
 			reply += `\ne.g.: \`${command.usage}\``;
 
-		return message.channel.send(reply);
+		return message.reply(reply);
 	}
 
 	try{
@@ -84,9 +84,11 @@ client.on(`message`, async message => {
  * @param {string} rank the rank to be added or removed
  */
 exports.rank = async function(message, rank) {
+	// allowing for hyphenated or non-hypenated ranks
 	if(/^[a-zA-Z]{4}[1-4]\d\d$/.test(rank))
 		rank = rank.slice(0, 4) + `-` + rank.slice(4, 7);
 
+	// allowing for capital letters
 	if (message.guild.roles.find(role => role.name === rank) == null)
 		rank = rank.toLowerCase();
 
@@ -126,9 +128,8 @@ exports.rank = async function(message, rank) {
  * @param {Discord.Message} message the message sent
  */
 exports.organise = async function(message) {
-	function isClass(word) {
-		return word.charAt(5) === `1` || word.charAt(5) === `2` || word.charAt(5) === `3` || word.charAt(5) === `4`;
-	}
+	const isClass = (word) => word.charAt(5) === `1` || word.charAt(5) === `2` || word.charAt(5) === `3` || word.charAt(5) === `4`;
+
 	const channelArray = message.guild.channels.array();
 	const roles = message.guild.roles.array();
 	roles.filter(role => isClass(role.name));
@@ -143,23 +144,6 @@ exports.organise = async function(message) {
 
 	// places each channel into an array and sorts the array
 	channelArray.forEach(function(item) {
-		// if (item.parent != null)
-		// if(item.parent.name === `100-level`) {
-		// 	oneLength++;
-		// 	oneNameArray.push(item.name);
-		// }
-		// else if(item.parent.name === `200-level`) {
-		// 	twoLength++;
-		// 	twoNameArray.push(item.name);
-		// }
-		// else if(item.parent.name === `300-level`) {
-		// 	threeLength++;
-		// 	threeNameArray.push(item.name);
-		// }
-		// else if(item.parent.name === `400-level`) {
-		// 	fourLength++;
-		// 	fourNameArray.push(item.name);
-		// }
 		if (item.name.charAt(5) === `1`) {
 			if (item.parent.name !== `100-level`)
 				item.setParent(oneCategory);
