@@ -4,5 +4,6 @@
     "aliasRanks": ["swen-2017", "swen-2018", "ecen-2017", "ecen-2018"],
     "socialRanks": ["awhina", "ethics", "girls-social", "no-memes"],
     "adminRank": "Admins",
-    "username": "VicBot"
+    "username": "VicBot",
+    "courseCodes": ["cgra", "comp", "cybr", "ecen", "engr", "math", "nwen", "phys", "swen", "stat", "rese"]
 }
