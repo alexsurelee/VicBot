@@ -25,7 +25,6 @@ client.on(`ready`, () => {
 	console.log(`Instance started at ${new Date()}\n`);
 });
 
-// actually log in
 client.login(token);
 
 // preventing some errors from killing the whole thing
@@ -45,7 +44,6 @@ client.on(`message`, async message => {
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
 
-	// hard-coded "admins" role from config
 	adminRole = message.guild.roles.find(role => role.name === adminRank);
 	oneCategory = message.guild.channels.find(category => category.name === `100-level`);
 	twoCategory = message.guild.channels.find(category => category.name === `200-level`);
@@ -84,11 +82,9 @@ client.on(`message`, async message => {
  * @param {string} rank the rank to be added or removed
  */
 exports.rank = async function(message, rank) {
-	// allowing for hyphenated or non-hypenated ranks
 	if(/^[a-zA-Z]{4}[1-4]\d\d$/.test(rank))
 		rank = rank.slice(0, 4) + `-` + rank.slice(4, 7);
 
-	// allowing for capital letters
 	if (message.guild.roles.find(role => role.name === rank) == null)
 		rank = rank.toLowerCase();
 
@@ -143,7 +139,7 @@ exports.organise = async function(message) {
 	const fourNameArray = [];
 
 	// places each channel into an array and sorts the array
-	channelArray.forEach(function(item) {
+	channelArray.forEach( (item) => {
 		if (item.name.charAt(5) === `1`) {
 			if (item.parent.name !== `100-level`)
 				item.setParent(oneCategory);
@@ -228,18 +224,18 @@ exports.newRank = async function(message, args) {
 
 	await message.guild.channels.create(args[0], {
 		type: `text`,
-		overwrites: [
+		permissionOverwrites: [
 			{
 				id: message.guild.id,
-				denied: [`VIEW_CHANNEL`],
+				deny: [`VIEW_CHANNEL`],
 			},
 			{
 				id: message.guild.roles.find(role => role.name === args[0]).id,
-				allowed: [`VIEW_CHANNEL`],
+				allow: [`VIEW_CHANNEL`],
 			},
 			{
 				id: message.guild.roles.find(role => role.name === `bots`).id,
-				allowed: [`VIEW_CHANNEL`],
+				allow: [`VIEW_CHANNEL`],
 			},
 		],
 		parent: levelParent,
@@ -272,7 +268,6 @@ exports.newRank = async function(message, args) {
 	}).on(`error`, (err) => {
 		console.log(`Error: ` + err.message);
 	});
-	return;
 };
 
 /**
@@ -286,3 +281,45 @@ exports.deleteRank = async function(message, args) {
 	return;
 };
 
+/**
+ *
+ * @param {Discord.TextChannel} channel
+ * @returns {Promise<boolean>}
+ *
+ */
+exports.isPaper = function(channel) {
+	if(!channel.parent) return false;
+	if(channel.type !== `text`) return false;
+
+	return channel.parent.name === `100-level` || channel.parent.name === `200-level` || channel.parent.name === `300-level` || channel.parent.name === `400-level`;
+};
+
+exports.getCourse = async function(code, i, j, k, message) {
+	const https = require(`https`);
+	const name = code+i+j+k;
+	const currentYear = (new Date()).getFullYear();
+	const index = require(`./index.js`);
+	https.get(`https://www.victoria.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`, (resp) => {
+		let data = ``;
+
+		// Adding the data chunks to the string
+		resp.on(`data`, (chunk) => {
+			data += chunk;
+		});
+
+
+		// Parsing the string for the course title
+		resp.on(`end`, () => {
+			JSON.parse(data, function(key, value) {
+				if (key === `id` && value && /^[a-zA-Z]{4}[1-4]\d\d$/.test(value)){
+					const hyphenatedName = value.slice(0, 4) + `-` + value.slice(4, 7);
+					const arrayRank = [hyphenatedName];
+					if(!message.guild.channels.find(channel => channel.name === hyphenatedName)) index.newRank(message, arrayRank);
+				}
+			});
+		});
+
+	}).on(`error`, (err) => {
+		console.log(`Error: ` + err.message);
+	});
+};
