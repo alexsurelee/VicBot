@@ -1,3 +1,4 @@
+const Discord = require(`discord.js`);
 const { aliasRanks, socialRanks } = require(`../config.json`);
 
 module.exports = {
@@ -8,64 +9,96 @@ module.exports = {
 	usage: `\`!ranks\``,
 	async execute(message){
 		const rankArray = message.guild.roles.array();
-		const paperStringArray = new Array();
+		const firstYearArray = new Array();
+		const secondYearArray = new Array();
+		const thirdYearArray = new Array();
+		const fourthYearArray = new Array();
 		const aliasStringArray = new Array();
 		const socialStringArray = new Array();
-		rankArray.forEach(function(item) {
-			if (item.name.includes(`-`) && item.name.length === 8 && socialRanks.indexOf(item.name) === -1 && aliasRanks.indexOf(item.name) === -1)
-				paperStringArray.push(item.name);
+		rankArray.forEach( (role) => {
+			if (role.name.includes(`-`) && role.name.length === 8 && socialRanks.indexOf(role.name) === -1 && aliasRanks.indexOf(role.name) === -1){
+				if(role.name.charAt(5) === `1`) firstYearArray.push(role.name);
+				else if(role.name.charAt(5) === `2`) secondYearArray.push(role.name);
+				else if(role.name.charAt(5) === `3`) thirdYearArray.push(role.name);
+				else if(role.name.charAt(5) === `4`) fourthYearArray.push(role.name);
+			}
 
-			else if (aliasRanks.indexOf(item.name) !== -1)
-				aliasStringArray.push(item.name);
+			else if (aliasRanks.indexOf(role.name) !== -1)
+				aliasStringArray.push(role.name);
 
-			else if (socialRanks.indexOf(item.name) !== -1)
-				socialStringArray.push(item.name);
+			else if (socialRanks.indexOf(role.name) !== -1)
+				socialStringArray.push(role.name);
 		});
-		paperStringArray.sort(); socialStringArray.sort(); aliasStringArray.sort();
-		let paperString = `\`\`\`\n`; let socialString = `\`\`\`\n`; let aliasString = `\`\`\`\n`;
+		firstYearArray.sort(); secondYearArray.sort(); thirdYearArray.sort(); fourthYearArray.sort(); socialStringArray.sort(); aliasStringArray.sort();
+		let firstYearString = `\`\`\`\n`;
+		let secondYearString = `\`\`\`\n`;
+		let thirdYearString = `\`\`\`\n`;
+		let fourthYearString = `\`\`\`\n`;
+		let socialString = `\`\`\`\n`;
+		let aliasString = `\`\`\`\n`;
 		let count = 1;
-		paperStringArray.forEach(function(item) {
-			paperString += item;
-			if (count % 4 === 0) paperString += `\n`; else paperString += `\t`;
+		firstYearArray.forEach( (item) => {
+			firstYearString += item;
+			if (count % 4 === 0) firstYearString += `\n`; else firstYearString += `\t`;
 			count++;
 		});
-		paperString += `\n\`\`\``;
+		firstYearString += `\n\`\`\``;
 		count = 1;
-		socialStringArray.forEach(function(item) {
+		secondYearArray.forEach( (item) => {
+			secondYearString += item;
+			if (count % 4 === 0) secondYearString += `\n`; else secondYearString += `\t`;
+			count++;
+		});
+		secondYearString += `\n\`\`\``;
+		count = 1;
+		thirdYearArray.forEach( (item) => {
+			thirdYearString += item;
+			if (count % 4 === 0) thirdYearString += `\n`; else thirdYearString += `\t`;
+			count++;
+		});
+		thirdYearString += `\n\`\`\``;
+		count = 1;
+		fourthYearArray.forEach( (item) => {
+			fourthYearString += item;
+			if (count % 4 === 0) fourthYearString += `\n`; else fourthYearString += `\t`;
+			count++;
+		});
+		fourthYearString += `\n\`\`\``;
+		count = 1;
+		socialStringArray.forEach( (item) => {
 			socialString += item;
 			if (count % 4 === 0) socialString += `\n`; else socialString += `\t`;
 			count++;
 		});
 		socialString += `\n\`\`\``;
 		count = 1;
-		aliasStringArray.forEach(function(item) {
+		aliasStringArray.forEach( (item) => {
 			aliasString += item;
 			if (count % 4 === 0) aliasString += `\n`; else aliasString += `\t`;
 			count++;
 		});
 		aliasString += `\n\`\`\``;
 
-		return message.channel.send({
-			embed: {
-				color: 0x004834,
-				title: `Ranks`,
-				fields: [{
-					name: `Usage`,
-					value: `You can add and/or remove multiple ranks in one \`!rank\` command \ne.g. \`!rank <course> [course ...]\``,
-				},
-				{
-					name: `Papers`,
-					value: `Individual channels for each paper.` + `\n` + paperString,
-				},
-				{
-					name: `Social`,
-					value: `Opt-in or out channels for particular social settings.` + `\n` + socialString,
-				},
-				{
-					name: `Aliases`,
-					value: `Global roles that will automatically place you in the default papers for your major, depending what year you started study.` + `\n` + aliasString,
-				}],
-			},
-		});
+		const firstYearPapers = new Discord.MessageEmbed()
+			.setTitle(`Papers`)
+			.addField(`Usage`, `You can add and/or remove multiple ranks in one \`!rank\` command \ne.g. \`!rank <course> [course ...]\``)
+			.addField(`First Year`, firstYearString);
+
+		const secondYearPapers = new Discord.MessageEmbed()
+			.addField(`Second Year`, secondYearString);
+		const thirdYearPapers = new Discord.MessageEmbed()
+			.addField(`Third Year`, thirdYearString);
+		const fourthYearPapers = new Discord.MessageEmbed()
+			.addField(`Fourth Year`, fourthYearString);
+
+		const embed = new Discord.MessageEmbed()
+			.addField(`Social`, `Opt-in or out channels for particular social settings.\n` + socialString)
+			.addField(`Aliases`, `Global roles that will automatically place you in the default papers for your major, depending what year your started study.\n` + aliasString);
+
+		message.channel.send(firstYearPapers);
+		message.channel.send(secondYearPapers);
+		message.channel.send(thirdYearPapers);
+		message.channel.send(fourthYearPapers);
+		return message.channel.send(embed);
 	}
 };

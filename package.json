@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "A bot designed specifically for the Engineering and Computer Science (ECS) Discord server at Victoria University of Wellington.",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "discord.js": "github:discordjs/discord.js",
+    "node-opus": "^0.3.1"
+  },
   "devDependencies": {
     "ajv": "^5.0.0",
     "eslint": "^5.12.1",

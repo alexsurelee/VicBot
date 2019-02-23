@@ -23,11 +23,11 @@ module.exports = {
 				const channel = role.guild.channels.find(ch => ch.name === args[i]);
 				if (role.permissionsIn(channel).has(`VIEW_CHANNEL`)) {
 					await channel.updateOverwrite(role, { VIEW_CHANNEL: null });
-					message.channel.send(`Removed ${role.name} from ${args[i]}`);
+					message.channel.send(`\`${role.name}\` no longer includes \`${args[i]}\``);
 				}
 				else {
 					await channel.updateOverwrite(role, { VIEW_CHANNEL: true });
-					message.channel.send(`Added ${role.name} to ${args[i]}`);
+					message.channel.send(`\`${role.name}\` now includes \`${args[i]}\``);
 				}
 			}
 

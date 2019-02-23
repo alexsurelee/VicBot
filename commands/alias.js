@@ -1,4 +1,6 @@
 const { aliasRanks } = require(`../config.json`);
+const Discord = require(`discord.js`);
+const index = require(`../index.js`);
 
 module.exports = {
 	name: `alias`,
@@ -17,11 +19,22 @@ module.exports = {
 				continue;
 			}
 			const role = message.guild.roles.find(role => role.name === args[i]);
-			let aliasChannels = `${role.name} currently includes: `;
-			message.guild.channels.array().forEach(element => {
-				if(role.permissionsIn(element).has(`VIEW_CHANNEL`) && element.parent !== null && element.parent === message.guild.channels.find(category => category.name === `papers`)) aliasChannels += `${element}` + `\t`;
+			let channels = `\`\`\``;
+			let count = 1;
+			message.guild.channels.array().forEach(channel => {
+				if(role.permissionsIn(channel).has(`VIEW_CHANNEL`)) {
+					if(index.isPaper(channel)) {
+						channels += channel.name;
+						if (count % 4 === 0) channels += `\n`; else channels += `\t`;
+						count++;
+					}
+				}
 			});
-			message.channel.send(aliasChannels);
+			channels += `\`\`\``;
+			message.channel.send(new Discord.MessageEmbed()
+				.setTitle(args[0])
+				.setDescription(channels));
 		}
 	},
+
 };
