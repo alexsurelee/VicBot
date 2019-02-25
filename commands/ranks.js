@@ -79,26 +79,22 @@ module.exports = {
 		});
 		aliasString += `\n\`\`\``;
 
-		const firstYearPapers = new Discord.MessageEmbed()
+		const firstAndSecond = new Discord.MessageEmbed()
 			.setTitle(`Papers`)
-			.addField(`Usage`, `You can add and/or remove multiple ranks in one \`!rank\` command \ne.g. \`!rank <course> [course ...]\``)
-			.addField(`First Year`, firstYearString);
+			.addField(`Usage`, `You can add and/or remove multiple ranks in one \`!rank\` command \ne.g. \`!rank <course> [course ...]\``, false)
+			.addField(`First Year`, firstYearString, true)
+			.addField(`Second Year`, secondYearString, true);
 
-		const secondYearPapers = new Discord.MessageEmbed()
-			.addField(`Second Year`, secondYearString);
-		const thirdYearPapers = new Discord.MessageEmbed()
-			.addField(`Third Year`, thirdYearString);
-		const fourthYearPapers = new Discord.MessageEmbed()
-			.addField(`Fourth Year`, fourthYearString);
+		const thirdAndFourth = new Discord.MessageEmbed()
+			.addField(`Third Year`, thirdYearString, true)
+			.addField(`Fourth Year`, fourthYearString, true);
 
-		const embed = new Discord.MessageEmbed()
+		const socialAndOthers = new Discord.MessageEmbed()
 			.addField(`Social`, `Opt-in or out channels for particular social settings.\n` + socialString)
 			.addField(`Aliases`, `Global roles that will automatically place you in the default papers for your major, depending what year your started study.\n` + aliasString);
 
-		message.channel.send(firstYearPapers);
-		message.channel.send(secondYearPapers);
-		message.channel.send(thirdYearPapers);
-		message.channel.send(fourthYearPapers);
-		return message.channel.send(embed);
+		message.channel.send(firstAndSecond);
+		message.channel.send(thirdAndFourth);
+		return message.channel.send(socialAndOthers);
 	}
 };
