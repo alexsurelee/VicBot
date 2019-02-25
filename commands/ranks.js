@@ -54,42 +54,42 @@ module.exports = {
 		let count = 1;
 		firstYearArray.forEach((role) => {
 			firstYearString += role;
-			if (count % 2 === 0) firstYearString += `\n`; else firstYearString += `\t`;
+			if (count % 4 === 0) firstYearString += `\n`; else firstYearString += `\t`;
 			count++;
 		});
 		firstYearString += `\n\`\`\``;
 		count = 1;
 		secondYearArray.forEach((role) => {
 			secondYearString += role;
-			if (count % 2 === 0) secondYearString += `\n`; else secondYearString += `\t`;
+			if (count % 4 === 0) secondYearString += `\n`; else secondYearString += `\t`;
 			count++;
 		});
 		secondYearString += `\n\`\`\``;
 		count = 1;
 		thirdYearArray.forEach((role) => {
 			thirdYearString += role;
-			if (count % 2 === 0) thirdYearString += `\n`; else thirdYearString += `\t`;
+			if (count % 4 === 0) thirdYearString += `\n`; else thirdYearString += `\t`;
 			count++;
 		});
 		thirdYearString += `\n\`\`\``;
 		count = 1;
 		fourthYearArray.forEach((role) => {
 			fourthYearString += role;
-			if (count % 2 === 0) fourthYearString += `\n`; else fourthYearString += `\t`;
+			if (count % 4 === 0) fourthYearString += `\n`; else fourthYearString += `\t`;
 			count++;
 		});
 		fourthYearString += `\n\`\`\``;
 		count = 1;
 		socialStringArray.forEach((item) => {
 			socialString += item;
-			if (count % 2 === 0) socialString += `\n`; else socialString += `\t`;
+			if (count % 4 === 0) socialString += `\n`; else socialString += `\t`;
 			count++;
 		});
 		socialString += `\n\`\`\``;
 		count = 1;
 		aliasStringArray.forEach((item) => {
 			aliasString += item;
-			if (count % 2 === 0) aliasString += `\n`; else aliasString += `\t`;
+			if (count % 4 === 0) aliasString += `\n`; else aliasString += `\t`;
 			count++;
 		});
 		aliasString += `\n\`\`\``;
