@@ -1,7 +1,6 @@
 {
     "forbiddenRanks": ["Admins", "Vanity", "baaa-admin", "vuwbotbestbot", "Dyno", "Mr. Upsy, Your Lifting Friend", "Lord/Lady of Java", "Hero of the Purge", "bots", "Muted", "the-swamp"],
     "forbiddenChannels": ["general", "media", "memes", "bots"],
-    "aliasRanks": ["swen-2017", "swen-2018", "ecen-2017", "ecen-2018"],
     "socialRanks": ["awhina", "ethics", "girls-social", "no-memes"],
     "adminRank": "Admins",
     "username": "VicBot",

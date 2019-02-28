@@ -12,7 +12,7 @@ for (const file of commandFiles) {
 }
 
 const { prefix, token } = require(`./botConfig.json`);
-const { forbiddenRanks, forbiddenChannels, aliasRanks, socialRanks, adminRank, username } = require(`./config.json`);
+const { forbiddenRanks, forbiddenChannels, socialRanks, adminRank, username } = require(`./config.json`);
 let oneCategory;
 let twoCategory;
 let threeCategory;
@@ -82,6 +82,7 @@ client.on(`message`, async message => {
  * @param {string} rank the rank to be added or removed
  */
 exports.rank = async function(message, rank) {
+	const aliasRegex = /^\w\w\w\w-\d\d\d\d$/;
 	if(/^[a-zA-Z]{4}[1-4]\d\d$/.test(rank))
 		rank = rank.slice(0, 4) + `-` + rank.slice(4, 7);
 
@@ -98,7 +99,7 @@ exports.rank = async function(message, rank) {
 
 	else if (!message.guild.roles.find(role => role.name === rank).members.has(message.author.id)) {
 		await message.member.roles.add(message.guild.roles.find(role => role.name === rank));
-		if(!aliasRanks.includes(rank) && !socialRanks.includes(rank)){
+		if(!aliasRegex.test(rank) && !socialRanks.includes(rank)){
 			const rankChannel = message.guild.channels.find(channel => channel.name === rank);
 			return message.reply(`Added you to ${rankChannel} successfully.`);
 		}
@@ -109,7 +110,7 @@ exports.rank = async function(message, rank) {
 
 	else {
 		await message.member.roles.remove(message.guild.roles.find(role => role.name === rank));
-		if(!aliasRanks.includes(rank)){
+		if(!aliasRegex.test(rank)){
 			const rankChannel = message.guild.channels.find(channel => channel.name === rank);
 			return message.reply(`Removed you from ${rankChannel} successfully.`);
 		}
@@ -291,7 +292,8 @@ exports.isPaper = function(channel) {
 	if(!channel.parent) return false;
 	if(channel.type !== `text`) return false;
 
-	return channel.parent.name === `100-level` || channel.parent.name === `200-level` || channel.parent.name === `300-level` || channel.parent.name === `400-level`;
+	return channel.parent.name === `100-level` || channel.parent.name === `200-level`
+	|| channel.parent.name === `300-level` || channel.parent.name === `400-level`;
 };
 
 exports.getCourse = async function(code, i, j, k, message) {

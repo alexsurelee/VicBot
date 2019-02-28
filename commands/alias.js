@@ -1,4 +1,3 @@
-const { aliasRanks } = require(`../config.json`);
 const Discord = require(`discord.js`);
 const index = require(`../index.js`);
 
@@ -9,12 +8,13 @@ module.exports = {
 	usage: `\`!alias <alias>\``,
 	description: `Lists the papers allocated to an alias.`,
 	async execute(message, args){
+		const aliasRegex = /^\w\w\w\w-\d\d\d\d$/;
 		for (let i = 0; i < args.length; i++){
 			if(!message.guild.roles.some(role => role.name === args[i])){
 				message.channel.send(`Couldn't find ${args[i]}`);
 				continue;
 			}
-			if(aliasRanks.indexOf(args[i]) === -1){
+			if(!aliasRegex.test(args[i])){
 				message.channel.send(`${args[0]} is not an alias.`);
 				continue;
 			}

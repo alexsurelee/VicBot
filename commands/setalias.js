@@ -1,5 +1,3 @@
-const { aliasRanks } = require(`../config.json`);
-
 module.exports = {
 	name: `setalias`,
 	args: true,
@@ -7,10 +5,11 @@ module.exports = {
 	usage: `\`!setalias <alias> <course> [course ...]\``,
 	description: `Changes the papers allocated to an alias.`,
 	async execute(message, args){
+		const aliasRegex = /^\w\w\w\w-\d\d\d\d$/;
 		if (!message.guild.roles.some(role => role.name === args[0])) {
 			return message.channel.send(`Couldn't find ${args[0]}`);
 		}
-		else if (aliasRanks.indexOf(args[0]) === -1) {
+		else if (!aliasRegex.test(args[0])) {
 			return message.channel.send(`${args[0]} is not an appropriate rank.`);
 		}
 		else {
