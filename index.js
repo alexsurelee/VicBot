@@ -12,7 +12,7 @@ for (const file of commandFiles) {
 }
 
 const { prefix, token } = require(`./botConfig.json`);
-const { forbiddenRanks, forbiddenChannels, socialRanks, adminRank, username } = require(`./config.json`);
+const { forbiddenRanks, socialRanks, adminRank, username } = require(`./config.json`);
 let oneCategory;
 let twoCategory;
 let threeCategory;
@@ -194,10 +194,9 @@ exports.organise = async function(message) {
  * Checks if three or more users have reacted with 📌, and pins the message.
  */
 client.on(`messageReactionAdd`, async reaction => {
-	if (!forbiddenChannels.includes(reaction.message.channel.name))
-		if (reaction.emoji.name === `📌`)
-			if (reaction.count >= 3 && !reaction.message.pinned)
-				await reaction.message.pin();
+	if (reaction.emoji.name === `📌`)
+		if (reaction.count >= 3 && !reaction.message.pinned)
+			await reaction.message.pin();
 });
 
 /**
