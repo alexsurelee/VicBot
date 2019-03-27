@@ -10,8 +10,14 @@ for (const file of commandFiles) {
 	// creates a map of command strings to their methods.
 	client.commands.set(command.name, command);
 }
-
-const { prefix, token } = require(`./botConfig.json`);
+let prefix = process.env.PREFIX;
+if(prefix === null || prefix === ``) {
+	prefix = require(`.botConfig.json`);
+}
+let token = process.env.TOKEN;
+if(token === null || token === ``) {
+	token = require(`.botConfig.json`);
+}
 const { forbiddenRanks, socialRanks, adminRank, username, logChannel } = require(`./config.json`);
 let oneCategory;
 let twoCategory;
