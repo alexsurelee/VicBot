@@ -2,6 +2,7 @@ module.exports = {
 	name: `delrank`,
 	args: true,
 	admin: true,
+	log: true,
 	usage: `\`!delrank <course>\``,
 	description: `Deletes a class's role and channel.`,
 	async execute(message, args) {

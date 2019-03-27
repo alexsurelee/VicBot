@@ -3,5 +3,6 @@
     "socialRanks": ["awhina", "ethics", "girls-social", "no-memes"],
     "adminRank": "Admins",
     "username": "VicBot",
-    "courseCodes": ["cgra", "comp", "cybr", "ecen", "engr", "math", "nwen", "phys", "swen", "stat", "rese"]
+    "courseCodes": ["cgra", "comp", "cybr", "ecen", "engr", "math", "nwen", "phys", "swen", "stat", "rese"],
+    "logChannel": "moderation-log"
 }

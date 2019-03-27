@@ -7,6 +7,7 @@ module.exports = {
 	args: true,
 	description: `Resets the channel and role for a course.`,
 	usage: `\`!reset <course>\``,
+	log: true,
 	async execute(message, args) {
 		if (!args.length) {
 			return message.channel.send(

@@ -5,6 +5,7 @@ module.exports = {
 	name: `alias`,
 	args: true,
 	admin: false,
+	log: false,
 	usage: `\`!alias <alias>\``,
 	description: `Lists the papers allocated to an alias.`,
 	async execute(message, args){

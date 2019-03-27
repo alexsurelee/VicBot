@@ -3,6 +3,7 @@ module.exports = {
 	name: `addrank`,
 	args: true,
 	admin: true,
+	log: true,
 	description: `Creates a new class role and channel.`,
 	usage: `\`!addrank <course>\``,
 	async execute(message, args){

@@ -4,6 +4,7 @@ module.exports = {
 	admin: true,
 	description: `Sorts the channels within the papers category.`,
 	usage: `\`!organise\``,
+	log: true,
 	async execute(message){
 		message.react(`🕦`);
 		await index.organise(message);

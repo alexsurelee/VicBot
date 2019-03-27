@@ -7,6 +7,7 @@ module.exports = {
 	admin: false,
 	description: `List the available user ranks.`,
 	usage: `\`!ranks\``,
+	log: false,
 	execute: async function(message) {
 		const roleArray = message.guild.roles.array();
 		const firstYearArray = [];

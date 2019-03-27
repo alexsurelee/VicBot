@@ -4,6 +4,7 @@ module.exports = {
 	admin: true,
 	usage: `\`!setalias <alias> <course> [course ...]\``,
 	description: `Changes the papers allocated to an alias.`,
+	log: true,
 	async execute(message, args){
 		const aliasRegex = /^\w\w\w\w-\d\d\d\d$/;
 		if (!message.guild.roles.some(role => role.name === args[0])) {

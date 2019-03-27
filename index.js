@@ -12,7 +12,7 @@ for (const file of commandFiles) {
 }
 
 const { prefix, token } = require(`./botConfig.json`);
-const { forbiddenRanks, socialRanks, adminRank, username } = require(`./config.json`);
+const { forbiddenRanks, socialRanks, adminRank, username, logChannel } = require(`./config.json`);
 let oneCategory;
 let twoCategory;
 let threeCategory;
@@ -69,6 +69,9 @@ client.on(`message`, async message => {
 
 	try{
 		command.execute(message, args);
+		if(command.log) {
+			this.log(commandName, message);
+		}
 	}
 	catch(error){
 		console.error(error);
@@ -118,6 +121,20 @@ exports.rank = async function(message, rank) {
 			return message.reply(`Removed you from ${rank} successfully.`);
 		}
 	}
+};
+
+/**
+ * Logs the use of the command in the log channel.
+ * @param {string} commandName name of the command used
+ * @param {Discord.Message} message the message sent
+ */
+exports.log = async function(commandName, message) {
+	const commandChannel = message.guild.channels.find(channel => channel.name === message.channel.name);
+	const embed = new Discord.MessageEmbed()
+		.setAuthor(message.author.tag, message.author.avatarURL())
+		.setDescription(`Used \`${commandName}\` command in ${commandChannel}\n${message.cleanContent}`)
+		.setTimestamp();
+	message.guild.channels.find(channel => channel.name === logChannel).send(embed);
 };
 
 /**
