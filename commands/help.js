@@ -4,6 +4,7 @@ module.exports = {
 	name: `help`,
 	description: `VicBot Commands`,
 	aliases: [`commands`],
+	log: false,
 	usage: `\`!help\``,
 	execute(message, args) {
 		const data = [];

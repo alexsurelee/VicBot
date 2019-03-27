@@ -5,6 +5,7 @@ module.exports = {
 	args: false,
 	admin: true,
 	usage: `\`!updatecourses\``,
+	log: true,
 	description: `Scrapes the victoria.ac.nz website for engineering courses and adds them to the server.`,
 	async execute(message) {
 		courseCodes.forEach(async function(code) {

@@ -2,6 +2,7 @@ module.exports = {
 	name: `micropad`,
 	args: false,
 	usage: `\`!micropad\``,
+	log: false,
 	description: `Provides information about micropad.`,
 	async execute(message) {
 		message.channel.send(

@@ -2,6 +2,7 @@ module.exports = {
 	name: `purge`,
 	args: true,
 	admin: true,
+	log: true,
 	description: `Deletes the previous x messages, including the command itself.`,
 	usage: `\`!purge <number of messages>\``,
 	async execute(message, args){

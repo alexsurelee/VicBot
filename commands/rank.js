@@ -6,6 +6,7 @@ module.exports = {
 	args: true,
 	description: `Add or remove class ranks.`,
 	usage: `\`!rank <course> [course ...]\``,
+	log: false,
 	async execute(message, args){
 		if(message.channel.name === `bots`){
 			args.forEach(function(rank) {

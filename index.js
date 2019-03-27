@@ -70,7 +70,7 @@ client.on(`message`, async message => {
 	try{
 		command.execute(message, args);
 		if(command.log) {
-			log(commandName, message);
+			this.log(commandName, message);
 		}
 	}
 	catch(error){
@@ -125,16 +125,17 @@ exports.rank = async function(message, rank) {
 
 /**
  * Logs the use of the command in the log channel.
- * @param {string} commandName 
- * @param {Discord.TextChannel} logChannel 
- * @param {Discord.Message} message 
+ * @param {string} commandName name of the command used
+ * @param {Discord.Message} message the message sent
  */
 exports.log = async function(commandName, message) {
+	const commandChannel = message.guild.channels.find(channel => channel.name === message.channel.name);
 	const embed = new Discord.MessageEmbed()
-		.setTitle(message.author.tag)
-		.addField(`Used ${commandName} in ${message.channel}`, message);
-	logChannel.send(embed);
-}
+		.setAuthor(message.author.tag, message.author.avatarURL())
+		.setDescription(`Used \`${commandName}\` command in ${commandChannel}\n${message.cleanContent}`)
+		.setTimestamp();
+	message.guild.channels.find(channel => channel.name === logChannel).send(embed);
+};
 
 /**
  * Sorts the channels within the 'papers' category.
