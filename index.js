@@ -12,7 +12,7 @@ for (const file of commandFiles) {
 }
 
 const { prefix, token } = require(`./botConfig.json`);
-const { forbiddenRanks, socialRanks, adminRank, username } = require(`./config.json`);
+const { forbiddenRanks, socialRanks, adminRank, username, logChannel } = require(`./config.json`);
 let oneCategory;
 let twoCategory;
 let threeCategory;
@@ -69,6 +69,9 @@ client.on(`message`, async message => {
 
 	try{
 		command.execute(message, args);
+		if(command.log) {
+			log(commandName, message);
+		}
 	}
 	catch(error){
 		console.error(error);
@@ -119,6 +122,19 @@ exports.rank = async function(message, rank) {
 		}
 	}
 };
+
+/**
+ * Logs the use of the command in the log channel.
+ * @param {string} commandName 
+ * @param {Discord.TextChannel} logChannel 
+ * @param {Discord.Message} message 
+ */
+exports.log = async function(commandName, message) {
+	const embed = new Discord.MessageEmbed()
+		.setTitle(message.author.tag)
+		.addField(`Used ${commandName} in ${message.channel}`, message);
+	logChannel.send(embed);
+}
 
 /**
  * Sorts the channels within the 'papers' category.
