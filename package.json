@@ -9,8 +9,11 @@
   },
   "dependencies": {
     "discord.js": "github:discordjs/discord.js",
+    "ffmpeg": "0.0.4",
     "forever": "^0.15.3",
-    "node-opus": "^0.3.1"
+    "node-opus": "^0.3.1",
+    "simple-youtube-api": "^5.1.1",
+    "ytdl-core": "^0.29.1"
   },
   "devDependencies": {
     "ajv": "^5.0.0",
