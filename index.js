@@ -39,6 +39,8 @@ process.on(`unhandledError`, error => console.error(`Unhandled Error:\n${error}`
 client.on(`disconnect`, error => console.error(`Disconnected! \n${error}`));
 client.on(`error`, console.error);
 
+
+
 // listening for messages
 client.on(`message`, async message => {
 	// redirecting old commands
@@ -82,6 +84,25 @@ client.on(`message`, async message => {
 	catch(error){
 		console.error(error);
 		message.reply(`there was an error trying to execute that command!`);
+	}
+});
+
+client.on(`guildMemberAdd`, async member => {
+	const embed = new Discord.MessageEmbed()
+		.setAuthor(`Member Joined`, member.user.avatarURL())
+		.setDescription(`${member} ${member.user.tag}`)
+		.setFooter(`ID: ${member.user.id}`)
+		.setTimestamp();
+	member.guild.channels.find(channel => channel.name === logChannel).send(embed);
+});
+
+client.on(`voiceStateUpdate`, async (oldState, newState) => {
+	const voiceRole = newState.guild.roles.find(role => role.name === `inVoice`);
+	if(newState.channel) {
+		newState.member.roles.add(voiceRole);
+	}
+	else {
+		newState.member.roles.remove(voiceRole);
 	}
 });
 
