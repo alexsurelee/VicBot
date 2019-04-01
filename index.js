@@ -1,5 +1,6 @@
+/* global Map, require */
 const Discord = require(`discord.js`);
-const { TOKEN, PREFIX, GOOGLE_API_KEY } = require(`./botConfig.json`);
+let { TOKEN, PREFIX, GOOGLE_API_KEY } = require(`./botConfig.json`);
 const fs = require(`fs`);
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -16,14 +17,15 @@ for (const file of commandFiles) {
 	// creates a map of command strings to their methods.
 	client.commands.set(command.name, command);
 }
-// let PREFIX = process.env.PREFIX;
-// if(PREFIX === null || PREFIX === ``) {
-// 	PREFIX = require(`./botConfig.json`);
-// }
-// let TOKEN = process.env.TOKEN;
-// if(TOKEN === null || TOKEN === ``) {
-// 	TOKEN = require(`./botConfig.json`);
-// }
+if(PREFIX === null || PREFIX === ``) {
+	PREFIX = process.env.PREFIX;
+}
+if(TOKEN === null || TOKEN === ``) {
+	TOKEN = process.env.TOKEN;
+}
+if(GOOGLE_API_KEY === null || GOOGLE_API_KEY === ``) {
+	GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+}
 
 const { forbiddenRanks, socialRanks, adminRank, username, logChannel } = require(`./config.json`);
 let oneCategory;
@@ -38,15 +40,15 @@ client.on(`ready`, () => {
 	console.log(`Instance started at ${new Date()}\n`);
 });
 
-client.login(TOKEN);
-
 // preventing some errors from killing the whole thing
 process.on(`unhandledRejection`, error => console.error(`Uncaught Promise Rejection:\n${error}`));
 process.on(`unhandledError`, error => console.error(`Unhandled Error:\n${error}`));
 client.on(`disconnect`, error => console.error(`Disconnected! \n${error}`));
 client.on(`error`, console.error);
 
-// listening for messages
+/**
+ *
+ */
 client.on(`message`, async message => {
 	// redirecting old commands
 	if(!message.content.startsWith(PREFIX) && message.content.startsWith(`;rank`))
@@ -92,6 +94,9 @@ client.on(`message`, async message => {
 	}
 });
 
+/**
+ *
+ */
 client.on(`guildMemberAdd`, async member => {
 	const embed = new Discord.MessageEmbed()
 		.setAuthor(`Member Joined`, member.user.avatarURL())
@@ -101,6 +106,9 @@ client.on(`guildMemberAdd`, async member => {
 	member.guild.channels.find(channel => channel.name === logChannel).send(embed);
 });
 
+/**
+ *
+ */
 client.on(`voiceStateUpdate`, async (oldState, newState) => {
 	const voiceRole = newState.guild.roles.find(role => role.name === `inVoice`);
 	if(newState.channel) {
@@ -344,6 +352,15 @@ exports.isPaper = function(channel) {
 	|| channel.parent.name === `300-level` || channel.parent.name === `400-level`;
 };
 
+/**
+ *
+ * @param code
+ * @param i
+ * @param j
+ * @param k
+ * @param message
+ * @returns {Promise<void>}
+ */
 exports.getCourse = async function(code, i, j, k, message) {
 	const https = require(`https`);
 	const name = code+i+j+k;
@@ -374,31 +391,42 @@ exports.getCourse = async function(code, i, j, k, message) {
 	});
 };
 
+/**
+ * Returns the current queue object so it can be utilised by command methods.
+ * @param id guild id
+ * @returns {any}
+ */
 exports.getQueue = function(id) {
 	return queue.get(id);
 };
 
-exports.playSong = async function(msg, args) {
+/**
+ *
+ * @param message
+ * @param args
+ * @returns {Promise<*>}
+ */
+exports.playSong = async function(message, args) {
 	const url = args[0] ? args[0].replace(/<(.+)>/g, `$1`) : ``;
 	const searchString = args.slice(0).join(` `);
-	const voiceChannel = msg.member.voice.channel;
-	if (!voiceChannel) return msg.channel.send(`I'm sorry but you need to be in a voice channel to play music!`);
-	const permissions = voiceChannel.permissionsFor(msg.client.user);
+	const voiceChannel = message.member.voice.channel;
+	if (!voiceChannel) return message.channel.send(`I'm sorry but you need to be in a voice channel to play music!`);
+	const permissions = voiceChannel.permissionsFor(message.client.user);
 	if (!permissions.has(`CONNECT`)) {
-		return msg.channel.send(`I cannot connect to your voice channel, make sure I have the proper permissions!`);
+		return message.channel.send(`I cannot connect to your voice channel, make sure I have the proper permissions!`);
 	}
 	if (!permissions.has(`SPEAK`)) {
-		return msg.channel.send(`I cannot speak in this voice channel, make sure I have the proper permissions!`);
+		return message.channel.send(`I cannot speak in this voice channel, make sure I have the proper permissions!`);
 	}
 
 	if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
 		const playlist = await youtube.getPlaylist(url);
 		const videos = await playlist.getVideos();
 		for (const video of Object.values(videos)) {
-			const video2 = await youtube.getVideoByID(video.id); // eslint-disable-line no-await-in-loop
-			await handleVideo(video2, msg, voiceChannel, true); // eslint-disable-line no-await-in-loop
+			const video2 = await youtube.getVideoByID(video.id);
+			await handleVideo(video2, message, voiceChannel, true);
 		}
-		return msg.channel.send(`✅ Playlist: **${playlist.title}** has been added to the queue!`);
+		return message.channel.send(`✅ Playlist: **${playlist.title}** has been added to the queue!`);
 	}
 	else {
 		let response;
@@ -410,13 +438,13 @@ exports.playSong = async function(msg, args) {
 			try {
 				const videos = await youtube.searchVideos(searchString, 10);
 				let index = 0;
-				msg.channel.send(`
+				message.channel.send(`
 __**Song selection:**__
 ${videos.map(video2 => `**${++index} -** ${video2.title}`).join(`\n`)}
 Please provide a value to select one of the search results ranging from 1-10.
 					`);
 				try {
-					response = await msg.channel.awaitMessages(msg2 => msg2.content > 0 && msg2.content < 11, {
+					response = await message.channel.awaitMessages(msg2 => msg2.content > 0 && msg2.content < 11, {
 						maxMatches: 1,
 						time: 10000,
 						errors: [`time`]
@@ -424,20 +452,28 @@ Please provide a value to select one of the search results ranging from 1-10.
 				}
 				catch (err) {
 					console.error(err);
-					return msg.channel.send(`No or invalid value entered, cancelling video selection.`);
+					return message.channel.send(`No or invalid value entered, cancelling video selection.`);
 				}
 				const videoIndex = parseInt(response.first().content);
 				video = await youtube.getVideoByID(videos[videoIndex - 1].id);
 			}
 			catch (err) {
 				console.error(err);
-				return msg.channel.send(`🆘 I could not obtain any search results.`);
+				return message.channel.send(`🆘 I could not obtain any search results.`);
 			}
 		}
-		return handleVideo(video, msg, voiceChannel);
+		return handleVideo(video, message, voiceChannel);
 	}
 };
 
+/**
+ *
+ * @param video
+ * @param msg
+ * @param voiceChannel
+ * @param playlist
+ * @returns {Promise<*>}
+ */
 async function handleVideo(video, msg, voiceChannel, playlist = false) {
 	const serverQueue = queue.get(msg.guild.id);
 	const song = {
@@ -459,8 +495,7 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
 		queueConstruct.songs.push(song);
 
 		try {
-			const connection = await voiceChannel.join();
-			queueConstruct.connection = connection;
+			queueConstruct.connection = await voiceChannel.join();
 			play(msg.guild, queueConstruct.songs[0]);
 		}
 		catch (error) {
@@ -477,6 +512,11 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
 	return undefined;
 }
 
+/**
+ *
+ * @param guild
+ * @param song
+ */
 function play(guild, song) {
 	const serverQueue = queue.get(guild.id);
 
@@ -498,3 +538,5 @@ function play(guild, song) {
 
 	serverQueue.textChannel.send(`🎶 Start playing: **${song.title}**`);
 }
+
+client.login(TOKEN);
