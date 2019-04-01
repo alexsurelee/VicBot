@@ -1,13 +1,13 @@
 /* global Map, require */
-const Discord = require(`discord.js`);
-let { TOKEN, PREFIX, GOOGLE_API_KEY } = require(`./botConfig.json`);
-const fs = require(`fs`);
+const Discord = require('discord.js');
+let { TOKEN, PREFIX, GOOGLE_API_KEY } = require('./botConfig.json');
+const fs = require('fs');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
-const commandFiles = fs.readdirSync(`./commands`).filter(file => file.endsWith(`.js`));
-const { Util } = require(`discord.js`);
-const YouTube = require(`simple-youtube-api`);
-const ytdl = require(`ytdl-core`);
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const { Util } = require('discord.js');
+const YouTube = require('simple-youtube-api');
+const ytdl = require('ytdl-core');
 const youtube = new YouTube(GOOGLE_API_KEY);
 const queue = new Map();
 
@@ -17,41 +17,41 @@ for (const file of commandFiles) {
 	// creates a map of command strings to their methods.
 	client.commands.set(command.name, command);
 }
-if(PREFIX === null || PREFIX === ``) {
+if(PREFIX === null || PREFIX === '') {
 	PREFIX = process.env.PREFIX;
 }
-if(TOKEN === null || TOKEN === ``) {
+if(TOKEN === null || TOKEN === '') {
 	TOKEN = process.env.TOKEN;
 }
-if(GOOGLE_API_KEY === null || GOOGLE_API_KEY === ``) {
+if(GOOGLE_API_KEY === null || GOOGLE_API_KEY === '') {
 	GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 }
 
-const { forbiddenRanks, socialRanks, adminRank, username, logChannel } = require(`./config.json`);
+const { forbiddenRanks, socialRanks, adminRank, username, logChannel } = require('./config.json');
 let oneCategory;
 let twoCategory;
 let threeCategory;
 let fourCategory;
 let adminRole;
 
-client.on(`ready`, () => {
+client.on('ready', () => {
 	client.user.setUsername(username);
-	client.user.setActivity(`${PREFIX}help | tinyurl.com/VicBot`, { type: `PLAYING` });
+	client.user.setActivity(`${PREFIX}help | tinyurl.com/VicBot`, { type: 'PLAYING' });
 	console.log(`Instance started at ${new Date()}\n`);
 });
 
 // preventing some errors from killing the whole thing
-process.on(`unhandledRejection`, error => console.error(`Uncaught Promise Rejection:\n${error}`));
-process.on(`unhandledError`, error => console.error(`Unhandled Error:\n${error}`));
-client.on(`disconnect`, error => console.error(`Disconnected! \n${error}`));
-client.on(`error`, console.error);
+process.on('unhandledRejection', error => console.error(`Uncaught Promise Rejection:\n${error}`));
+process.on('unhandledError', error => console.error(`Unhandled Error:\n${error}`));
+client.on('disconnect', error => console.error(`Disconnected! \n${error}`));
+client.on('error', console.error);
 
 /**
  *
  */
-client.on(`message`, async message => {
+client.on('message', async message => {
 	// redirecting old commands
-	if(!message.content.startsWith(PREFIX) && message.content.startsWith(`;rank`))
+	if(!message.content.startsWith(PREFIX) && message.content.startsWith(';rank'))
 		return message.channel.send(`Please use "${PREFIX}rank".`);
 
 	// limiting to predefined PREFIX
@@ -60,21 +60,21 @@ client.on(`message`, async message => {
 	const commandName = args.shift().toLowerCase();
 
 	adminRole = message.guild.roles.find(role => role.name === adminRank);
-	oneCategory = message.guild.channels.find(category => category.name === `100-level`);
-	twoCategory = message.guild.channels.find(category => category.name === `200-level`);
-	threeCategory = message.guild.channels.find(category => category.name === `300-level`);
-	fourCategory = message.guild.channels.find(category => category.name === `400-level`);
+	oneCategory = message.guild.channels.find(category => category.name === '100-level');
+	twoCategory = message.guild.channels.find(category => category.name === '200-level');
+	threeCategory = message.guild.channels.find(category => category.name === '300-level');
+	fourCategory = message.guild.channels.find(category => category.name === '400-level');
 
 
 	// checking to ensure the command or an alias of the command exists
 	const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 	if(!command) return;
 
-	if (command.admin && (!message.member.roles.has(adminRole.id) && !message.member.hasPermission(`ADMINISTRATOR`)))
-		return message.channel.send(`This requires admin permissions.`);
+	if (command.admin && (!message.member.roles.has(adminRole.id) && !message.member.hasPermission('ADMINISTRATOR')))
+		return message.channel.send('This requires admin permissions.');
 
 	if(command.args && !args.length){
-		let reply = `Please include the appropriate arguments`;
+		let reply = 'Please include the appropriate arguments';
 
 		if(command.usage)
 			reply += `\ne.g.: \`${command.usage}\``;
@@ -90,16 +90,16 @@ client.on(`message`, async message => {
 	}
 	catch(error){
 		console.error(error);
-		message.reply(`there was an error trying to execute that command!`);
+		message.reply('there was an error trying to execute that command!');
 	}
 });
 
 /**
  *
  */
-client.on(`guildMemberAdd`, async member => {
+client.on('guildMemberAdd', async member => {
 	const embed = new Discord.MessageEmbed()
-		.setAuthor(`Member Joined`, member.user.avatarURL())
+		.setAuthor('Member Joined', member.user.avatarURL())
 		.setDescription(`${member} ${member.user.tag}`)
 		.setFooter(`ID: ${member.user.id}`)
 		.setTimestamp();
@@ -109,8 +109,8 @@ client.on(`guildMemberAdd`, async member => {
 /**
  *
  */
-client.on(`voiceStateUpdate`, async (oldState, newState) => {
-	const voiceRole = newState.guild.roles.find(role => role.name === `inVoice`);
+client.on('voiceStateUpdate', async (oldState, newState) => {
+	const voiceRole = newState.guild.roles.find(role => role.name === 'inVoice');
 	if(newState.channel) {
 		newState.member.roles.add(voiceRole);
 	}
@@ -127,7 +127,7 @@ client.on(`voiceStateUpdate`, async (oldState, newState) => {
 exports.rank = async function(message, rank) {
 	const aliasRegex = /^\w\w\w\w-\d\d\d\d$/;
 	if(/^[a-zA-Z]{4}[1-4]\d\d$/.test(rank))
-		rank = rank.slice(0, 4) + `-` + rank.slice(4, 7);
+		rank = rank.slice(0, 4) + '-' + rank.slice(4, 7);
 
 	if (message.guild.roles.find(role => role.name === rank) == null)
 		rank = rank.toLowerCase();
@@ -182,7 +182,7 @@ exports.log = async function(commandName, message) {
  * @param {Discord.Message} message the message sent
  */
 exports.organise = async function(message) {
-	const isClass = (word) => word.charAt(5) === `1` || word.charAt(5) === `2` || word.charAt(5) === `3` || word.charAt(5) === `4`;
+	const isClass = (word) => word.charAt(5) === '1' || word.charAt(5) === '2' || word.charAt(5) === '3' || word.charAt(5) === '4';
 
 	const channelArray = message.guild.channels.array();
 	const roles = message.guild.roles.array();
@@ -198,26 +198,26 @@ exports.organise = async function(message) {
 
 	// places each channel into an array and sorts the array
 	channelArray.forEach( (item) => {
-		if (item.name.charAt(5) === `1`) {
-			if (item.parent.name !== `100-level`)
+		if (item.name.charAt(5) === '1') {
+			if (item.parent.name !== '100-level')
 				item.setParent(oneCategory);
 			oneLength++;
 			oneNameArray.push(item.name);
 		}
-		else if (item.name.charAt(5) === `2`) {
-			if (item.parent.name !== `200-level`)
+		else if (item.name.charAt(5) === '2') {
+			if (item.parent.name !== '200-level')
 				item.setParent(twoCategory);
 			twoLength++;
 			twoNameArray.push(item.name);
 		}
-		else if (item.name.charAt(5) === `3`) {
-			if (item.parent.name !== `300-level`)
+		else if (item.name.charAt(5) === '3') {
+			if (item.parent.name !== '300-level')
 				item.setParent(threeCategory);
 			threeLength++;
 			threeNameArray.push(item.name);
 		}
-		else if (item.name.charAt(5) === `4`) {
-			if (item.parent.name !== `400-level`)
+		else if (item.name.charAt(5) === '4') {
+			if (item.parent.name !== '400-level')
 				item.setParent(fourCategory);
 			fourLength++;
 			fourNameArray.push(item.name);
@@ -250,8 +250,8 @@ exports.organise = async function(message) {
 /**
  * Checks if three or more users have reacted with 📌, and pins the message.
  */
-client.on(`messageReactionAdd`, async reaction => {
-	if (reaction.emoji.name === `📌`)
+client.on('messageReactionAdd', async reaction => {
+	if (reaction.emoji.name === '📌')
 		if (reaction.count >= 3 && !reaction.message.pinned)
 			await reaction.message.pin();
 });
@@ -274,25 +274,25 @@ exports.newRank = async function(message, args) {
 		},
 	});
 	let levelParent;
-	if(args[0].charAt(5) === `1`) levelParent = oneCategory;
-	else if(args[0].charAt(5) === `2`) levelParent = twoCategory;
-	else if(args[0].charAt(5) === `3`) levelParent = threeCategory;
-	else if(args[0].charAt(5) === `4`) levelParent = fourCategory;
+	if(args[0].charAt(5) === '1') levelParent = oneCategory;
+	else if(args[0].charAt(5) === '2') levelParent = twoCategory;
+	else if(args[0].charAt(5) === '3') levelParent = threeCategory;
+	else if(args[0].charAt(5) === '4') levelParent = fourCategory;
 
 	await message.guild.channels.create(args[0], {
-		type: `text`,
+		type: 'text',
 		permissionOverwrites: [
 			{
 				id: message.guild.id,
-				deny: [`VIEW_CHANNEL`],
+				deny: ['VIEW_CHANNEL'],
 			},
 			{
 				id: message.guild.roles.find(role => role.name === args[0]).id,
-				allow: [`VIEW_CHANNEL`],
+				allow: ['VIEW_CHANNEL'],
 			},
 			{
-				id: message.guild.roles.find(role => role.name === `bots`).id,
-				allow: [`VIEW_CHANNEL`],
+				id: message.guild.roles.find(role => role.name === 'bots').id,
+				allow: ['VIEW_CHANNEL'],
 			},
 		],
 		parent: levelParent,
@@ -304,26 +304,26 @@ exports.newRank = async function(message, args) {
 	const name = args[0].slice(0, 4) + args[0].slice(5, args[0].length);
 
 	const currentYear = (new Date()).getFullYear();
-	const https = require(`https`);
+	const https = require('https');
 	https.get(`https://www.victoria.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`, (resp) => {
-		let data = ``;
+		let data = '';
 
 		// Adding the data chunks to the string
-		resp.on(`data`, (chunk) => {
+		resp.on('data', (chunk) => {
 			data += chunk;
 		});
 
 		// Parsing the string for the course title
-		resp.on(`end`, () => {
+		resp.on('end', () => {
 			JSON.parse(data, function(key, value) {
-				if (key === `title`)
+				if (key === 'title')
 					message.guild.channels.find(channel => channel.name === args[0]).setTopic(value);
 
 			});
 		});
 
-	}).on(`error`, (err) => {
-		console.log(`Error: ` + err.message);
+	}).on('error', (err) => {
+		console.log('Error: ' + err.message);
 	});
 };
 
@@ -346,10 +346,10 @@ exports.deleteRank = async function(message, args) {
  */
 exports.isPaper = function(channel) {
 	if(!channel.parent) return false;
-	if(channel.type !== `text`) return false;
+	if(channel.type !== 'text') return false;
 
-	return channel.parent.name === `100-level` || channel.parent.name === `200-level`
-	|| channel.parent.name === `300-level` || channel.parent.name === `400-level`;
+	return channel.parent.name === '100-level' || channel.parent.name === '200-level'
+	|| channel.parent.name === '300-level' || channel.parent.name === '400-level';
 };
 
 /**
@@ -362,32 +362,32 @@ exports.isPaper = function(channel) {
  * @returns {Promise<void>}
  */
 exports.getCourse = async function(code, i, j, k, message) {
-	const https = require(`https`);
+	const https = require('https');
 	const name = code+i+j+k;
 	const currentYear = (new Date()).getFullYear();
-	const index = require(`./index.js`);
+	const index = require('./index.js');
 	https.get(`https://www.victoria.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`, (resp) => {
-		let data = ``;
+		let data = '';
 
 		// Adding the data chunks to the string
-		resp.on(`data`, (chunk) => {
+		resp.on('data', (chunk) => {
 			data += chunk;
 		});
 
 
 		// Parsing the string for the course title
-		resp.on(`end`, () => {
+		resp.on('end', () => {
 			JSON.parse(data, function(key, value) {
-				if (key === `id` && value && /^[a-zA-Z]{4}[1-4]\d\d$/.test(value)){
-					const hyphenatedName = value.slice(0, 4) + `-` + value.slice(4, 7);
+				if (key === 'id' && value && /^[a-zA-Z]{4}[1-4]\d\d$/.test(value)){
+					const hyphenatedName = value.slice(0, 4) + '-' + value.slice(4, 7);
 					const arrayRank = [hyphenatedName];
 					if(!message.guild.channels.find(channel => channel.name === hyphenatedName)) index.newRank(message, arrayRank);
 				}
 			});
 		});
 
-	}).on(`error`, (err) => {
-		console.log(`Error: ` + err.message);
+	}).on('error', (err) => {
+		console.log('Error: ' + err.message);
 	});
 };
 
@@ -407,16 +407,16 @@ exports.getQueue = function(id) {
  * @returns {Promise<*>}
  */
 exports.playSong = async function(message, args) {
-	const url = args[0] ? args[0].replace(/<(.+)>/g, `$1`) : ``;
-	const searchString = args.slice(0).join(` `);
+	const url = args[0] ? args[0].replace(/<(.+)>/g, '$1') : '';
+	const searchString = args.slice(0).join(' ');
 	const voiceChannel = message.member.voice.channel;
-	if (!voiceChannel) return message.channel.send(`I'm sorry but you need to be in a voice channel to play music!`);
+	if (!voiceChannel) return message.channel.send('I\'m sorry but you need to be in a voice channel to play music!');
 	const permissions = voiceChannel.permissionsFor(message.client.user);
-	if (!permissions.has(`CONNECT`)) {
-		return message.channel.send(`I cannot connect to your voice channel, make sure I have the proper permissions!`);
+	if (!permissions.has('CONNECT')) {
+		return message.channel.send('I cannot connect to your voice channel, make sure I have the proper permissions!');
 	}
-	if (!permissions.has(`SPEAK`)) {
-		return message.channel.send(`I cannot speak in this voice channel, make sure I have the proper permissions!`);
+	if (!permissions.has('SPEAK')) {
+		return message.channel.send('I cannot speak in this voice channel, make sure I have the proper permissions!');
 	}
 
 	if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
@@ -440,26 +440,26 @@ exports.playSong = async function(message, args) {
 				let index = 0;
 				message.channel.send(`
 __**Song selection:**__
-${videos.map(video2 => `**${++index} -** ${video2.title}`).join(`\n`)}
+${videos.map(video2 => `**${++index} -** ${video2.title}`).join('\n')}
 Please provide a value to select one of the search results ranging from 1-10.
 					`);
 				try {
 					response = await message.channel.awaitMessages(msg2 => msg2.content > 0 && msg2.content < 11, {
 						maxMatches: 1,
 						time: 10000,
-						errors: [`time`]
+						errors: ['time']
 					});
 				}
 				catch (err) {
 					console.error(err);
-					return message.channel.send(`No or invalid value entered, cancelling video selection.`);
+					return message.channel.send('No or invalid value entered, cancelling video selection.');
 				}
 				const videoIndex = parseInt(response.first().content);
 				video = await youtube.getVideoByID(videos[videoIndex - 1].id);
 			}
 			catch (err) {
 				console.error(err);
-				return message.channel.send(`🆘 I could not obtain any search results.`);
+				return message.channel.send('🆘 I could not obtain any search results.');
 			}
 		}
 		return handleVideo(video, message, voiceChannel);
@@ -527,13 +527,13 @@ function play(guild, song) {
 	}
 
 	const dispatcher = serverQueue.connection.play(ytdl(song.url))
-		.on(`end`, reason => {
-			if (reason === `Stream is not generating quickly enough.`) console.log(`Song ended.`);
+		.on('end', reason => {
+			if (reason === 'Stream is not generating quickly enough.') console.log('Song ended.');
 			else console.log(reason);
 			serverQueue.songs.shift();
 			play(guild, serverQueue.songs[0]);
 		})
-		.on(`error`, error => console.error(error));
+		.on('error', error => console.error(error));
 	dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
 
 	serverQueue.textChannel.send(`🎶 Start playing: **${song.title}**`);
