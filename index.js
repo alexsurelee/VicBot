@@ -8,7 +8,6 @@ const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('
 const { Util } = require('discord.js');
 const YouTube = require('simple-youtube-api');
 const ytdl = require('ytdl-core');
-const youtube = new YouTube(GOOGLE_API_KEY);
 const queue = new Map();
 
 for (const file of commandFiles) {
@@ -27,6 +26,7 @@ const TOKEN = process.env.TOKEN;
 // if(GOOGLE_API_KEY === null || GOOGLE_API_KEY === '') {
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 // }
+const youtube = new YouTube(GOOGLE_API_KEY);
 
 const { forbiddenRanks, socialRanks, adminRank, username, logChannel } = require('./config.json');
 let oneCategory;
