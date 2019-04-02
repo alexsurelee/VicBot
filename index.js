@@ -1,6 +1,6 @@
 /* global Map, require */
 const Discord = require('discord.js');
-let { TOKEN, PREFIX, GOOGLE_API_KEY } = require('./botConfig.json');
+// let { TOKEN, PREFIX, GOOGLE_API_KEY } = require('./botConfig.json');
 const fs = require('fs');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -17,15 +17,16 @@ for (const file of commandFiles) {
 	// creates a map of command strings to their methods.
 	client.commands.set(command.name, command);
 }
-if(PREFIX === null || PREFIX === '') {
-	PREFIX = process.env.PREFIX;
-}
-if(TOKEN === null || TOKEN === '') {
-	TOKEN = process.env.TOKEN;
-}
-if(GOOGLE_API_KEY === null || GOOGLE_API_KEY === '') {
-	GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
-}
+
+// if(PREFIX === null || PREFIX === '') {
+const PREFIX = process.env.PREFIX;
+// }
+// if(TOKEN === null || TOKEN === '') {
+const TOKEN = process.env.TOKEN;
+// }
+// if(GOOGLE_API_KEY === null || GOOGLE_API_KEY === '') {
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+// }
 
 const { forbiddenRanks, socialRanks, adminRank, username, logChannel } = require('./config.json');
 let oneCategory;
