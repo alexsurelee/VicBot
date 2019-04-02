@@ -1,13 +1,13 @@
-const Discord = require(`discord.js`);
-const index = require(`../index.js`);
+const Discord = require('discord.js');
+const index = require('../index.js');
 
 module.exports = {
-	name: `alias`,
+	name: 'alias',
 	args: true,
 	admin: false,
 	log: false,
-	usage: `\`!alias <alias>\``,
-	description: `Lists the papers allocated to an alias.`,
+	usage: '`!alias <alias>`',
+	description: 'Lists the papers allocated to an alias.',
 	async execute(message, args){
 		const aliasRegex = /^\w\w\w\w-\d\d\d\d$/;
 		for (let i = 0; i < args.length; i++){
@@ -20,18 +20,18 @@ module.exports = {
 				continue;
 			}
 			const role = message.guild.roles.find(role => role.name === args[i]);
-			let channels = `\`\`\``;
+			let channels = '```';
 			let count = 1;
 			message.guild.channels.array().forEach(channel => {
-				if(role.permissionsIn(channel).has(`VIEW_CHANNEL`)) {
+				if(role.permissionsIn(channel).has('VIEW_CHANNEL')) {
 					if(index.isPaper(channel)) {
 						channels += channel.name;
-						if (count % 4 === 0) channels += `\n`; else channels += `\t`;
+						if (count % 4 === 0) channels += '\n'; else channels += '\t';
 						count++;
 					}
 				}
 			});
-			channels += `\`\`\``;
+			channels += '```';
 			message.channel.send(new Discord.MessageEmbed()
 				.setTitle(args[0])
 				.setDescription(channels));

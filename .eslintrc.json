@@ -9,7 +9,7 @@
 	"rules": {
 		"indent": ["error", "tab"],
 		"linebreak-style": ["error", "unix"],
-		"quotes": ["error", "backtick"],
+		"quotes": ["error", "single"],
 		"semi": ["error", "always"],
 		"brace-style": [2, "stroustrup", { "allowSingleLine": true }],
 		"no-trailing-spaces": [2, { "ignoreComments": true }],
