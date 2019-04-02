@@ -92,15 +92,17 @@ client.on(`guildMemberAdd`, async member => {
 		.setAuthor(`Member Joined`, member.user.displayAvatarURL())
 		.setDescription(`${member} ${member.user.tag}`)
 		.setFooter(`ID: ${member.user.id}`)
+		.setColor(`GREEN`)
 		.setTimestamp();
 	member.guild.channels.find(channel => channel.name === logChannel).send(embed);
 });
 
 client.on(`guildMemberRemove`, async member => {
 	const embed = new Discord.MessageEmbed()
-		.setAuthor(`Member Joined`, member.user.displayAvatarURL())
+		.setAuthor(`Member Left`, member.user.displayAvatarURL())
 		.setDescription(`${member} ${member.user.tag}`)
 		.setFooter(`ID: ${member.user.id}`)
+		.setColor(`RED`)
 		.setTimestamp();
 	member.guild.channels.find(channel => channel.name === logChannel).send(embed);
 });
