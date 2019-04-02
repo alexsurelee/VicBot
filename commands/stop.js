@@ -12,6 +12,6 @@ module.exports = {
 		if (!serverQueue) return message.channel.send('There is nothing playing that I could stop for you.');
 		serverQueue.songs = [];
 		serverQueue.connection.dispatcher.end('Stop command has been used!');
-		return undefined;
+		return message.channel.send('Stopped music.');
 	}
 };

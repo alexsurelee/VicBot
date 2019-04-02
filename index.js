@@ -421,7 +421,7 @@ exports.playSong = async function(message, args) {
 	const url = args[0] ? args[0].replace(/<(.+)>/g, '$1') : '';
 	const searchString = args.slice(0).join(' ');
 	const voiceChannel = message.member.voice.channel;
-	if (!voiceChannel) return message.channel.send('I\'m sorry but you need to be in a voice channel to play music!');
+	if (!voiceChannel) return message.channel.send('You need to be in a voice channel to play music!');
 	const permissions = voiceChannel.permissionsFor(message.client.user);
 	if (!permissions.has('CONNECT')) {
 		return message.channel.send('I cannot connect to your voice channel, make sure I have the proper permissions!');
@@ -456,7 +456,7 @@ Please provide a value to select one of the search results ranging from 1-10.
 					`);
 				try {
 					response = await message.channel.awaitMessages(msg2 => msg2.content > 0 && msg2.content < 11, {
-						maxMatches: 1,
+						max: 1,
 						time: 10000,
 						errors: ['time']
 					});
