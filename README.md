@@ -4,17 +4,11 @@ Runs on discord.js master branch (v12).
 
 Primary capabilities include:
 - Creating channels and corresponding ranks with appropriate information from the course specified by the user.
-- Bare minimum integration of playing music (currently disabled).
+    - Sorting new channels into their correct alphabetical location, currently divided by categories such as `100-level`, `200-level`, etc.
 - Assigning and removing ranks.
-- Sorting a category's channels alphabetically (currently focused on a category named `papers`, could easily be adjusted).
+- Playing music from YouTube (search functionality needs refining, links work ok).
 
-Upcoming capabilities include:
-- Playing music with pause, stop, and queueing capabilities.
-
-Requires a `botConfig.json` file your bot token and desired prefix. E.g.
-```json
-{
-    "prefix": "!",
-    "token": "YOUR_TOKEN_HERE"
-}
-```
+Requires three environment variables to be set:
+`PREFIX`: The prefix for your bot, e.g. `!`.
+`TOKEN`: The token for your bot, can be retrieved from here: https://discordapp.com/developers/applications/
+`GOOGLE_API_KEY`: See here: https://developers.google.com/youtube/v3/getting-started
