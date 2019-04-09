@@ -9,6 +9,9 @@ Primary capabilities include:
 - Playing music from YouTube (search functionality needs refining, links work ok).
 
 Requires three environment variables to be set:
+
 `PREFIX`: The prefix for your bot, e.g. `!`.
+
 `TOKEN`: The token for your bot, can be retrieved from here: https://discordapp.com/developers/applications/
+
 `GOOGLE_API_KEY`: See here: https://developers.google.com/youtube/v3/getting-started
