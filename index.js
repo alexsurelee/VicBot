@@ -1,32 +1,32 @@
 /* global Map, require */
 const Discord = require('discord.js');
-// let { TOKEN, PREFIX, GOOGLE_API_KEY } = require('./botConfig.json');
 const fs = require('fs');
 const client = new Discord.Client();
+const {PREFIX, TOKEN, GOOGLE_API_KEY} = require('./botConfig.json');
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const { Util } = require('discord.js');
 const YouTube = require('simple-youtube-api');
 const ytdl = require('ytdl-core');
+let prefix = process.env.PREFIX;
+let token = process.env.TOKEN;
+let googleApiKey = process.env.GOOGLE_API_KEY;
+if(!prefix) {
+	prefix = PREFIX;
+}
+if(!token) {
+	token = TOKEN;
+}
+if(!googleApiKey) {
+	googleApiKey = GOOGLE_API_KEY;
+}
+const youtube = new YouTube(googleApiKey);
 const queue = new Map();
 
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
-
-	// creates a map of command strings to their methods.
 	client.commands.set(command.name, command);
 }
-
-// if(PREFIX === null || PREFIX === '') {
-const PREFIX = process.env.PREFIX;
-// }
-// if(TOKEN === null || TOKEN === '') {
-const TOKEN = process.env.TOKEN;
-// }
-// if(GOOGLE_API_KEY === null || GOOGLE_API_KEY === '') {
-const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
-// }
-const youtube = new YouTube(GOOGLE_API_KEY);
 
 const { forbiddenRanks, socialRanks, adminRank, username, logChannel } = require('./config.json');
 let oneCategory;
@@ -37,7 +37,7 @@ let adminRole;
 
 client.on('ready', () => {
 	client.user.setUsername(username);
-	client.user.setActivity(`${PREFIX}help | tinyurl.com/VicBot`, { type: 'PLAYING' });
+	client.user.setActivity(`${prefix}help | tinyurl.com/VicBot`, { type: 'PLAYING' });
 	console.log(`Instance started at ${new Date()}\n`);
 });
 
@@ -52,12 +52,12 @@ client.on('error', console.error);
  */
 client.on('message', async message => {
 	// redirecting old commands
-	if(!message.content.startsWith(PREFIX) && message.content.startsWith(';rank'))
-		return message.channel.send(`Please use "${PREFIX}rank".`);
+	if(!message.content.startsWith(prefix) && message.content.startsWith(';rank'))
+		return message.channel.send(`Please use "${prefix}rank".`);
 
 	// limiting to predefined PREFIX
-	if (!message.content.startsWith(PREFIX) || message.author.bot) return;
-	const args = message.content.slice(PREFIX.length).split(/ +/);
+	if (!message.content.startsWith(prefix) || message.author.bot) return;
+	const args = message.content.slice(prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
 
 	adminRole = message.guild.roles.find(role => role.name === adminRank);
@@ -551,4 +551,4 @@ function play(guild, song) {
 	serverQueue.textChannel.send(`🎶 Start playing: **${song.title}**`);
 }
 
-client.login(TOKEN);
+client.login(token);
