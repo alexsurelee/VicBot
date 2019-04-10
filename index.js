@@ -2,24 +2,24 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 const client = new Discord.Client();
-const {PREFIX, TOKEN, GOOGLE_API_KEY} = require('./botConfig.json');
+// const {PREFIX, TOKEN, GOOGLE_API_KEY} = require('./botConfig.json');
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const { Util } = require('discord.js');
 const YouTube = require('simple-youtube-api');
 const ytdl = require('ytdl-core');
-let prefix = process.env.PREFIX;
-let token = process.env.TOKEN;
-let googleApiKey = process.env.GOOGLE_API_KEY;
-if(!prefix) {
-	prefix = PREFIX;
-}
-if(!token) {
-	token = TOKEN;
-}
-if(!googleApiKey) {
-	googleApiKey = GOOGLE_API_KEY;
-}
+const prefix = process.env.PREFIX;
+const token = process.env.TOKEN;
+const googleApiKey = process.env.GOOGLE_API_KEY;
+// if(!prefix) {
+// 	prefix = PREFIX;
+// }
+// if(!token) {
+// 	token = TOKEN;
+// }
+// if(!googleApiKey) {
+// 	googleApiKey = GOOGLE_API_KEY;
+// }
 const youtube = new YouTube(googleApiKey);
 const queue = new Map();
 
