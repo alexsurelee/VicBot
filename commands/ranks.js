@@ -17,7 +17,7 @@ module.exports = {
 		const aliasStringArray = [];
 		const socialStringArray = [];
 		const rankRegex = /^\w\w\w\w-\d\d\d$/;
-		const aliasRegex = /^\w\w\w\w-\d\d\d\d$/;
+		const aliasRegex = /^\d{3}-level$/;
 		roleArray.forEach((role) => {
 			if (rankRegex.test(role.name)) {
 				const c = role.name.charAt(5);
