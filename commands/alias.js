@@ -8,14 +8,14 @@ module.exports = {
 	log: false,
 	usage: '`!alias <alias>`',
 	description: 'Lists the papers allocated to an alias.',
-	async execute(message, args){
-		const aliasRegex = /^\w\w\w\w-\d\d\d\d$/;
-		for (let i = 0; i < args.length; i++){
-			if(!message.guild.roles.some(role => role.name === args[i])){
+	async execute(message, args) {
+		const aliasRegex = /^\d{3}-level$/;
+		for (let i = 0; i < args.length; i++) {
+			if (!message.guild.roles.some(role => role.name === args[i])) {
 				message.channel.send(`Couldn't find ${args[i]}`);
 				continue;
 			}
-			if(!aliasRegex.test(args[i])){
+			if (!aliasRegex.test(args[i])) {
 				message.channel.send(`${args[0]} is not an alias.`);
 				continue;
 			}
@@ -23,19 +23,19 @@ module.exports = {
 			let channels = '```';
 			let count = 1;
 			message.guild.channels.array().forEach(channel => {
-				if(role.permissionsIn(channel).has('VIEW_CHANNEL')) {
-					if(index.isPaper(channel)) {
+				if (role.permissionsIn(channel).has('VIEW_CHANNEL')) {
+					if (index.isPaper(channel)) {
 						channels += channel.name;
-						if (count % 4 === 0) channels += '\n'; else channels += '\t';
+						if (count % 4 === 0) channels += '\n';
+						else channels += '\t';
 						count++;
 					}
 				}
 			});
 			channels += '```';
-			message.channel.send(new Discord.MessageEmbed()
-				.setTitle(args[0])
-				.setDescription(channels));
+			message.channel.send(
+				new Discord.MessageEmbed().setTitle(args[0]).setDescription(channels)
+			);
 		}
-	},
-
+	}
 };

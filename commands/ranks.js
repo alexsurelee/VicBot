@@ -107,7 +107,7 @@ module.exports = {
 
 		const socialAndOthers = new Discord.MessageEmbed()
 			.addField('Social', 'Opt-in or out channels for particular social settings.\n' + socialString)
-			.addField('Aliases', 'Global roles that will automatically place you in the default papers for your major, depending what year your started study.\n' + aliasString);
+			.addField('Aliases', 'Global roles that will automatically place you in the default papers for your major, for that year of study.\n' + aliasString);
 
 		message.channel.send(firstAndSecond);
 		message.channel.send(thirdAndFourth);
