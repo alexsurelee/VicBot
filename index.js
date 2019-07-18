@@ -27,7 +27,7 @@ try {
 		}
 	}
 }
- catch (err) {
+catch (err) {
 	console.error(err);
 }
 const youtube = new YouTube(googleApiKey);
@@ -128,7 +128,7 @@ client.on('message', async message => {
 			this.log(commandName, message);
 		}
 	}
- catch (error) {
+	catch (error) {
 		console.error(error);
 		message.reply('there was an error trying to execute that command!');
 	}
@@ -169,7 +169,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 	if (newState.channel) {
 		newState.member.roles.add(voiceRole);
 	}
- else {
+	else {
 		newState.member.roles.remove(voiceRole);
 	}
 });
@@ -190,12 +190,12 @@ exports.rank = async function(message, rank) {
 	if (forbiddenRanks.includes(rank)) {
 		return message.channel.send(`Sorry, you cannot join ${rank}.`);
 	}
- else if (message.guild.roles.find(role => role.name === rank) == null) {
+	else if (message.guild.roles.find(role => role.name === rank) == null) {
 		return message.channel.send(
 			`${rank} role doesn't exist. Consider asking an @admin to create it.`
 		);
 	}
- else if (
+	else if (
 		!message.guild.roles
 			.find(role => role.name === rank)
 			.members.has(message.author.id)
@@ -209,11 +209,11 @@ exports.rank = async function(message, rank) {
 			);
 			return message.reply(`Added you to ${rankChannel} successfully.`);
 		}
- else {
+		else {
 			return message.reply(`Added you to ${rank} successfully.`);
 		}
 	}
- else {
+	else {
 		await message.member.roles.remove(
 			message.guild.roles.find(role => role.name === rank)
 		);
@@ -223,7 +223,7 @@ exports.rank = async function(message, rank) {
 			);
 			return message.reply(`Removed you from ${rankChannel} successfully.`);
 		}
- else {
+		else {
 			return message.reply(`Removed you from ${rank} successfully.`);
 		}
 	}
@@ -281,17 +281,17 @@ exports.organise = async function(message) {
 			oneLength++;
 			oneNameArray.push(item.name);
 		}
- else if (item.name.charAt(5) === '2') {
+		else if (item.name.charAt(5) === '2') {
 			if (item.parent.name !== '200-level') item.setParent(twoCategory);
 			twoLength++;
 			twoNameArray.push(item.name);
 		}
- else if (item.name.charAt(5) === '3') {
+		else if (item.name.charAt(5) === '3') {
 			if (item.parent.name !== '300-level') item.setParent(threeCategory);
 			threeLength++;
 			threeNameArray.push(item.name);
 		}
- else if (item.name.charAt(5) === '4') {
+		else if (item.name.charAt(5) === '4') {
 			if (item.parent.name !== '400-level') item.setParent(fourCategory);
 			fourLength++;
 			fourNameArray.push(item.name);
@@ -359,13 +359,15 @@ client.on('messageReactionAdd', async reaction => {
  * @param {string[]} args array of strings in the message
  */
 exports.newRank = async function(message, args) {
-	await message.guild.roles.create({
-		data: {
-			name: args[0],
-			hoist: false,
-			mentionable: false
-		}
-	});
+	if(message.guild.roles.find(role => role.name === args[0]) == null) {
+		await message.guild.roles.create({
+			data: {
+				name: args[0],
+				hoist: false,
+				mentionable: false
+			}
+		});
+	}
 	let levelParent;
 	if (args[0].charAt(5) === '1') levelParent = oneCategory;
 	else if (args[0].charAt(5) === '2') levelParent = twoCategory;
@@ -551,13 +553,13 @@ exports.playSong = async function(message, args) {
 			`✅ Playlist: **${playlist.title}** has been added to the queue!`
 		);
 	}
- else {
+	else {
 		let response;
 		let video;
 		try {
 			video = await youtube.getVideo(url);
 		}
- catch (error) {
+		catch (error) {
 			try {
 				const videos = await youtube.searchVideos(searchString, 10);
 				let index = 0;
@@ -576,7 +578,7 @@ Please provide a value to select one of the search results ranging from 1-10.
 						}
 					);
 				}
- catch (err) {
+				catch (err) {
 					console.error(err);
 					return message.channel.send(
 						'No or invalid value entered, cancelling video selection.'
@@ -585,7 +587,7 @@ Please provide a value to select one of the search results ranging from 1-10.
 				const videoIndex = parseInt(response.first().content);
 				video = await youtube.getVideoByID(videos[videoIndex - 1].id);
 			}
- catch (err) {
+			catch (err) {
 				console.error(err);
 				return message.channel.send(
 					'🆘 I could not obtain any search results.'
@@ -628,13 +630,13 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
 			queueConstruct.connection = await voiceChannel.join();
 			play(msg.guild, queueConstruct.songs[0]);
 		}
- catch (error) {
+		catch (error) {
 			console.error(`I could not join the voice channel: ${error}`);
 			queue.delete(msg.guild.id);
 			return msg.channel.send(`I could not join the voice channel: ${error}`);
 		}
 	}
- else {
+	else {
 		serverQueue.songs.push(song);
 		if (playlist) return undefined;
 		else
