@@ -34,7 +34,7 @@ module.exports = {
       });
       channels += "```";
       message.channel.send(
-        new Discord.MessageEmbed().setTitle(args[0]).setDescription(channels)
+        new Discord.MessageEmbed().setTitle(args[i]).setDescription(channels)
       );
     }
   }
