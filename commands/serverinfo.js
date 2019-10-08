@@ -20,7 +20,7 @@ module.exports = {
               name: "Owner",
               value: message.guild.owner.displayName
                 ? message.guild.owner.displayName
-                : message.guild.owner.user.username
+                : message.guild.member(message.guild.ownerID)
             },
             {
               name: "Creation Date",
