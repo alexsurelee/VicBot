@@ -8,6 +8,13 @@ module.exports = {
   async execute(message, args) {
     // If the message is in a server
     if (message.guild) {
+      let admins = "";
+      message.guild.members.array().forEach(member => {
+        if (member.hasPermission("ADMINISTRATOR")) {
+          admins += member.displayName + ", ";
+        }
+      });
+      admins = admins.slice(0, admins.lastIndexOf(","));
       const embed = {
         embed: {
           color: 3447003,
@@ -17,10 +24,8 @@ module.exports = {
           },
           fields: [
             {
-              name: "Owner",
-              value: message.guild.owner
-                ? message.guild.owner.displayName
-                : message.guild.member(message.guild.ownerID).username
+              name: "Admins",
+              value: admins
             },
             {
               name: "Creation Date",
