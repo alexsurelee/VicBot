@@ -18,9 +18,9 @@ module.exports = {
           fields: [
             {
               name: "Owner",
-              value: message.guild.owner.displayName
+              value: message.guild.owner
                 ? message.guild.owner.displayName
-                : message.guild.member(message.guild.ownerID)
+                : message.guild.member(message.guild.ownerID).username
             },
             {
               name: "Creation Date",
