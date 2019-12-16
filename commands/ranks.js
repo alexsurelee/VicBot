@@ -99,7 +99,7 @@ module.exports = {
       .setTitle("Papers")
       .addField(
         "Usage",
-        "You can add and/or remove multiple ranks in one `!rank` command \ne.g. `!rank <course> [course ...]`",
+        "You can add and/or remove multiple ranks in one `!rank` command \ne.g. `!rank <course> [course ...]` \ne.g. `!rank engr123` \ne.g. `!rank engr123 comp103 engr101`",
         false
       )
       .addField("First Year", firstYearString, true)

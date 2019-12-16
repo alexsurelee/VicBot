@@ -8,7 +8,9 @@ module.exports = {
   usage: "`!rank <course> [course ...]`",
   log: false,
   async execute(message, args) {
-    if (message.channel.name === "bots") {
+    if (args[0] === "boomer") {
+      message.reply("ok boomer");
+    } else if (message.channel.name === "bots") {
       args.forEach(function(rank) {
         index.rank(message, rank);
       });
