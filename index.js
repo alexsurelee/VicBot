@@ -388,7 +388,7 @@ exports.newRank = async function(message, args) {
   const https = require("https");
   https
     .get(
-      `https://www.victoria.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`,
+      `https://www.wgtn.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`,
       resp => {
         let data = "";
 
