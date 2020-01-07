@@ -2,17 +2,35 @@
   "env": {
     "node": true
   },
-  "extends": ["plugin:prettier/recommended"],
   "parserOptions": {
     "ecmaVersion": 8
   },
   "rules": {
-    "indent": ["error", "tab"],
-    "linebreak-style": ["error", "unix"],
-    "quotes": ["error", "single"],
-    "semi": ["error", "always"],
-    "brace-style": [2, "stroustrup", { "allowSingleLine": true }],
-    "no-trailing-spaces": [2, { "ignoreComments": true }],
+    "indent": [
+      "error",
+      "tab"
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "brace-style": [
+      "error",
+      "stroustrup",
+      {
+        "allowSingleLine": true
+      }
+    ],
+    "no-trailing-spaces": [
+      2,
+      {
+        "ignoreComments": true
+      }
+    ],
     "no-var": 2,
     "prefer-const": 2,
     "no-console": 0,

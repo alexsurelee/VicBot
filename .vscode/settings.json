@@ -1,5 +1,7 @@
 {
-    "eslint.autoFixOnSave": true,
     "git.ignoreLimitWarning": true,
-    "editor.insertSpaces": false
+    "editor.insertSpaces": false,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    }
 }
