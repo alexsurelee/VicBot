@@ -1,4 +1,4 @@
-const index = require("../index.js");
+const index = require('../index.js');
 var MAX_EMBED = 2000; // maximum characters allowed per embedded message
 module.exports = {
   name: "exams",
@@ -18,16 +18,16 @@ module.exports = {
         return;
       }
       // find the exam courses of the user by checking their roles
-      var exams = new Array();
+      const exams = new Array();
       message.member.roles.forEach(function(value) {
-        var exam = parseRole(value.name);
+        const exam = parseRole(value.name);
         if (exam) exams.push(exam);
       });
-      var examData = index.formatExams(message, exams, false); // get the formatted data
+      const examData = index.formatExams(message, exams, false); // get the formatted data
       if (examData.length > MAX_EMBED)
         message.reply(
-          `too many arguments to process. Try reducing the amount of course roles you have.`
-        );
+          "too many arguments to process. Try reducing the amount of course roles you have."
+				);
       else if (examData.length > 0) {
         // generate the embedded message
         const embeddedMessage = index.examDataEmbed(examData);
@@ -35,13 +35,13 @@ module.exports = {
       } else
         message.reply(
           "couldn't find exam data for your course roles for the current trimister."
-        ); // none of the user courses were valid
+				); // none of the user courses were valid
     }
     // The message was sent in a DM, can't retrieve the server info
     else
       return message.reply(
         "Looks like you didn't send this message from a server"
-      );
+			);
   }
 };
 
