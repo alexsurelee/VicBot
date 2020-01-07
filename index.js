@@ -970,9 +970,9 @@ exports.updateConfigUrl = function(url) {
   if (validExamURL(url)) {
     examDataUrl = url;
     // update the config file
-    const file = require("./botConfig.json");
+    const file = require("./config.json");
     file.EXAM_DATA_URL = examDataUrl;
-    fs.writeFile("./botConfig.json", JSON.stringify(file, null, 2), function(
+    fs.writeFile("./config.json", JSON.stringify(file, null, 2), function(
       error
     ) {
       if (error) {
