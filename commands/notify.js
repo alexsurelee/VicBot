@@ -1,4 +1,4 @@
-const index = require("../index.js");
+const index = require('../index.js');
 module.exports = {
   name: "notify",
   args: true,
@@ -12,12 +12,12 @@ module.exports = {
       if (args[0] == "all") {
         // find all the exam courses
         var exams = Object.keys(index.examData);
-        var notified = index.notifyExams(message, exams, false); // send exam data to each channel
+        const notified = index.notifyExams(message, exams, false); // send exam data to each channel
         message.reply(`successfully notified ${notified} channels.`);
       } else {
         // find exam courses in arguments
         var exams = [args.length];
-        for (var i = 0; i < args.length; i++) {
+        for (let i = 0; i < args.length; i++) {
           exams[i] = args[i];
         }
         index.notifyExams(message, exams, true); // send exam data to each channel

@@ -1,5 +1,5 @@
-const index = require("../index.js");
-const { courseCodes } = require("../config.json");
+const index = require('../index.js');
+const { courseCodes } = require('../config.json');
 module.exports = {
   name: "seturl",
   args: true,
@@ -12,7 +12,7 @@ module.exports = {
     if (message.guild) {
       if (index.updateConfigUrl(args[0]))
         message.reply(
-          `successfully updated the URL. To update the exam data, use \`!updateexams\``
+          "successfully updated the URL. To update the exam data, use `!updateexams`"
         );
       else message.reply("invalid URL. Does the URL end with `./xlsx`?");
     }
