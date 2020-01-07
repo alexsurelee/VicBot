@@ -27,7 +27,7 @@ module.exports = {
       if (examData.length > MAX_EMBED)
         message.reply(
           "too many arguments to process. Try reducing the amount of course roles you have."
-				);
+        );
       else if (examData.length > 0) {
         // generate the embedded message
         const embeddedMessage = index.examDataEmbed(examData);

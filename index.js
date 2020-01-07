@@ -1,6 +1,6 @@
 /* global Map, require */
-const Discord = require('discord.js');
-const fs = require('fs');
+const Discord = require("discord.js");
+const fs = require("fs");
 const download = require('download-file'); // fetching exam data
 const xlsx = require('xlsx'); // exam data speadsheet
 const client = new Discord.Client();
@@ -8,25 +8,20 @@ client.commands = new Discord.Collection();
 const commandFiles = fs
   .readdirSync("./commands")
   .filter(file => file.endsWith(".js"));
-const { Util } = require('discord.js');
-const YouTube = require('simple-youtube-api');
-const ytdl = require('ytdl-core');
+const { Util } = require("discord.js");
+const YouTube = require("simple-youtube-api");
+const ytdl = require("ytdl-core");
 let prefix = process.env.PREFIX;
 let token = process.env.TOKEN;
 let googleApiKey = process.env.GOOGLE_API_KEY;
 let examDataUrl = process.env.EXAM_DATA_URL;
 let examDataFile = process.env.EXAM_DATA_FILE;
+let examDataUpdate = process.env.EXAM_DATA_UPDATE;
 module.exports.examData = {};
 
 try {
   if (fs.existsSync("./botConfig.json")) {
-    const {
-      PREFIX,
-      TOKEN,
-      GOOGLE_API_KEY,
-      EXAM_DATA_URL,
-      EXAM_DATA_FILE
-    } = require("./botConfig.json");
+    const { PREFIX, TOKEN, GOOGLE_API_KEY, EXAM_DATA_URL, EXAM_DATA_FILE, EXAM_DATA_UPDATE } = require("./botConfig.json");
     if (!prefix) {
       prefix = PREFIX;
     }
@@ -41,6 +36,9 @@ try {
     }
     if (!examDataFile) {
       examDataFile = EXAM_DATA_FILE;
+    }
+    if (!examDataUpdate) {
+      examDataUpdate = EXAM_DATA_UPDATE;
     }
   }
 } catch (err) {
@@ -60,14 +58,14 @@ const {
   adminRank,
   username,
   logChannel
-} = require('./config.json');
+} = require("./config.json");
 let oneCategory;
 let twoCategory;
 let threeCategory;
 let fourCategory;
 let adminRole;
 
-client.on('ready', () => {
+client.on("ready", () => {
   client.user.setUsername(username);
   client.user.setActivity(`${prefix}help | tinyurl.com/VicBot`, {
     type: "PLAYING"
@@ -76,19 +74,19 @@ client.on('ready', () => {
 });
 
 // preventing some errors from killing the whole thing
-process.on('unhandledRejection', error =>
+process.on("unhandledRejection", error =>
   console.error(`Uncaught Promise Rejection:\n${error}`)
 );
-process.on('unhandledError', error =>
+process.on("unhandledError", error =>
   console.error(`Unhandled Error:\n${error}`)
 );
-client.on('disconnect', error => console.error(`Disconnected! \n${error}`));
-client.on('error', console.error);
+client.on("disconnect", error => console.error(`Disconnected! \n${error}`));
+client.on("error", console.error);
 
 /**
  *
  */
-client.on('message', async message => {
+client.on("message", async message => {
   // redirecting old commands
   if (
     !message.content.startsWith(prefix) &&
@@ -119,7 +117,7 @@ client.on('message', async message => {
   const command =
     client.commands.get(commandName) ||
     client.commands.find(
-    	cmd => cmd.aliases && cmd.aliases.includes(commandName)
+      cmd => cmd.aliases && cmd.aliases.includes(commandName)
     );
   if (!command) return;
 
@@ -131,15 +129,15 @@ client.on('message', async message => {
     return message.channel.send("This requires admin permissions.");
 
   if (command.args && !args.length) {
-    let reply = 'Please include the appropriate arguments';
+    let reply = "Please include the appropriate arguments";
 
     if (command.usage) reply += `\ne.g.: \`${command.usage}\``;
 
     return message.reply(reply);
-	}
+  }
 
   try {
-		command.execute(message, args);
+    command.execute(message, args);
     if (command.log) {
       this.log(commandName, message);
     }
@@ -152,7 +150,7 @@ client.on('message', async message => {
 /**
  *
  */
-client.on('guildMemberAdd', async member => {
+client.on("guildMemberAdd", async member => {
   const embed = new Discord.MessageEmbed()
     .setAuthor("Member Joined", member.user.displayAvatarURL())
     .setDescription(`${member} ${member.user.tag}`)
@@ -164,7 +162,7 @@ client.on('guildMemberAdd', async member => {
     .send(embed);
 });
 
-client.on('guildMemberRemove', async member => {
+client.on("guildMemberRemove", async member => {
   const embed = new Discord.MessageEmbed()
     .setAuthor("Member Left", member.user.displayAvatarURL())
     .setDescription(`${member} ${member.user.tag}`)
@@ -179,7 +177,7 @@ client.on('guildMemberRemove', async member => {
 /**
  *
  */
-client.on('voiceStateUpdate', async (oldState, newState) => {
+client.on("voiceStateUpdate", async (oldState, newState) => {
   const voiceRole = newState.guild.roles.find(role => role.name === "inVoice");
   if (newState.channel) {
     newState.member.roles.add(voiceRole);
@@ -202,7 +200,7 @@ exports.rank = async function(message, rank) {
     rank = rank.toLowerCase();
 
   if (forbiddenRanks.includes(rank)) {
-		return message.channel.send(`Sorry, you cannot join ${rank}.`);
+    return message.channel.send(`Sorry, you cannot join ${rank}.`);
   } else if (message.guild.roles.find(role => role.name === rank) == null) {
     return message.channel.send(
       `${rank} role doesn't exist. Consider asking an @admin to create it.`
@@ -347,7 +345,7 @@ exports.organise = async function(message) {
 /**
  * Checks if three or more users have reacted with 📌, and pins the message.
  */
-client.on('messageReactionAdd', async reaction => {
+client.on("messageReactionAdd", async reaction => {
   if (reaction.emoji.name === "📌")
     if (reaction.count >= 3 && !reaction.message.pinned)
       await reaction.message.pin();
@@ -379,7 +377,7 @@ exports.newRank = async function(message, args) {
   else if (args[0].charAt(5) === "4") levelParent = fourCategory;
 
   await message.guild.channels.create(args[0], {
-    type: 'text',
+    type: "text",
     permissionOverwrites: [
       {
         id: message.guild.id,
@@ -402,7 +400,7 @@ exports.newRank = async function(message, args) {
   const name = args[0].slice(0, 4) + args[0].slice(5, args[0].length);
 
   const currentYear = new Date().getFullYear();
-	const https = require('https');
+  const https = require("https");
   https
     .get(
       `https://www.wgtn.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`,
@@ -410,12 +408,12 @@ exports.newRank = async function(message, args) {
         let data = "";
 
         // Adding the data chunks to the string
-        resp.on('data', chunk => {
+        resp.on("data", chunk => {
           data += chunk;
         });
 
         // Parsing the string for the course title
-        resp.on('end', () => {
+        resp.on("end", () => {
           JSON.parse(data, function(key, value) {
             if (key === "title")
               message.guild.channels
@@ -456,7 +454,7 @@ exports.isPaper = function(channel) {
   if (channel.type !== "text") return false;
 
   return (
-    channel.parent.name === '100-level' ||
+    channel.parent.name === "100-level" ||
     channel.parent.name === "200-level" ||
     channel.parent.name === "300-level" ||
     channel.parent.name === "400-level"
@@ -484,12 +482,12 @@ exports.getCourse = async function(code, i, j, k, message) {
         let data = "";
 
         // Adding the data chunks to the string
-        resp.on('data', chunk => {
+        resp.on("data", chunk => {
           data += chunk;
         });
 
         // Parsing the string for the course title
-        resp.on('end', () => {
+        resp.on("end", () => {
           JSON.parse(data, function(key, value) {
             if (key === "id" && value && /^[a-zA-Z]{4}[1-4]\d\d$/.test(value)) {
               const hyphenatedName =
@@ -547,7 +545,7 @@ exports.playSong = async function(message, args) {
   }
 
   if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
-		const playlist = await youtube.getPlaylist(url);
+    const playlist = await youtube.getPlaylist(url);
     const videos = await playlist.getVideos();
     for (const video of Object.values(videos)) {
       const video2 = await youtube.getVideoByID(video.id);
@@ -567,7 +565,7 @@ exports.playSong = async function(message, args) {
         let index = 0;
         message.channel.send(`
 __**Song selection:**__
-${videos.map(video2 => `**${++index} -** ${video2.title}`).join('\n')}
+${videos.map(video2 => `**${++index} -** ${video2.title}`).join("\n")}
 Please provide a value to select one of the search results ranging from 1-10.
 					`);
         try {
@@ -627,7 +625,7 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
     queueConstruct.songs.push(song);
 
     try {
-			queueConstruct.connection = await voiceChannel.join();
+      queueConstruct.connection = await voiceChannel.join();
       play(msg.guild, queueConstruct.songs[0]);
     } catch (error) {
       console.error(`I could not join the voice channel: ${error}`);
@@ -684,12 +682,28 @@ exports.getExamLastUpdated = function() {
 };
 
 /**
+ * Checks if the exam data is outdated and updates it if it is.
+ */
+function checkExamUpdates() {
+  if (new Date() - module.exports.getExamLastUpdated() > examDataUpdate) {
+    module.exports.fetchData();
+    if (new Date() - module.exports.getExamLastUpdated() < 10000) {
+      // updated within 10 seconds - new data, process it
+      module.exports.processData();
+    }
+  }
+}
+
+/**
  * Retrives data from the source, keeping the data up to date.
  */
 exports.fetchData = function() {
   const options = { filename: examDataFile, timeout: 500 };
   download(examDataUrl, options, function(error) {
-    if (error || error == "Timeout" || error == 404) console.error(error);
+    if (error == 404)
+      console.error(
+        "URL for exam data returned a 404. Check the URL is valid and working."
+      );
   });
 };
 
@@ -749,6 +763,7 @@ function getValue(worksheet, id) {
  */
 exports.formatExams = function(message, exams, displayErrors) {
   let examDataOutput = "";
+  checkExamUpdates(); // check to see if exam data is outdated
   for (let i = 0; i < exams.length; i++) {
     const exam = module.exports.parseExam(exams[i].toUpperCase());
     if (exam != undefined) {
@@ -958,6 +973,8 @@ exports.updateConfigUrl = function(url) {
         return false;
       }
     });
+    module.exports.fetchData();
+    module.exports.processData();
     return true;
   } else return false;
 };
@@ -974,9 +991,9 @@ function validExamURL(url) {
     "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
     "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
     "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
-      "(\\#[-a-z\\d_]*)?$",
+      "(\\#[-a-z\\d_]*)?$", // fragment locator
     "i"
-  ); // fragment locator
+  );
   return pattern.test(url) && url.endsWith('.xlsx');
 }
 
