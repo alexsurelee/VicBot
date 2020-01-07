@@ -1,8 +1,8 @@
 /* global Map, require */
 const Discord = require("discord.js");
 const fs = require("fs");
-const download = require('download-file'); // fetching exam data
-const xlsx = require('xlsx'); // exam data speadsheet
+const download = require("download-file"); // fetching exam data
+const xlsx = require("xlsx"); // exam data speadsheet
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const commandFiles = fs
@@ -20,7 +20,13 @@ module.exports.examData = {};
 
 try {
   if (fs.existsSync("./botConfig.json")) {
-    const { PREFIX, TOKEN, GOOGLE_API_KEY, EXAM_DATA_URL, EXAM_DATA_FILE } = require("./botConfig.json");
+    const {
+      PREFIX,
+      TOKEN,
+      GOOGLE_API_KEY,
+      EXAM_DATA_URL,
+      EXAM_DATA_FILE
+    } = require("./botConfig.json");
     if (!prefix) {
       prefix = PREFIX;
     }
@@ -675,7 +681,7 @@ function play(guild, song) {
 exports.getExamLastUpdated = function() {
   const stats = fs.statSync(examDataFile);
   return stats.mtime;
-}
+};
 
 /**
  * Retrives data from the source, keeping the data up to date.
@@ -683,9 +689,9 @@ exports.getExamLastUpdated = function() {
 exports.fetchData = function() {
   var options = { filename: examDataFile, timeout: 500 };
   download(examDataUrl, options, function(error) {
-    if (error || error == 'Timeout' || error == 404) console.error(error);
+    if (error || error == "Timeout" || error == 404) console.error(error);
   });
-}
+};
 
 /**
  * Takes the data file and adds it to the object data array.
@@ -693,27 +699,34 @@ exports.fetchData = function() {
 exports.processData = function() {
   var stream = fs.createReadStream(examDataFile);
   var buffers = [];
-  stream.on('data', function(data) { buffers.push(data); });
-  stream.on('end', function() {
+  stream.on("data", function(data) {
+    buffers.push(data);
+  });
+  stream.on("end", function() {
     var buffer = Buffer.concat(buffers);
-    var workbook = xlsx.read(buffer, {type:"buffer"});
+    var workbook = xlsx.read(buffer, { type: "buffer" });
     var worksheet = workbook.Sheets[workbook.SheetNames[0]];
     var y = 4;
     while (true) {
-      var examCell = worksheet['A'+y];
-      var examValue = (examCell ? examCell.v : undefined);
+      var examCell = worksheet["A" + y];
+      var examValue = examCell ? examCell.v : undefined;
       var exam = module.exports.parseExam(examValue);
       if (exam != undefined) {
-        var durationValue = getValue(worksheet, 'B'+y);
-        var dateValue = getValue(worksheet, 'C'+y);
-        var startValue = getValue(worksheet, 'D'+y);
-        var roomsValue = getValue(worksheet, 'E'+y);
-        module.exports.examData[exam] = { duration: durationValue, date: dateValue, start: startValue, rooms: roomsValue }
+        var durationValue = getValue(worksheet, "B" + y);
+        var dateValue = getValue(worksheet, "C" + y);
+        var startValue = getValue(worksheet, "D" + y);
+        var roomsValue = getValue(worksheet, "E" + y);
+        module.exports.examData[exam] = {
+          duration: durationValue,
+          date: dateValue,
+          start: startValue,
+          rooms: roomsValue
+        };
         y++;
       } else break;
     }
   });
-}
+};
 
 /**
  * Returns a worksheet's cell value.
@@ -723,7 +736,7 @@ exports.processData = function() {
  */
 function getValue(worksheet, id) {
   var cell = worksheet[id];
-  var value = (cell ? cell.v : undefined);
+  var value = cell ? cell.v : undefined;
   return value;
 }
 
@@ -735,18 +748,26 @@ function getValue(worksheet, id) {
  * @return {string}
  */
 exports.formatExams = function(message, exams, displayErrors) {
-  var examDataOutput = '';
+  var examDataOutput = "";
   for (var i = 0; i < exams.length; i++) {
     var exam = module.exports.parseExam(exams[i].toUpperCase());
     if (exam != undefined) {
       var datum = module.exports.examData[exam];
       if (datum != undefined) {
-        examDataOutput += `${exam}\t${parseDuration(datum.duration)}\t${parseDate(datum.date)}\t${parseStart(datum.start)}\t${parseRooms(datum.rooms)}\n`;
-      } else if (displayErrors) message.reply(`couldn't find exam data for '${exams[i]}'. Does the course exist for the current trimister?`);
-    } else if (displayErrors) message.reply(`'${exams[i]}' is not a valid course.`);
+        examDataOutput += `${exam}\t${parseDuration(
+          datum.duration
+        )}\t${parseDate(datum.date)}\t${parseStart(datum.start)}\t${parseRooms(
+          datum.rooms
+        )}\n`;
+      } else if (displayErrors)
+        message.reply(
+          `couldn't find exam data for '${exams[i]}'. Does the course exist for the current trimister?`
+        );
+    } else if (displayErrors)
+      message.reply(`'${exams[i]}' is not a valid course.`);
   }
   return examDataOutput;
-}
+};
 
 /**
  * Checks if the input is a valid exam.
@@ -757,9 +778,9 @@ exports.parseExam = function(exam) {
   if (/^[a-zA-Z]{4}[0-9]{3}/.test(exam)) {
     return exam.slice(0, 7).toUpperCase();
   } else if (/^[a-zA-Z]{4}-[0-9]{3}/.test(exam)) {
-      return exam.slice(0, 4).toUpperCase() + exam.slice(5, 8);
+    return exam.slice(0, 4).toUpperCase() + exam.slice(5, 8);
   } else return undefined;
-}
+};
 
 /**
  * Returns the channel name of the exam.
@@ -767,7 +788,7 @@ exports.parseExam = function(exam) {
  * @return {string}
  */
 function getChannel(exam) {
-  return exam.slice(0, 4).toLowerCase() + '-' + exam.slice(4, 7);
+  return exam.slice(0, 4).toLowerCase() + "-" + exam.slice(4, 7);
 }
 
 /**
@@ -787,10 +808,10 @@ function parseDuration(duration) {
 function parseDate(date) {
   var date = convertToDate(date);
   var day = date.getDate();
-  if (day.toString().length == 1) day = '0' + day;
-  var month = date.getMonth()+1;
-  if (month.toString().length == 1) month = '0' + month;
-  return `${day}/${month}/${date.getFullYear()}`
+  if (day.toString().length == 1) day = "0" + day;
+  var month = date.getMonth() + 1;
+  if (month.toString().length == 1) month = "0" + month;
+  return `${day}/${month}/${date.getFullYear()}`;
 }
 
 /**
@@ -801,7 +822,7 @@ function parseDate(date) {
  * @return {Date}
  */
 function convertToDate(date) {
-  return new Date((date-25569)*86400000); // 25569 accounts for serial number shift.
+  return new Date((date - 25569) * 86400000); // 25569 accounts for serial number shift.
 }
 
 /**
@@ -811,11 +832,11 @@ function convertToDate(date) {
  * @return {string}
  */
 function parseStart(start) {
-  var hour = Math.floor(start*24);
-  var minute = Math.floor(start*24%1*60);
-  var meridiem = 'AM';
-  if (hour >= 12) meridiem = 'PM';
-  return `${hour%12}:${minute} ${meridiem}`
+  var hour = Math.floor(start * 24);
+  var minute = Math.floor(((start * 24) % 1) * 60);
+  var meridiem = "AM";
+  if (hour >= 12) meridiem = "PM";
+  return `${hour % 12}:${minute} ${meridiem}`;
 }
 
 /**
@@ -838,15 +859,27 @@ exports.notifyExams = function(message, exams, displayErrors) {
   var notified = 0;
   for (var i = 0; i < exams.length; i++) {
     var exam = module.exports.parseExam(exams[i].toUpperCase());
-    if (exam != undefined) { // valid exam
+    if (exam != undefined) {
+      // valid exam
       var examChannel = getChannel(exam);
       var datum = module.exports.examData[exam];
-      if (datum != undefined) { // valid exam course code
-        var channel = client.channels.find(channel => channel.name == examChannel);
-        if (channel != undefined) { // channel exists for the exam
-          var examDataOutput = module.exports.formatExams(message, [exam], false); // get the formatted data
-          if (examDataOutput.length > 0) { // generate the embedded message
-            const embeddedMessage = module.exports.examDataEmbed(examDataOutput);
+      if (datum != undefined) {
+        // valid exam course code
+        var channel = client.channels.find(
+          channel => channel.name == examChannel
+        );
+        if (channel != undefined) {
+          // channel exists for the exam
+          var examDataOutput = module.exports.formatExams(
+            message,
+            [exam],
+            false
+          ); // get the formatted data
+          if (examDataOutput.length > 0) {
+            // generate the embedded message
+            const embeddedMessage = module.exports.examDataEmbed(
+              examDataOutput
+            );
             // delete all old exam data in the course channel
             // channel.messages.fetch(messages => messages.filter(m => m.author.id == client.user.id)).then(messages => {
             //   let arr = messages.array();
@@ -857,12 +890,19 @@ exports.notifyExams = function(message, exams, displayErrors) {
             channel.send(embeddedMessage).then(msg => msg.pin()); // pin the message
             notified++;
           }
-        } else if (displayErrors) message.reply(`couldn't find the channel for '${exams[i]}'. Does the channel #${examChannel} exist?`);
-      } else if (displayErrors) message.reply(`couldn't find exam data for '${exams[i]}'. Does the course exist for the current trimister?`);
-    } else if (displayErrors) message.reply(`'${exams[i]}' is not a valid course.`);
+        } else if (displayErrors)
+          message.reply(
+            `couldn't find the channel for '${exams[i]}'. Does the channel #${examChannel} exist?`
+          );
+      } else if (displayErrors)
+        message.reply(
+          `couldn't find exam data for '${exams[i]}'. Does the course exist for the current trimister?`
+        );
+    } else if (displayErrors)
+      message.reply(`'${exams[i]}' is not a valid course.`);
   }
   return notified;
-}
+};
 
 /**
  * Generates an embedded message with the exam data provided.
@@ -871,12 +911,17 @@ exports.notifyExams = function(message, exams, displayErrors) {
  */
 exports.examDataEmbed = function(examDataOutput) {
   const embeddedMessage = new Discord.MessageEmbed()
-    .setTitle('Exam Times')
+    .setTitle("Exam Times")
     .setDescription(`\`\`\`${examDataOutput}\`\`\``)
-    .addField(`Last updated: ${formatTime(new Date().getTime()-module.exports.getExamLastUpdated().getTime())} ago.`, `To find out your room, log in to [Student Records](https://student-records.vuw.ac.nz).`)
+    .addField(
+      `Last updated: ${formatTime(
+        new Date().getTime() - module.exports.getExamLastUpdated().getTime()
+      )} ago.`,
+      `To find out your room, log in to [Student Records](https://student-records.vuw.ac.nz).`
+    )
     .setTimestamp();
   return embeddedMessage;
-}
+};
 
 /**
  * Converts milliseconds into a string formatted time.
@@ -884,7 +929,7 @@ exports.examDataEmbed = function(examDataOutput) {
  * @return {string}
  */
 function formatTime(milliseconds) {
-  let totalSeconds = (milliseconds / 1000);
+  let totalSeconds = milliseconds / 1000;
   let days = Math.floor(totalSeconds / 86400);
   totalSeconds %= 86400;
   let hours = Math.floor(totalSeconds / 3600);
@@ -894,13 +939,20 @@ function formatTime(milliseconds) {
   return `${days} days, ${hours} hours, ${minutes} minutes and ${seconds} seconds`;
 }
 
+/**
+ * Checks if the url is valid and updates the config file.
+ * @param {string}
+ * @return {boolean}
+ */
 exports.updateConfigUrl = function(url) {
   if (validExamURL(url)) {
     examDataUrl = url;
     // update the config file
     var file = require("./botConfig.json");
     file.EXAM_DATA_URL = examDataUrl;
-    fs.writeFile("./botConfig.json", JSON.stringify(file, null, 2), function(error) {
+    fs.writeFile("./botConfig.json", JSON.stringify(file, null, 2), function(
+      error
+    ) {
       if (error) {
         console.log(error);
         return false;
@@ -908,7 +960,7 @@ exports.updateConfigUrl = function(url) {
     });
     return true;
   } else return false;
-}
+};
 
 /**
  * Returns whether the input is a valid exam url address.
@@ -916,13 +968,16 @@ exports.updateConfigUrl = function(url) {
  * @return {boolean}
  */
 function validExamURL(url) {
-  var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-    '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-    '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-    '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-  return pattern.test(url) && url.endsWith('.xlsx');
+  var pattern = new RegExp(
+    "^(https?:\\/\\/)?" + // protocol
+    "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+    "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+    "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+    "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+      "(\\#[-a-z\\d_]*)?$",
+    "i"
+  ); // fragment locator
+  return pattern.test(url) && url.endsWith(".xlsx");
 }
 
 // update and process the data before running the client
