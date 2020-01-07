@@ -21,7 +21,7 @@ module.exports.examData = {};
 
 try {
   if (fs.existsSync("./botConfig.json")) {
-    const { PREFIX, TOKEN, GOOGLE_API_KEY, EXAM_DATA_URL, EXAM_DATA_FILE, EXAM_DATA_UPDATE } = require("./botConfig.json");
+    const { PREFIX, TOKEN, GOOGLE_API_KEY } = require("./botConfig.json");
     if (!prefix) {
       prefix = PREFIX;
     }
@@ -31,6 +31,13 @@ try {
     if (!googleApiKey) {
       googleApiKey = GOOGLE_API_KEY;
     }
+  }
+} catch (err) {
+  console.error(err);
+}
+try {
+  if (fs.existsSync("./config.json")) {
+    const { EXAM_DATA_URL, EXAM_DATA_FILE, EXAM_DATA_UPDATE } = require("./config.json");
     if (!examDataUrl) {
       examDataUrl = EXAM_DATA_URL;
     }
