@@ -12,6 +12,7 @@
     "download-file": "^0.1.5",
     "forever": "^1.0.0",
     "node-opus": "^0.3.2",
+    "opusscript": "0.0.7",
     "simple-youtube-api": "^5.2.1",
     "xlsx": "^0.15.4",
     "ytdl-core": "^0.29.7"

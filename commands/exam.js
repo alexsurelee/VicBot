@@ -10,9 +10,17 @@ module.exports = {
 		if (args.length == 0) {
 			const channelName = message.channel.name;
 			const exam = index.parseExam(channelName);
-			const examData = index.formatExams(message, [exam], true); // get the formatted data
-			const embeddedMessage = index.examDataEmbed(examData);
-			message.reply(embeddedMessage);
+			if (exam) {
+				const examDataOutput = index.formatExams(message, [exam], true); // get the formatted data
+				if (examDataOutput.length > 0) {
+					const embeddedMessage = index.examDataEmbed(examDataOutput);
+					message.reply(embeddedMessage);
+				}
+			}
+			else
+				message.reply(
+					`invalid channel. Is <#${message.channel.id}> a course channel?`
+				);
 		} else {
 			const exams = [args.length];
 			for (let i = 0; i < args.length; i++) {
