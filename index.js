@@ -1,16 +1,16 @@
 /* global Map, require */
-const Discord = require("discord.js");
-const fs = require("fs");
-const download = require("download-file"); // fetching exam data
-const xlsx = require("xlsx"); // exam data speadsheet
+const Discord = require('discord.js');
+const fs = require('fs');
+const download = require('download-file'); // fetching exam data
+const xlsx = require('xlsx'); // exam data speadsheet
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const commandFiles = fs
   .readdirSync("./commands")
   .filter(file => file.endsWith(".js"));
-const { Util } = require("discord.js");
-const YouTube = require("simple-youtube-api");
-const ytdl = require("ytdl-core");
+const { Util } = require('discord.js');
+const YouTube = require('simple-youtube-api');
+const ytdl = require('ytdl-core');
 let prefix = process.env.PREFIX;
 let token = process.env.TOKEN;
 let googleApiKey = process.env.GOOGLE_API_KEY;
@@ -60,14 +60,14 @@ const {
   adminRank,
   username,
   logChannel
-} = require("./config.json");
+} = require('./config.json');
 let oneCategory;
 let twoCategory;
 let threeCategory;
 let fourCategory;
 let adminRole;
 
-client.on("ready", () => {
+client.on('ready', () => {
   client.user.setUsername(username);
   client.user.setActivity(`${prefix}help | tinyurl.com/VicBot`, {
     type: "PLAYING"
@@ -76,19 +76,19 @@ client.on("ready", () => {
 });
 
 // preventing some errors from killing the whole thing
-process.on("unhandledRejection", error =>
+process.on('unhandledRejection', error =>
   console.error(`Uncaught Promise Rejection:\n${error}`)
 );
-process.on("unhandledError", error =>
+process.on('unhandledError', error =>
   console.error(`Unhandled Error:\n${error}`)
 );
-client.on("disconnect", error => console.error(`Disconnected! \n${error}`));
-client.on("error", console.error);
+client.on('disconnect', error => console.error(`Disconnected! \n${error}`));
+client.on('error', console.error);
 
 /**
  *
  */
-client.on("message", async message => {
+client.on('message', async message => {
   // redirecting old commands
   if (
     !message.content.startsWith(prefix) &&
@@ -119,7 +119,7 @@ client.on("message", async message => {
   const command =
     client.commands.get(commandName) ||
     client.commands.find(
-      cmd => cmd.aliases && cmd.aliases.includes(commandName)
+    	cmd => cmd.aliases && cmd.aliases.includes(commandName)
     );
   if (!command) return;
 
@@ -131,15 +131,15 @@ client.on("message", async message => {
     return message.channel.send("This requires admin permissions.");
 
   if (command.args && !args.length) {
-    let reply = "Please include the appropriate arguments";
+    let reply = 'Please include the appropriate arguments';
 
     if (command.usage) reply += `\ne.g.: \`${command.usage}\``;
 
     return message.reply(reply);
-  }
+	}
 
   try {
-    command.execute(message, args);
+		command.execute(message, args);
     if (command.log) {
       this.log(commandName, message);
     }
@@ -152,7 +152,7 @@ client.on("message", async message => {
 /**
  *
  */
-client.on("guildMemberAdd", async member => {
+client.on('guildMemberAdd', async member => {
   const embed = new Discord.MessageEmbed()
     .setAuthor("Member Joined", member.user.displayAvatarURL())
     .setDescription(`${member} ${member.user.tag}`)
@@ -164,7 +164,7 @@ client.on("guildMemberAdd", async member => {
     .send(embed);
 });
 
-client.on("guildMemberRemove", async member => {
+client.on('guildMemberRemove', async member => {
   const embed = new Discord.MessageEmbed()
     .setAuthor("Member Left", member.user.displayAvatarURL())
     .setDescription(`${member} ${member.user.tag}`)
@@ -179,7 +179,7 @@ client.on("guildMemberRemove", async member => {
 /**
  *
  */
-client.on("voiceStateUpdate", async (oldState, newState) => {
+client.on('voiceStateUpdate', async (oldState, newState) => {
   const voiceRole = newState.guild.roles.find(role => role.name === "inVoice");
   if (newState.channel) {
     newState.member.roles.add(voiceRole);
@@ -202,7 +202,7 @@ exports.rank = async function(message, rank) {
     rank = rank.toLowerCase();
 
   if (forbiddenRanks.includes(rank)) {
-    return message.channel.send(`Sorry, you cannot join ${rank}.`);
+		return message.channel.send(`Sorry, you cannot join ${rank}.`);
   } else if (message.guild.roles.find(role => role.name === rank) == null) {
     return message.channel.send(
       `${rank} role doesn't exist. Consider asking an @admin to create it.`
@@ -347,7 +347,7 @@ exports.organise = async function(message) {
 /**
  * Checks if three or more users have reacted with 📌, and pins the message.
  */
-client.on("messageReactionAdd", async reaction => {
+client.on('messageReactionAdd', async reaction => {
   if (reaction.emoji.name === "📌")
     if (reaction.count >= 3 && !reaction.message.pinned)
       await reaction.message.pin();
@@ -379,7 +379,7 @@ exports.newRank = async function(message, args) {
   else if (args[0].charAt(5) === "4") levelParent = fourCategory;
 
   await message.guild.channels.create(args[0], {
-    type: "text",
+    type: 'text',
     permissionOverwrites: [
       {
         id: message.guild.id,
@@ -402,7 +402,7 @@ exports.newRank = async function(message, args) {
   const name = args[0].slice(0, 4) + args[0].slice(5, args[0].length);
 
   const currentYear = new Date().getFullYear();
-  const https = require("https");
+	const https = require('https');
   https
     .get(
       `https://www.wgtn.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`,
@@ -410,12 +410,12 @@ exports.newRank = async function(message, args) {
         let data = "";
 
         // Adding the data chunks to the string
-        resp.on("data", chunk => {
+        resp.on('data', chunk => {
           data += chunk;
         });
 
         // Parsing the string for the course title
-        resp.on("end", () => {
+        resp.on('end', () => {
           JSON.parse(data, function(key, value) {
             if (key === "title")
               message.guild.channels
@@ -456,7 +456,7 @@ exports.isPaper = function(channel) {
   if (channel.type !== "text") return false;
 
   return (
-    channel.parent.name === "100-level" ||
+    channel.parent.name === '100-level' ||
     channel.parent.name === "200-level" ||
     channel.parent.name === "300-level" ||
     channel.parent.name === "400-level"
@@ -484,12 +484,12 @@ exports.getCourse = async function(code, i, j, k, message) {
         let data = "";
 
         // Adding the data chunks to the string
-        resp.on("data", chunk => {
+        resp.on('data', chunk => {
           data += chunk;
         });
 
         // Parsing the string for the course title
-        resp.on("end", () => {
+        resp.on('end', () => {
           JSON.parse(data, function(key, value) {
             if (key === "id" && value && /^[a-zA-Z]{4}[1-4]\d\d$/.test(value)) {
               const hyphenatedName =
@@ -547,7 +547,7 @@ exports.playSong = async function(message, args) {
   }
 
   if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
-    const playlist = await youtube.getPlaylist(url);
+		const playlist = await youtube.getPlaylist(url);
     const videos = await playlist.getVideos();
     for (const video of Object.values(videos)) {
       const video2 = await youtube.getVideoByID(video.id);
@@ -567,7 +567,7 @@ exports.playSong = async function(message, args) {
         let index = 0;
         message.channel.send(`
 __**Song selection:**__
-${videos.map(video2 => `**${++index} -** ${video2.title}`).join("\n")}
+${videos.map(video2 => `**${++index} -** ${video2.title}`).join('\n')}
 Please provide a value to select one of the search results ranging from 1-10.
 					`);
         try {
@@ -627,7 +627,7 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
     queueConstruct.songs.push(song);
 
     try {
-      queueConstruct.connection = await voiceChannel.join();
+			queueConstruct.connection = await voiceChannel.join();
       play(msg.guild, queueConstruct.songs[0]);
     } catch (error) {
       console.error(`I could not join the voice channel: ${error}`);
@@ -687,7 +687,7 @@ exports.getExamLastUpdated = function() {
  * Retrives data from the source, keeping the data up to date.
  */
 exports.fetchData = function() {
-  var options = { filename: examDataFile, timeout: 500 };
+  const options = { filename: examDataFile, timeout: 500 };
   download(examDataUrl, options, function(error) {
     if (error || error == "Timeout" || error == 404) console.error(error);
   });
@@ -697,25 +697,25 @@ exports.fetchData = function() {
  * Takes the data file and adds it to the object data array.
  */
 exports.processData = function() {
-  var stream = fs.createReadStream(examDataFile);
-  var buffers = [];
+  const stream = fs.createReadStream(examDataFile);
+  const buffers = [];
   stream.on("data", function(data) {
     buffers.push(data);
   });
   stream.on("end", function() {
-    var buffer = Buffer.concat(buffers);
-    var workbook = xlsx.read(buffer, { type: "buffer" });
-    var worksheet = workbook.Sheets[workbook.SheetNames[0]];
-    var y = 4;
+    const buffer = Buffer.concat(buffers);
+    const workbook = xlsx.read(buffer, { type: "buffer" });
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    let y = 4;
     while (true) {
-      var examCell = worksheet["A" + y];
-      var examValue = examCell ? examCell.v : undefined;
-      var exam = module.exports.parseExam(examValue);
+      const examCell = worksheet["A" + y];
+      const examValue = examCell ? examCell.v : undefined;
+      const exam = module.exports.parseExam(examValue);
       if (exam != undefined) {
-        var durationValue = getValue(worksheet, "B" + y);
-        var dateValue = getValue(worksheet, "C" + y);
-        var startValue = getValue(worksheet, "D" + y);
-        var roomsValue = getValue(worksheet, "E" + y);
+        const durationValue = getValue(worksheet, "B" + y);
+        const dateValue = getValue(worksheet, "C" + y);
+        const startValue = getValue(worksheet, "D" + y);
+        const roomsValue = getValue(worksheet, "E" + y);
         module.exports.examData[exam] = {
           duration: durationValue,
           date: dateValue,
@@ -735,8 +735,8 @@ exports.processData = function() {
  * @return {any}
  */
 function getValue(worksheet, id) {
-  var cell = worksheet[id];
-  var value = cell ? cell.v : undefined;
+  const cell = worksheet[id];
+  const value = cell ? cell.v : undefined;
   return value;
 }
 
@@ -748,11 +748,11 @@ function getValue(worksheet, id) {
  * @return {string}
  */
 exports.formatExams = function(message, exams, displayErrors) {
-  var examDataOutput = "";
-  for (var i = 0; i < exams.length; i++) {
-    var exam = module.exports.parseExam(exams[i].toUpperCase());
+  let examDataOutput = "";
+  for (let i = 0; i < exams.length; i++) {
+    const exam = module.exports.parseExam(exams[i].toUpperCase());
     if (exam != undefined) {
-      var datum = module.exports.examData[exam];
+      const datum = module.exports.examData[exam];
       if (datum != undefined) {
         examDataOutput += `${exam}\t${parseDuration(
           datum.duration
@@ -807,9 +807,9 @@ function parseDuration(duration) {
  */
 function parseDate(date) {
   var date = convertToDate(date);
-  var day = date.getDate();
+  let day = date.getDate();
   if (day.toString().length == 1) day = "0" + day;
-  var month = date.getMonth() + 1;
+  let month = date.getMonth() + 1;
   if (month.toString().length == 1) month = "0" + month;
   return `${day}/${month}/${date.getFullYear()}`;
 }
@@ -832,9 +832,9 @@ function convertToDate(date) {
  * @return {string}
  */
 function parseStart(start) {
-  var hour = Math.floor(start * 24);
-  var minute = Math.floor(((start * 24) % 1) * 60);
-  var meridiem = "AM";
+  const hour = Math.floor(start * 24);
+  const minute = Math.floor(((start * 24) % 1) * 60);
+  let meridiem = "AM";
   if (hour >= 12) meridiem = "PM";
   return `${hour % 12}:${minute} ${meridiem}`;
 }
@@ -856,21 +856,21 @@ function parseRooms(rooms) {
  * @return {number}
  */
 exports.notifyExams = function(message, exams, displayErrors) {
-  var notified = 0;
-  for (var i = 0; i < exams.length; i++) {
-    var exam = module.exports.parseExam(exams[i].toUpperCase());
+  let notified = 0;
+  for (let i = 0; i < exams.length; i++) {
+    const exam = module.exports.parseExam(exams[i].toUpperCase());
     if (exam != undefined) {
       // valid exam
       var examChannel = getChannel(exam);
-      var datum = module.exports.examData[exam];
+      const datum = module.exports.examData[exam];
       if (datum != undefined) {
         // valid exam course code
-        var channel = client.channels.find(
+        const channel = client.channels.find(
           channel => channel.name == examChannel
         );
         if (channel != undefined) {
           // channel exists for the exam
-          var examDataOutput = module.exports.formatExams(
+          const examDataOutput = module.exports.formatExams(
             message,
             [exam],
             false
@@ -917,7 +917,7 @@ exports.examDataEmbed = function(examDataOutput) {
       `Last updated: ${formatTime(
         new Date().getTime() - module.exports.getExamLastUpdated().getTime()
       )} ago.`,
-      `To find out your room, log in to [Student Records](https://student-records.vuw.ac.nz).`
+      "To find out your room, log in to [Student Records](https://student-records.vuw.ac.nz)."
     )
     .setTimestamp();
   return embeddedMessage;
@@ -930,12 +930,12 @@ exports.examDataEmbed = function(examDataOutput) {
  */
 function formatTime(milliseconds) {
   let totalSeconds = milliseconds / 1000;
-  let days = Math.floor(totalSeconds / 86400);
+  const days = Math.floor(totalSeconds / 86400);
   totalSeconds %= 86400;
-  let hours = Math.floor(totalSeconds / 3600);
+  const hours = Math.floor(totalSeconds / 3600);
   totalSeconds %= 3600;
-  let minutes = Math.floor(totalSeconds / 60);
-  let seconds = Math.floor(totalSeconds % 60);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = Math.floor(totalSeconds % 60);
   return `${days} days, ${hours} hours, ${minutes} minutes and ${seconds} seconds`;
 }
 
@@ -948,7 +948,7 @@ exports.updateConfigUrl = function(url) {
   if (validExamURL(url)) {
     examDataUrl = url;
     // update the config file
-    var file = require("./botConfig.json");
+    const file = require("./botConfig.json");
     file.EXAM_DATA_URL = examDataUrl;
     fs.writeFile("./botConfig.json", JSON.stringify(file, null, 2), function(
       error
@@ -968,7 +968,7 @@ exports.updateConfigUrl = function(url) {
  * @return {boolean}
  */
 function validExamURL(url) {
-  var pattern = new RegExp(
+  const pattern = new RegExp(
     "^(https?:\\/\\/)?" + // protocol
     "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
     "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
@@ -977,7 +977,7 @@ function validExamURL(url) {
       "(\\#[-a-z\\d_]*)?$",
     "i"
   ); // fragment locator
-  return pattern.test(url) && url.endsWith(".xlsx");
+  return pattern.test(url) && url.endsWith('.xlsx');
 }
 
 // update and process the data before running the client

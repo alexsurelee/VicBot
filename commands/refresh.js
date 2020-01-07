@@ -1,4 +1,4 @@
-const index = require("../index.js");
+const index = require('../index.js');
 module.exports = {
   name: "refresh",
   args: false,
@@ -9,8 +9,8 @@ module.exports = {
     "Updates the examination information for the current course channel.",
   async execute(message) {
     if (message.guild) {
-      var channelName = message.channel.name;
-      var exam = index.parseExam(channelName);
+      const channelName = message.channel.name;
+      const exam = index.parseExam(channelName);
       if (exam) index.notifyExams(message, [exam], true);
       else
         message.reply(

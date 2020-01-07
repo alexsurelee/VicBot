@@ -1,5 +1,5 @@
-const index = require("../index.js");
-const { courseCodes } = require("../config.json");
+const index = require('../index.js');
+const { courseCodes } = require('../config.json');
 module.exports = {
   name: "updateexams",
   args: false,
@@ -29,6 +29,6 @@ module.exports = {
     else
       return message.reply(
         "Looks like you didn't send this message from a server"
-      );
+			);
   }
 };
