@@ -12,8 +12,12 @@ module.exports = {
       exams[i] = args[i];
     }
     var examData = index.formatExams(message, exams, true); // get the formatted data
-    if (examData.length > MAX_EMBED) message.reply(`too many arguments to process. Try reducing the amount of courses.`);
-    else { // generate the embedded message
+    if (examData.length > MAX_EMBED)
+      message.reply(
+        `too many arguments to process. Try reducing the amount of courses.`
+      );
+    else {
+      // generate the embedded message
       const embeddedMessage = index.examDataEmbed(examData);
       message.reply(embeddedMessage);
     }

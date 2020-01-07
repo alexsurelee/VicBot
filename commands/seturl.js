@@ -10,10 +10,16 @@ module.exports = {
   async execute(message, args) {
     // If the message is in a server
     if (message.guild) {
-      if (index.updateConfigUrl(args[0])) message.reply(`successfully updated the URL. To update the exam data, use \`!updateexams\``);
+      if (index.updateConfigUrl(args[0]))
+        message.reply(
+          `successfully updated the URL. To update the exam data, use \`!updateexams\``
+        );
       else message.reply("invalid URL. Does the URL end with `./xlsx`?");
     }
     // The message was sent in a DM, can't retrieve the server info
-    else return message.reply("Looks like you didn't send this message from a server");
+    else
+      return message.reply(
+        "Looks like you didn't send this message from a server"
+      );
   }
 };
