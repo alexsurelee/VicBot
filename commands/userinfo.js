@@ -11,8 +11,7 @@ module.exports = {
     if (!args.length) {
       // Display info about the calling user
       member = message.guild.member(message.author);
-    }
-    else {
+    } else {
       // Display info about the user specified by the first argument
       member = message.guild.members.get(args[0]);
 
@@ -24,7 +23,7 @@ module.exports = {
       }
     }
     // Format Permissions
-    const permissions = member.permissions.toArray().map(perm => {
+    let permissions = member.permissions.toArray().map(perm => {
       return perm
         .toLowerCase()
         .replace(/_/g, " ") // Replace all underscores with spaces
@@ -36,7 +35,7 @@ module.exports = {
 
     // Calculate Join Position
     let joinPosition;
-    const members = message.guild.members.array();
+    let members = message.guild.members.array();
     members.sort((a, b) => a.joinedAt - b.joinedAt);
     for (let i = 0; i < members.length; i++) {
       if (members[i].id == message.guild.member(message.author).id)

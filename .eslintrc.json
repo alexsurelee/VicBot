@@ -8,7 +8,7 @@
   "rules": {
     "indent": [
       "error",
-      2
+      "tab"
     ],
     "linebreak-style": [
       "error",
@@ -33,7 +33,7 @@
     ],
     "no-var": 2,
     "prefer-const": 2,
-    "no-console": 1,
+    "no-console": 0,
     "space-before-function-paren": [
       "error",
       {

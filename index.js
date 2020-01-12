@@ -1,53 +1,36 @@
-/* eslint-disable no-console */
 /* global Map, require */
 const Discord = require("discord.js");
 const fs = require("fs");
-const download = require('download-file'); // fetching exam data
-const xlsx = require('xlsx'); // exam data speadsheet
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const commandFiles = fs
   .readdirSync("./commands")
   .filter(file => file.endsWith(".js"));
 const { Util } = require("discord.js");
+const YouTube = require("simple-youtube-api");
+const ytdl = require("ytdl-core");
 let prefix = process.env.PREFIX;
 let token = process.env.TOKEN;
-let examDataUrl = process.env.EXAM_DATA_URL;
-let examDataFile = process.env.EXAM_DATA_FILE;
-let examDataUpdate = process.env.EXAM_DATA_UPDATE;
-module.exports.examData = {};
+let googleApiKey = process.env.GOOGLE_API_KEY;
 
 try {
   if (fs.existsSync("./botConfig.json")) {
-    const { PREFIX, TOKEN } = require("./botConfig.json");
-    if (PREFIX) {
+    const { PREFIX, TOKEN, GOOGLE_API_KEY } = require("./botConfig.json");
+    if (!prefix) {
       prefix = PREFIX;
     }
-    if (TOKEN) {
+    if (!token) {
       token = TOKEN;
     }
-  }
-}
-catch (err) {
-  console.error(err);
-}
-try {
-  if (fs.existsSync("./config.json")) {
-    const { EXAM_DATA_URL, EXAM_DATA_FILE, EXAM_DATA_UPDATE } = require("./config.json");
-    if (!examDataUrl) {
-      examDataUrl = EXAM_DATA_URL;
-    }
-    if (!examDataFile) {
-      examDataFile = EXAM_DATA_FILE;
-    }
-    if (!examDataUpdate) {
-      examDataUpdate = EXAM_DATA_UPDATE;
+    if (!googleApiKey) {
+      googleApiKey = GOOGLE_API_KEY;
     }
   }
-}
-catch (err) {
+} catch (err) {
   console.error(err);
 }
+const youtube = new YouTube(googleApiKey);
+const queue = new Map();
 
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
@@ -119,7 +102,7 @@ client.on("message", async message => {
   const command =
     client.commands.get(commandName) ||
     client.commands.find(
-    	cmd => cmd.aliases && cmd.aliases.includes(commandName)
+      cmd => cmd.aliases && cmd.aliases.includes(commandName)
     );
   if (!command) return;
 
@@ -143,8 +126,7 @@ client.on("message", async message => {
     if (command.log) {
       this.log(commandName, message);
     }
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
     message.reply("there was an error trying to execute that command!");
   }
@@ -184,8 +166,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   const voiceRole = newState.guild.roles.find(role => role.name === "inVoice");
   if (newState.channel) {
     newState.member.roles.add(voiceRole);
-  }
-  else {
+  } else {
     newState.member.roles.remove(voiceRole);
   }
 });
@@ -205,13 +186,11 @@ exports.rank = async function(message, rank) {
 
   if (forbiddenRanks.includes(rank)) {
     return message.channel.send(`Sorry, you cannot join ${rank}.`);
-  }
-  else if (message.guild.roles.find(role => role.name === rank) == null) {
+  } else if (message.guild.roles.find(role => role.name === rank) == null) {
     return message.channel.send(
       `${rank} role doesn't exist. Consider asking an @admin to create it.`
     );
-  }
-  else if (
+  } else if (
     !message.guild.roles
       .find(role => role.name === rank)
       .members.has(message.author.id)
@@ -224,12 +203,10 @@ exports.rank = async function(message, rank) {
         channel => channel.name === rank
       );
       return message.reply(`Added you to ${rankChannel} successfully.`);
-    }
-    else {
+    } else {
       return message.reply(`Added you to ${rank} successfully.`);
     }
-  }
-  else {
+  } else {
     await message.member.roles.remove(
       message.guild.roles.find(role => role.name === rank)
     );
@@ -238,8 +215,7 @@ exports.rank = async function(message, rank) {
         channel => channel.name === rank
       );
       return message.reply(`Removed you from ${rankChannel} successfully.`);
-    }
-    else {
+    } else {
       return message.reply(`Removed you from ${rank} successfully.`);
     }
   }
@@ -294,18 +270,15 @@ exports.organise = async function(message) {
       if (item.parent.name !== "100-level") item.setParent(oneCategory);
       oneLength++;
       oneNameArray.push(item.name);
-    }
-    else if (item.name.charAt(5) === "2") {
+    } else if (item.name.charAt(5) === "2") {
       if (item.parent.name !== "200-level") item.setParent(twoCategory);
       twoLength++;
       twoNameArray.push(item.name);
-    }
-    else if (item.name.charAt(5) === "3") {
+    } else if (item.name.charAt(5) === "3") {
       if (item.parent.name !== "300-level") item.setParent(threeCategory);
       threeLength++;
       threeNameArray.push(item.name);
-    }
-    else if (item.name.charAt(5) === "4") {
+    } else if (item.name.charAt(5) === "4") {
       if (item.parent.name !== "400-level") item.setParent(fourCategory);
       fourLength++;
       fourNameArray.push(item.name);
@@ -522,341 +495,166 @@ exports.getCourse = async function(code, i, j, k, message) {
 };
 
 /**
- * Returns the last time the data file was modified.
- * @return {Date}
+ * Returns the current queue object so it can be utilised by command methods.
+ * @param id guild id
+ * @returns {any}
  */
-exports.getExamLastUpdated = function() {
-  const stats = fs.statSync(examDataFile);
-  return stats.mtime;
+exports.getQueue = function(id) {
+  return queue.get(id);
 };
 
 /**
- * Checks if the exam data is outdated and updates it if it is.
+ *
+ * @param message
+ * @param args
+ * @returns {Promise<*>}
  */
-function checkExamUpdates() {
-  if (new Date() - module.exports.getExamLastUpdated() > examDataUpdate) {
-    module.exports.fetchData();
-    if (new Date() - module.exports.getExamLastUpdated() < 10000) {
-      // updated within 10 seconds - new data, process it
-      module.exports.processData();
+exports.playSong = async function(message, args) {
+  const url = args[0] ? args[0].replace(/<(.+)>/g, "$1") : "";
+  const searchString = args.slice(0).join(" ");
+  const voiceChannel = message.member.voice.channel;
+  if (!voiceChannel)
+    return message.channel.send(
+      "You need to be in a voice channel to play music!"
+    );
+  const permissions = voiceChannel.permissionsFor(message.client.user);
+  if (!permissions.has("CONNECT")) {
+    return message.channel.send(
+      "I cannot connect to your voice channel, make sure I have the proper permissions!"
+    );
+  }
+  if (!permissions.has("SPEAK")) {
+    return message.channel.send(
+      "I cannot speak in this voice channel, make sure I have the proper permissions!"
+    );
+  }
+
+  if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
+    const playlist = await youtube.getPlaylist(url);
+    const videos = await playlist.getVideos();
+    for (const video of Object.values(videos)) {
+      const video2 = await youtube.getVideoByID(video.id);
+      await handleVideo(video2, message, voiceChannel, true);
     }
-  }
-}
-
-/**
- * Retrives data from the source, keeping the data up to date.
- */
-exports.fetchData = function() {
-  const options = { filename: examDataFile, timeout: 500 };
-  download(examDataUrl, options, function(error) {
-    if (error == 404)
-      console.error(
-        "URL for exam data returned a 404. Check the URL is valid and working."
-      );
-  });
-};
-
-/**
- * Takes the data file and adds it to the object data array.
- */
-exports.processData = function() {
-  const stream = fs.createReadStream(examDataFile);
-  const buffers = [];
-  stream.on("data", function(data) {
-    buffers.push(data);
-  });
-  stream.on("end", function() {
-    const buffer = Buffer.concat(buffers);
-    const workbook = xlsx.read(buffer, { type: "buffer" });
-    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-    let y = 4;
-    while (true) {
-      const examCell = worksheet["A" + y];
-      const examValue = examCell ? examCell.v : undefined;
-      const exam = module.exports.parseExam(examValue);
-      if (exam != undefined) {
-        const durationValue = getValue(worksheet, "B" + y);
-        const dateValue = getValue(worksheet, "C" + y);
-        const startValue = getValue(worksheet, "D" + y);
-        const roomsValue = getValue(worksheet, "E" + y);
-        module.exports.examData[exam] = {
-          duration: durationValue,
-          date: dateValue,
-          start: startValue,
-          rooms: roomsValue
-        };
-        y++;
-      }
-      else break;
-    }
-  });
-};
-
-/**
- * Returns a worksheet's cell value.
- * @param {object}
- * @param {string}
- * @return {any}
- */
-function getValue(worksheet, id) {
-  const cell = worksheet[id];
-  const value = cell ? cell.v : undefined;
-  return value;
-}
-
-/**
- * Generates a formatted string containing the exam data.
- * @param {object}
- * @param {object}
- * @param {boolean}
- * @return {string}
- */
-exports.formatExams = function(message, exams, displayErrors) {
-  let examDataOutput = "";
-  checkExamUpdates(); // check to see if exam data is outdated
-  for (let i = 0; i < exams.length; i++) {
-    const exam = module.exports.parseExam(exams[i].toUpperCase());
-    if (exam != undefined) {
-      const datum = module.exports.examData[exam];
-      if (datum != undefined) {
-        examDataOutput += `${exam}\t${parseDuration(
-          datum.duration
-        )}\t${parseDate(datum.date)}\t${parseStart(datum.start)}\t${parseRooms(
-          datum.rooms
-        )}\n`;
-      }
-      else if (displayErrors)
-        message.reply(
-          `couldn't find exam data for '${exams[i]}'. Does the course exist for the current trimister?`
-        );
-    }
-    else if (displayErrors)
-      message.reply(`'${exams[i]}' is not a valid course.`);
-  }
-  return examDataOutput;
-};
-
-/**
- * Checks if the input is a valid exam.
- * @param {string}
- * @return {any}
- */
-exports.parseExam = function(exam) {
-  if (/^[a-zA-Z]{4}[0-9]{3}/.test(exam)) {
-    return exam.slice(0, 7).toUpperCase();
-  }
-  else if (/^[a-zA-Z]{4}-[0-9]{3}/.test(exam)) {
-    return exam.slice(0, 4).toUpperCase() + exam.slice(5, 8);
-  }
-  else return undefined;
-};
-
-/**
- * Returns the channel name of the exam.
- * @param {string}
- * @return {string}
- */
-function getChannel(exam) {
-  return exam.slice(0, 4).toLowerCase() + "-" + exam.slice(4, 7);
-}
-
-/**
- * Returns the duration.
- * @param {number}
- * @return {number}
- */
-function parseDuration(duration) {
-  return duration;
-}
-
-/**
- * Converts the raw input into a string formatted date.
- * @param {number}
- * @return {string}
- */
-function parseDate(date) {
-  date = convertToDate(date);
-  let day = date.getDate();
-  if (day.toString().length == 1) day = "0" + day;
-  let month = date.getMonth() + 1;
-  if (month.toString().length == 1) month = "0" + month;
-  return `${day}/${month}/${date.getFullYear()}`;
-}
-
-/**
- * Converts the raw input into a Date object.
- * The input is a serial number which represents how many days past 1 Janurary 1900.
- * Date objects can be created with serial numbers, but they start from 1 Janurary 1970.
- * @param {number}
- * @return {Date}
- */
-function convertToDate(date) {
-  return new Date((date - 25569) * 86400000); // 25569 accounts for serial number shift.
-}
-
-/**
- * Converts the raw input into a string formatted start time.
- * The input is a decimal value between 0 and 1, representing the amount of time past midnight of the day.
- * @param {number}
- * @return {string}
- */
-function parseStart(start) {
-  const hour = Math.floor(start * 24);
-  const minute = Math.floor(((start * 24) % 1) * 60);
-  let meridiem = "AM";
-  if (hour >= 12) meridiem = "PM";
-  return `${hour % 12}:${minute} ${meridiem}`;
-}
-
-/**
- * Returns the rooms.
- * @param {string}
- * @return {string}
- */
-function parseRooms(rooms) {
-  return rooms;
-}
-
-/**
- * Generates a formatted string containing the exam data and sends it to its respective channel.
- * @param {object}
- * @param {object}
- * @param {boolean}
- * @return {number}
- */
-exports.notifyExams = function(message, exams, displayErrors) {
-  let notified = 0;
-  for (let i = 0; i < exams.length; i++) {
-    const exam = module.exports.parseExam(exams[i].toUpperCase());
-    if (exam != undefined) {
-      // valid exam
-      const examChannel = getChannel(exam);
-      const datum = module.exports.examData[exam];
-      if (datum != undefined) {
-        // valid exam course code
-        const channel = client.channels.find(
-          channel => channel.name == examChannel
-        );
-        if (channel != undefined) {
-          // channel exists for the exam
-          const examDataOutput = module.exports.formatExams(
-            message,
-            [exam],
-            false
-          ); // get the formatted data
-          if (examDataOutput.length > 0) {
-            // generate the embedded message
-            const embeddedMessage = module.exports.examDataEmbed(
-              examDataOutput
-            );
-            // delete all old exam data in the course channel
-            // channel.messages.fetch(messages => messages.filter(m => m.author.id == client.user.id)).then(messages => {
-            //   let arr = messages.array();
-            //   for (let i = 0; i < arr.length; i++) {
-            //     arr[i].delete();
-            //   }
-            // });
-            channel.send(embeddedMessage).then(msg => msg.pin()); // pin the message
-            notified++;
-          }
-        }
-        else if (displayErrors)
-          message.reply(
-            `couldn't find the channel for '${exams[i]}'. Does the channel #${examChannel} exist?`
+    return message.channel.send(
+      `✅ Playlist: **${playlist.title}** has been added to the queue!`
+    );
+  } else {
+    let response;
+    let video;
+    try {
+      video = await youtube.getVideo(url);
+    } catch (error) {
+      try {
+        const videos = await youtube.searchVideos(searchString, 10);
+        let index = 0;
+        message.channel.send(`
+__**Song selection:**__
+${videos.map(video2 => `**${++index} -** ${video2.title}`).join("\n")}
+Please provide a value to select one of the search results ranging from 1-10.
+					`);
+        try {
+          response = await message.channel.awaitMessages(
+            msg2 => msg2.content > 0 && msg2.content < 11,
+            {
+              max: 1,
+              time: 10000,
+              errors: ["time"]
+            }
           );
-      }
-      else if (displayErrors)
-        message.reply(
-          `couldn't find exam data for '${exams[i]}'. Does the course exist for the current trimister?`
+        } catch (err) {
+          console.error(err);
+          return message.channel.send(
+            "No or invalid value entered, cancelling video selection."
+          );
+        }
+        const videoIndex = parseInt(response.first().content);
+        video = await youtube.getVideoByID(videos[videoIndex - 1].id);
+      } catch (err) {
+        console.error(err);
+        return message.channel.send(
+          "🆘 I could not obtain any search results."
         );
-    }
-    else if (displayErrors)
-      message.reply(`'${exams[i]}' is not a valid course.`);
-  }
-  return notified;
-};
-
-/**
- * Generates an embedded message with the exam data provided.
- * @param {string}
- * @return {object}
- */
-exports.examDataEmbed = function(examDataOutput) {
-  const embeddedMessage = new Discord.MessageEmbed()
-    .setTitle("Exam Times")
-    .setDescription(`\`\`\`${examDataOutput}\`\`\``)
-    .addField(
-      `Last updated: ${formatTime(
-        new Date().getTime() - module.exports.getExamLastUpdated().getTime()
-      )} ago.`,
-      "To find out your room, log in to [Student Records](https://student-records.vuw.ac.nz)."
-    )
-    .setTimestamp();
-  return embeddedMessage;
-};
-
-/**
- * Converts milliseconds into a string formatted time.
- * @param {number}
- * @return {string}
- */
-function formatTime(milliseconds) {
-  let totalSeconds = milliseconds / 1000;
-  const days = Math.floor(totalSeconds / 86400);
-  totalSeconds %= 86400;
-  const hours = Math.floor(totalSeconds / 3600);
-  totalSeconds %= 3600;
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = Math.floor(totalSeconds % 60);
-  return `${days} days, ${hours} hours, ${minutes} minutes and ${seconds} seconds`;
-}
-
-/**
- * Checks if the url is valid and updates the config file.
- * @param {string}
- * @return {boolean}
- */
-exports.updateConfigUrl = function(url) {
-  if (validExamURL(url)) {
-    examDataUrl = url;
-    // update the config file
-    const file = require("./config.json");
-    file.EXAM_DATA_URL = examDataUrl;
-    fs.writeFile("./config.json", JSON.stringify(file, null, 2), function(
-      error
-    ) {
-      if (error) {
-        console.log(error);
-        return false;
       }
-    });
-    module.exports.fetchData();
-    module.exports.processData();
-    return true;
+    }
+    return handleVideo(video, message, voiceChannel);
   }
-  else return false;
 };
 
 /**
- * Returns whether the input is a valid exam url address.
- * @param {string}
- * @return {boolean}
+ *
+ * @param video
+ * @param msg
+ * @param voiceChannel
+ * @param playlist
+ * @returns {Promise<*>}
  */
-function validExamURL(url) {
-  const pattern = new RegExp(
-    "^(https?:\\/\\/)?" + // protocol
-    "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
-    "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-    "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-    "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
-      "(\\#[-a-z\\d_]*)?$", // fragment locator
-    "i"
-  );
-  return pattern.test(url) && url.endsWith('.xlsx');
+async function handleVideo(video, msg, voiceChannel, playlist = false) {
+  const serverQueue = queue.get(msg.guild.id);
+  const song = {
+    id: video.id,
+    title: Util.escapeMarkdown(video.title),
+    url: `https://www.youtube.com/watch?v=${video.id}`
+  };
+  if (!serverQueue) {
+    const queueConstruct = {
+      textChannel: msg.channel,
+      voiceChannel: voiceChannel,
+      connection: null,
+      songs: [],
+      volume: 5,
+      playing: true
+    };
+    queue.set(msg.guild.id, queueConstruct);
+
+    queueConstruct.songs.push(song);
+
+    try {
+      queueConstruct.connection = await voiceChannel.join();
+      play(msg.guild, queueConstruct.songs[0]);
+    } catch (error) {
+      console.error(`I could not join the voice channel: ${error}`);
+      queue.delete(msg.guild.id);
+      return msg.channel.send(`I could not join the voice channel: ${error}`);
+    }
+  } else {
+    serverQueue.songs.push(song);
+    if (playlist) return undefined;
+    else
+      return msg.channel.send(
+        `✅ **${song.title}** has been added to the queue!`
+      );
+  }
+  return undefined;
 }
 
-// update and process the data before running the client
-module.exports.fetchData();
-module.exports.processData();
+/**
+ *
+ * @param guild
+ * @param song
+ */
+function play(guild, song) {
+  const serverQueue = queue.get(guild.id);
+
+  if (!song) {
+    serverQueue.voiceChannel.leave();
+    queue.delete(guild.id);
+    return;
+  }
+
+  const dispatcher = serverQueue.connection
+    .play(ytdl(song.url))
+    .on("end", reason => {
+      if (reason === "Stream is not generating quickly enough.")
+        console.log("Song ended.");
+      else console.log(reason);
+      serverQueue.songs.shift();
+      play(guild, serverQueue.songs[0]);
+    })
+    .on("error", error => console.error(error));
+  dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
+
+  serverQueue.textChannel.send(`🎶 Start playing: **${song.title}**`);
+}
 
 client.login(token);
