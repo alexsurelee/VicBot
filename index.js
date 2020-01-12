@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* global Map, require */
 const Discord = require("discord.js");
 const fs = require("fs");
@@ -26,7 +27,8 @@ try {
       token = TOKEN;
     }
   }
-} catch (err) {
+}
+catch (err) {
   console.error(err);
 }
 try {
@@ -42,7 +44,8 @@ try {
       examDataUpdate = EXAM_DATA_UPDATE;
     }
   }
-} catch (err) {
+}
+catch (err) {
   console.error(err);
 }
 
@@ -116,7 +119,7 @@ client.on("message", async message => {
   const command =
     client.commands.get(commandName) ||
     client.commands.find(
-      cmd => cmd.aliases && cmd.aliases.includes(commandName)
+    	cmd => cmd.aliases && cmd.aliases.includes(commandName)
     );
   if (!command) return;
 
@@ -140,7 +143,8 @@ client.on("message", async message => {
     if (command.log) {
       this.log(commandName, message);
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.error(error);
     message.reply("there was an error trying to execute that command!");
   }
@@ -180,7 +184,8 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   const voiceRole = newState.guild.roles.find(role => role.name === "inVoice");
   if (newState.channel) {
     newState.member.roles.add(voiceRole);
-  } else {
+  }
+  else {
     newState.member.roles.remove(voiceRole);
   }
 });
@@ -200,11 +205,13 @@ exports.rank = async function(message, rank) {
 
   if (forbiddenRanks.includes(rank)) {
     return message.channel.send(`Sorry, you cannot join ${rank}.`);
-  } else if (message.guild.roles.find(role => role.name === rank) == null) {
+  }
+  else if (message.guild.roles.find(role => role.name === rank) == null) {
     return message.channel.send(
       `${rank} role doesn't exist. Consider asking an @admin to create it.`
     );
-  } else if (
+  }
+  else if (
     !message.guild.roles
       .find(role => role.name === rank)
       .members.has(message.author.id)
@@ -217,10 +224,12 @@ exports.rank = async function(message, rank) {
         channel => channel.name === rank
       );
       return message.reply(`Added you to ${rankChannel} successfully.`);
-    } else {
+    }
+    else {
       return message.reply(`Added you to ${rank} successfully.`);
     }
-  } else {
+  }
+  else {
     await message.member.roles.remove(
       message.guild.roles.find(role => role.name === rank)
     );
@@ -229,7 +238,8 @@ exports.rank = async function(message, rank) {
         channel => channel.name === rank
       );
       return message.reply(`Removed you from ${rankChannel} successfully.`);
-    } else {
+    }
+    else {
       return message.reply(`Removed you from ${rank} successfully.`);
     }
   }
@@ -284,15 +294,18 @@ exports.organise = async function(message) {
       if (item.parent.name !== "100-level") item.setParent(oneCategory);
       oneLength++;
       oneNameArray.push(item.name);
-    } else if (item.name.charAt(5) === "2") {
+    }
+    else if (item.name.charAt(5) === "2") {
       if (item.parent.name !== "200-level") item.setParent(twoCategory);
       twoLength++;
       twoNameArray.push(item.name);
-    } else if (item.name.charAt(5) === "3") {
+    }
+    else if (item.name.charAt(5) === "3") {
       if (item.parent.name !== "300-level") item.setParent(threeCategory);
       threeLength++;
       threeNameArray.push(item.name);
-    } else if (item.name.charAt(5) === "4") {
+    }
+    else if (item.name.charAt(5) === "4") {
       if (item.parent.name !== "400-level") item.setParent(fourCategory);
       fourLength++;
       fourNameArray.push(item.name);
@@ -573,7 +586,8 @@ exports.processData = function() {
           rooms: roomsValue
         };
         y++;
-      } else break;
+      }
+      else break;
     }
   });
 };
@@ -610,11 +624,13 @@ exports.formatExams = function(message, exams, displayErrors) {
         )}\t${parseDate(datum.date)}\t${parseStart(datum.start)}\t${parseRooms(
           datum.rooms
         )}\n`;
-      } else if (displayErrors)
+      }
+      else if (displayErrors)
         message.reply(
           `couldn't find exam data for '${exams[i]}'. Does the course exist for the current trimister?`
         );
-    } else if (displayErrors)
+    }
+    else if (displayErrors)
       message.reply(`'${exams[i]}' is not a valid course.`);
   }
   return examDataOutput;
@@ -628,9 +644,11 @@ exports.formatExams = function(message, exams, displayErrors) {
 exports.parseExam = function(exam) {
   if (/^[a-zA-Z]{4}[0-9]{3}/.test(exam)) {
     return exam.slice(0, 7).toUpperCase();
-  } else if (/^[a-zA-Z]{4}-[0-9]{3}/.test(exam)) {
+  }
+  else if (/^[a-zA-Z]{4}-[0-9]{3}/.test(exam)) {
     return exam.slice(0, 4).toUpperCase() + exam.slice(5, 8);
-  } else return undefined;
+  }
+  else return undefined;
 };
 
 /**
@@ -657,7 +675,7 @@ function parseDuration(duration) {
  * @return {string}
  */
 function parseDate(date) {
-  var date = convertToDate(date);
+  date = convertToDate(date);
   let day = date.getDate();
   if (day.toString().length == 1) day = "0" + day;
   let month = date.getMonth() + 1;
@@ -712,7 +730,7 @@ exports.notifyExams = function(message, exams, displayErrors) {
     const exam = module.exports.parseExam(exams[i].toUpperCase());
     if (exam != undefined) {
       // valid exam
-      var examChannel = getChannel(exam);
+      const examChannel = getChannel(exam);
       const datum = module.exports.examData[exam];
       if (datum != undefined) {
         // valid exam course code
@@ -741,15 +759,18 @@ exports.notifyExams = function(message, exams, displayErrors) {
             channel.send(embeddedMessage).then(msg => msg.pin()); // pin the message
             notified++;
           }
-        } else if (displayErrors)
+        }
+        else if (displayErrors)
           message.reply(
             `couldn't find the channel for '${exams[i]}'. Does the channel #${examChannel} exist?`
           );
-      } else if (displayErrors)
+      }
+      else if (displayErrors)
         message.reply(
           `couldn't find exam data for '${exams[i]}'. Does the course exist for the current trimister?`
         );
-    } else if (displayErrors)
+    }
+    else if (displayErrors)
       message.reply(`'${exams[i]}' is not a valid course.`);
   }
   return notified;
@@ -812,7 +833,8 @@ exports.updateConfigUrl = function(url) {
     module.exports.fetchData();
     module.exports.processData();
     return true;
-  } else return false;
+  }
+  else return false;
 };
 
 /**

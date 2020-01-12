@@ -12,33 +12,40 @@ module.exports = {
       return message.channel.send(
         "Please include the name of the rank you wish to create."
       );
-    } else if (args.length > 1) {
+    }
+    else if (args.length > 1) {
       return message.channel.send(
         "Please only include one rank to create (no spaces)."
       );
-    } else if (!args[0].includes("-")) {
+    }
+    else if (!args[0].includes("-")) {
       return message.channel.send("Classes should include the `-` symbol");
-    } else if (args[0].includes("+")) {
+    }
+    else if (args[0].includes("+")) {
       return message.channel.send(
         "You cannot include the `+` symbol in a rank."
       );
-    } else if (args[0].length !== 8) {
+    }
+    else if (args[0].length !== 8) {
       return message.channel.send(
         "Classes should be 8 characters long, e.g. `engr-101`"
       );
-    } else if (
+    }
+    else if (
       message.guild.roles.find(role => role.name === args[0]) != null
     ) {
       return message.channel.send(
         "Couldn't create class - role already exists."
       );
-    } else if (
+    }
+    else if (
       message.guild.channels.find(role => role.name === args[0]) != null
     ) {
       return message.channel.send(
         "Couldn't create class - channel already exists."
       );
-    } else {
+    }
+    else {
       // regex to ensure that they're alphanumeric
       const letters = /^[0-9a-zA-Z]+$/;
       for (let i = 0; i < args[0].length; i++)
