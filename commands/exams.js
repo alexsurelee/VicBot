@@ -1,5 +1,5 @@
 const index = require('../index.js');
-var MAX_EMBED = 2000; // maximum characters allowed per embedded message
+const MAX_EMBED = 2000; // maximum characters allowed per embedded message
 module.exports = {
   name: "exams",
   args: false,
@@ -32,16 +32,17 @@ module.exports = {
         // generate the embedded message
         const embeddedMessage = index.examDataEmbed(examData);
         message.reply(embeddedMessage);
-      } else
+      }
+      else
         message.reply(
           "couldn't find exam data for your course roles for the current trimister."
-				); // none of the user courses were valid
+        ); // none of the user courses were valid
     }
     // The message was sent in a DM, can't retrieve the server info
     else
       return message.reply(
         "Looks like you didn't send this message from a server"
-			);
+      );
   }
 };
 
@@ -53,5 +54,6 @@ module.exports = {
 function parseRole(role) {
   if (/^[a-zA-Z]{4}-[0-9]{3}/.test(role)) {
     return role.slice(0, 4).toUpperCase() + role.slice(5, 8);
-  } else return undefined;
+  }
+  else return undefined;
 }
