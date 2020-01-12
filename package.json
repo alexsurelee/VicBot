@@ -9,10 +9,9 @@
   },
   "dependencies": {
     "discord.js": "github:discordjs/discord.js",
+    "download-file": "^0.1.5",
     "forever": "^1.0.0",
-    "node-opus": "^0.3.2",
-    "simple-youtube-api": "^5.2.1",
-    "ytdl-core": "^0.29.5"
+    "xlsx": "^0.15.4"
   },
   "devDependencies": {
     "eslint": "^6.2.2"

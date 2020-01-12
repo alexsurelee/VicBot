@@ -23,14 +23,19 @@ module.exports = {
         const c = role.name.charAt(5);
         if (c === "1") {
           firstYearArray.push(role.name);
-        } else if (c === "2") {
+        }
+        else if (c === "2") {
           secondYearArray.push(role.name);
-        } else if (c === "3") {
+        }
+        else if (c === "3") {
           thirdYearArray.push(role.name);
-        } else if (c === "4") fourthYearArray.push(role.name);
-      } else if (aliasRegex.test(role.name)) {
+        }
+        else if (c === "4") fourthYearArray.push(role.name);
+      }
+      else if (aliasRegex.test(role.name)) {
         aliasStringArray.push(role.name);
-      } else if (socialRanks.indexOf(role.name) !== -1) {
+      }
+      else if (socialRanks.indexOf(role.name) !== -1) {
         socialStringArray.push(role.name);
       }
     });
