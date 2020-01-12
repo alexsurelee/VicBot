@@ -10,10 +10,14 @@ module.exports = {
   async execute(message, args) {
     if (args[0] === "boomer") {
       message.reply("ok boomer");
-    } else if (message.channel.name === "bots") {
+    }
+    else if (message.channel.name === "bots") {
       args.forEach(function(rank) {
         index.rank(message, rank);
       });
+    }
+    else {
+      message.reply("Please go to the bots channel!");
     }
   }
 };
