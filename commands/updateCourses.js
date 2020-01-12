@@ -7,7 +7,7 @@ module.exports = {
   usage: "`!updatecourses`",
   log: true,
   description:
-    "Scrapes the victoria.ac.nz website for engineering courses and adds them to the server.",
+    "Scrapes the wgtn.ac.nz website for engineering courses and adds them to the server.",
   async execute(message) {
     courseCodes.forEach(async function(code) {
       for (let i = 1; i <= 4; i++) {

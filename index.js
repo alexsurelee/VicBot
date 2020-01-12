@@ -489,7 +489,7 @@ exports.getCourse = async function(code, i, j, k, message) {
   const index = require("./index.js");
   https
     .get(
-      `https://www.victoria.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`,
+      `https://www.wgtn.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`,
       resp => {
         let data = "";
 
