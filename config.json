@@ -28,8 +28,5 @@
     "stat",
     "rese"
   ],
-  "logChannel": "moderation-log",
-  "EXAM_DATA_URL": "https://www.victoria.ac.nz/__data/assets/excel_doc/0005/1766759/end-of-year-exam-timetable.xlsx",
-  "EXAM_DATA_FILE": "data.xlsx",
-  "EXAM_DATA_UPDATE": 2419200000
+  "logChannel": "moderation-log"
 }

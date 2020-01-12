@@ -1,6 +1,4 @@
 **/botConfig.json
-**/data.xlsx
 node_modules/
 .DS_Store
 .idea/*
-yarn-error.log

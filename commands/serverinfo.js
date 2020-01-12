@@ -55,8 +55,7 @@ module.exports = {
         }
       };
       return message.channel.send(embed);
-    }
-    else {
+    } else {
       // The message was sent in a DM, can't retrieve the server info
       return message.reply(
         "Looks like you didn't send this message from a server"
