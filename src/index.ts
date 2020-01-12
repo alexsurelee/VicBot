@@ -1,11 +1,12 @@
 /* eslint-disable no-console */
 /* global Map, require */
-const Discord = require("discord.js");
-const fs = require("fs");
-const download = require('download-file'); // fetching exam data
-const xlsx = require('xlsx'); // exam data speadsheet
-const client = new Discord.Client();
-client.commands = new Discord.Collection();
+// import Discord = require("discord.js");
+import fs = require("fs");
+import download = require("download-file"); // fetching exam data
+import xlsx = require("xlsx"); // exam data speadsheet
+import { Client, Collection, MessageEmbed } from "discord.js";
+const client = new Client();
+const commands = new Collection<string, command>();
 const commandFiles = fs
   .readdirSync("./commands")
   .filter(file => file.endsWith(".js"));
@@ -51,7 +52,7 @@ catch (err) {
 
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
-  client.commands.set(command.name, command);
+  commands.set(command.name, command);
 }
 
 const {
@@ -77,11 +78,9 @@ client.on("ready", () => {
 
 // preventing some errors from killing the whole thing
 process.on("unhandledRejection", error =>
-  console.error(`Uncaught Promise Rejection:\n${error}`)
+  console.error(`Unhandled Promise Rejection:\n${error}`)
 );
-process.on("unhandledError", error =>
-  console.error(`Unhandled Error:\n${error}`)
-);
+process.on("uncaughtException", exception => console.error(`Uncaught Exception:\n${exception}`))
 client.on("disconnect", error => console.error(`Disconnected! \n${error}`));
 client.on("error", console.error);
 
@@ -117,8 +116,8 @@ client.on("message", async message => {
 
   // checking to ensure the command or an alias of the command exists
   const command =
-    client.commands.get(commandName) ||
-    client.commands.find(
+    commands.get(commandName) ||
+    commands.find(
     	cmd => cmd.aliases && cmd.aliases.includes(commandName)
     );
   if (!command) return;
@@ -154,7 +153,7 @@ client.on("message", async message => {
  *
  */
 client.on("guildMemberAdd", async member => {
-  const embed = new Discord.MessageEmbed()
+  const embed = new MessageEmbed()
     .setAuthor("Member Joined", member.user.displayAvatarURL())
     .setDescription(`${member} ${member.user.tag}`)
     .setFooter(`ID: ${member.user.id}`)
@@ -166,7 +165,7 @@ client.on("guildMemberAdd", async member => {
 });
 
 client.on("guildMemberRemove", async member => {
-  const embed = new Discord.MessageEmbed()
+  const embed = new MessageEmbed()
     .setAuthor("Member Left", member.user.displayAvatarURL())
     .setDescription(`${member} ${member.user.tag}`)
     .setFooter(`ID: ${member.user.id}`)
@@ -486,7 +485,7 @@ exports.getCourse = async function(code, i, j, k, message) {
   const https = require("https");
   const name = code + i + j + k;
   const currentYear = new Date().getFullYear();
-  const index = require("./index.js");
+  const index = require("./index.js/index.js");
   https
     .get(
       `https://www.victoria.ac.nz/_service/courses/2.1/courses/${name}?year=${currentYear}`,
@@ -852,7 +851,7 @@ function validExamURL(url) {
       "(\\#[-a-z\\d_]*)?$", // fragment locator
     "i"
   );
-  return pattern.test(url) && url.endsWith('.xlsx');
+  return pattern.test(url) && url.endsWith(".xlsx");
 }
 
 // update and process the data before running the client

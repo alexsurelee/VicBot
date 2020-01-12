@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"outDir": "./build",
+		"allowJs": true,
+		"target": "es2019",
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true
+	},
+	"include": [
+		"./src/**/*"
+	]
+}

@@ -10,6 +10,7 @@
       "error",
       2
     ],
+    "quotes": "error",
     "linebreak-style": [
       "error",
       "unix"
