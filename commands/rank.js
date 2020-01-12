@@ -15,5 +15,8 @@ module.exports = {
         index.rank(message, rank);
       });
     }
+    else {
+      message.reply("Please go to the bots channel!")
+    }
   }
 };

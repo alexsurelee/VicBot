@@ -10,6 +10,7 @@ module.exports = {
 		if (args.length == 0) {
 			const channelName = message.channel.name;
 			const exam = index.parseExam(channelName);
+			if (!exam) return message.reply("Looks like this isn't a course channel, try specifying a course or execute this command in a course channel!")
 			const examData = index.formatExams(message, [exam], true); // get the formatted data
 			const embeddedMessage = index.examDataEmbed(examData);
 			message.reply(embeddedMessage);
