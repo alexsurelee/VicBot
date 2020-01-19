@@ -1,4 +1,3 @@
-const index = require('../index.js');
 module.exports = {
   name: 'notify',
   args: false,

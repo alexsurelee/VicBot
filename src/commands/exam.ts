@@ -1,5 +1,5 @@
-const index = require('../index.js');
-const MAX_EMBED = 2000; // maximum characters allowed per embedded message
+import { MAX_EMBED } from "..";
+
 module.exports = {
   name: 'exam',
   args: false,

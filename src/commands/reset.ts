@@ -1,5 +1,4 @@
-const { forbiddenRanks } = require("../config.json");
-const index = require("../index.js");
+const { forbiddenRanks } = require("../../config.json");
 
 module.exports = {
   name: "reset",

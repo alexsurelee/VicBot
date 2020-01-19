@@ -1,4 +1,3 @@
-const index = require("../index.js");
 module.exports = {
   name: "organise",
   admin: true,

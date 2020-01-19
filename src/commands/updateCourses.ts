@@ -1,5 +1,3 @@
-const index = require("../index.js");
-const { courseCodes } = require("../config.json");
 module.exports = {
   name: "updatecourses",
   args: false,
@@ -8,7 +6,7 @@ module.exports = {
   log: true,
   description:
     "Scrapes the victoria.ac.nz website for engineering courses and adds them to the server.",
-  async execute(message) {
+  async execute(message): Promise<undefined> {
     courseCodes.forEach(async function(code) {
       for (let i = 1; i <= 4; i++) {
         for (let j = 0; j <= 9; j++) {
@@ -18,5 +16,6 @@ module.exports = {
         }
       }
     });
+    return undefined;
   }
 };

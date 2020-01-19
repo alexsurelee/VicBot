@@ -1,9 +1,9 @@
-const index = require("../index.js");
-
-module.exports = {
+import {command} from "../interfaces"
+export const rank: command =  {
   name: "rank",
   aliases: ["role"],
   args: true,
+  admin: false,
   description: "Add or remove class ranks.",
   usage: "`!rank <course> [course ...]`",
   log: false,

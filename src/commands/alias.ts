@@ -1,5 +1,4 @@
-const Discord = require("discord.js");
-const index = require("../index.js");
+import { MessageEmbed } from "discord.js";
 
 module.exports = {
   name: "alias",
@@ -34,7 +33,7 @@ module.exports = {
       });
       channels += "```";
       message.channel.send(
-        new Discord.MessageEmbed().setTitle(args[i]).setDescription(channels)
+        new MessageEmbed().setTitle(args[i]).setDescription(channels)
       );
     }
   }
