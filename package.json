@@ -21,6 +21,8 @@
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.9.0",
     "eslint-plugin-prettier": "^3.1.2",
+    "husky": ">=1",
+    "lint-staged": ">=8",
     "prettier": "^1.19.1"
   },
   "scripts": {
@@ -36,5 +38,16 @@
   "bugs": {
     "url": "https://github.com/alexsurelee/VicBot/issues"
   },
-  "homepage": "https://github.com/alexsurelee/VicBot#readme"
+  "homepage": "https://github.com/alexsurelee/VicBot#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
+  }
 }
