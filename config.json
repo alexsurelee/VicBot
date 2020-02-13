@@ -12,7 +12,13 @@
     "Muted",
     "the-swamp"
   ],
-  "socialRanks": ["awhina", "ethics", "girls-social", "no-memes"],
+  "socialRanks": [
+    "Alumni",
+    "awhina",
+    "ethics",
+    "girls-social",
+    "no-memes"
+  ],
   "adminRank": "Admins",
   "username": "VicBot",
   "courseCodes": [

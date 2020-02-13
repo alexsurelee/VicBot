@@ -200,6 +200,8 @@ exports.rank = async function(message, rank) {
   if (/^[a-zA-Z]{4}[1-4]\d\d$/.test(rank))
     rank = rank.slice(0, 4) + "-" + rank.slice(4, 7);
 
+  if (rank === "alumni") rank = "Alumni";
+
   if (message.guild.roles.find(role => role.name === rank) == null)
     rank = rank.toLowerCase();
 
