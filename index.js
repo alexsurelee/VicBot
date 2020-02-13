@@ -197,33 +197,32 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
  */
 exports.rank = async function(message, rank) {
   const aliasRegex = /^\w\w\w\w-\d\d\d\d$/;
-  if (/^[a-zA-Z]{4}[1-4]\d\d$/.test(rank))
+  const noDashCourseRegex = /^[a-zA-Z]{4}[1-4]\d\d$/;
+  const courseRegex = /^[a-zA-Z]{4}-[1-4]\d\d$/;
+
+  if (noDashCourseRegex.test(rank))
     rank = rank.slice(0, 4) + "-" + rank.slice(4, 7);
 
-  if (rank === "alumni") rank = "Alumni";
-
-  if (message.guild.roles.find(role => role.name === rank) == null)
-    rank = rank.toLowerCase();
-
-  if (forbiddenRanks.includes(rank)) {
+  if (!socialRanks.includes(rank) && !courseRegex.test(rank)) {
     return message.channel.send(`Sorry, you cannot join ${rank}.`);
   }
-  else if (message.guild.roles.find(role => role.name === rank) == null) {
+
+  else if (message.guild.roles.find(role => role.name.toUpperCase() === rank.toUpperCase()) == null) {
     return message.channel.send(
       `${rank} role doesn't exist. Consider asking an @admin to create it.`
     );
   }
   else if (
     !message.guild.roles
-      .find(role => role.name === rank)
+      .find(role => role.name.toUpperCase() === rank.toUpperCase())
       .members.has(message.author.id)
   ) {
     await message.member.roles.add(
-      message.guild.roles.find(role => role.name === rank)
+      message.guild.roles.find(role => role.name.toUpperCase() === rank.toUpperCase())
     );
     if (!aliasRegex.test(rank) && !socialRanks.includes(rank)) {
       const rankChannel = message.guild.channels.find(
-        channel => channel.name === rank
+        channel => channel.name.toUpperCase() === rank.toUpperCase()
       );
       return message.reply(`Added you to ${rankChannel} successfully.`);
     }
@@ -233,11 +232,11 @@ exports.rank = async function(message, rank) {
   }
   else {
     await message.member.roles.remove(
-      message.guild.roles.find(role => role.name === rank)
+      message.guild.roles.find(role => role.name.toUpperCase() === rank.toUpperCase())
     );
     if (!aliasRegex.test(rank)) {
       const rankChannel = message.guild.channels.find(
-        channel => channel.name === rank
+        channel => channel.name.toUpperCase() === rank.toUpperCase()
       );
       return message.reply(`Removed you from ${rankChannel} successfully.`);
     }
