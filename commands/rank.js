@@ -11,7 +11,7 @@ module.exports = {
     if (args[0] === "boomer") {
       message.reply("ok boomer");
     }
-    else if (message.channel.name === "bots") {
+    else if (message.channel.name === "bots" && !message.member.hasPermission("ADMINISTRATOR")) {
       args.forEach(function(rank) {
         index.rank(message, rank);
       });

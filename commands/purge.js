@@ -10,6 +10,7 @@ module.exports = {
       return message.channel.send(
         "Please specify a number of messages to purge."
       );
-    return message.channel.bulkDelete(args[0] + 1);
+    const delNum = parseInt(args[0]) > 99 ? 100 : (parseInt(args[0]) + 1);
+    return message.channel.bulkDelete(delNum);
   }
 };
