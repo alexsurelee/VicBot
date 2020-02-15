@@ -55,7 +55,6 @@ for (const file of commandFiles) {
 }
 
 const {
-  forbiddenRanks,
   socialRanks,
   adminRank,
   username,
@@ -203,7 +202,7 @@ exports.rank = async function(message, rank) {
   if (noDashCourseRegex.test(rank))
     rank = rank.slice(0, 4) + "-" + rank.slice(4, 7);
 
-  if (!socialRanks.includes(rank) && !courseRegex.test(rank)) {
+  if (!socialRanks.includes(rank.toLowerCase()) && !courseRegex.test(rank)) {
     return message.channel.send(`Sorry, you cannot join ${rank}.`);
   }
 
@@ -238,7 +237,7 @@ exports.rank = async function(message, rank) {
       const rankChannel = message.guild.channels.find(
         channel => channel.name.toUpperCase() === rank.toUpperCase()
       );
-      return message.reply(`Removed you from ${rankChannel} successfully.`);
+      return message.reply(`Removed you from ${rankChannel ? rankChannel : rank} successfully.`);
     }
     else {
       return message.reply(`Removed you from ${rank} successfully.`);
