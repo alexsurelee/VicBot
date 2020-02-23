@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const { socialRanks } = require("../config.json");
+const { socialRanks } = require(__dirname + "/../../config.json");
 
 module.exports = {
   name: "ranks",

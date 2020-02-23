@@ -1,0 +1,83 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+module.exports = {
+    name: "userinfo",
+    args: false,
+    admin: false,
+    log: false,
+    description: "Displays information about a user",
+    usage: "`!userinfo <user_id>`",
+    execute(message, args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Get Discord Guild Member
+            let member;
+            if (!args.length) {
+                // Display info about the calling user
+                member = message.guild.member(message.author);
+            }
+            else {
+                // Display info about the user specified by the first argument
+                member = message.guild.members.get(args[0]);
+                // Check we were able to retrieve the member (member is undefined)
+                if (!member) {
+                    return message.reply(`I couldn't find a user with the ID \`${args[0]}\``);
+                }
+            }
+            // Format Permissions
+            const permissions = member.permissions.toArray().map(perm => {
+                return perm
+                    .toLowerCase()
+                    .replace(/_/g, " ") // Replace all underscores with spaces
+                    .replace(/\w\S*/g, txt => {
+                    // Capitalize the first letter of each word
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                });
+            });
+            // Calculate Join Position
+            let joinPosition;
+            const members = message.guild.members.array();
+            members.sort((a, b) => a.joinedAt - b.joinedAt);
+            for (let i = 0; i < members.length; i++) {
+                if (members[i].id == message.guild.member(message.author).id)
+                    joinPosition = i;
+            }
+            // Construct Reply
+            const embed = {
+                embed: {
+                    color: 3447003,
+                    title: `${member.user.tag}`,
+                    thumbnail: {
+                        url: member.user.avatarURL()
+                    },
+                    description: `@${member.displayName}`,
+                    fields: [
+                        {
+                            name: "Joined",
+                            value: `${member.joinedAt.toDateString()} at ${member.joinedAt.toTimeString()}`
+                        },
+                        {
+                            name: "Join Position",
+                            value: joinPosition
+                        },
+                        {
+                            name: "Permissions",
+                            value: permissions.join(", ")
+                        }
+                    ],
+                    timestamp: new Date(),
+                    footer: {
+                        text: `ID: ${member.id}`
+                    }
+                }
+            };
+            return message.channel.send(embed);
+        });
+    }
+};

@@ -1,4 +1,4 @@
-const { forbiddenRanks } = require("../config.json");
+const { forbiddenRanks } = require(__dirname + "/../../config.json");
 const index = require("../index.js");
 
 module.exports = {
