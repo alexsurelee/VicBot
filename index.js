@@ -10,7 +10,6 @@ const commandFiles = fs
   .readdirSync("./commands")
   .filter(file => file.endsWith(".js"));
 const { Util } = require("discord.js");
-const wrappers = require("./data/wrappers.json");
 let prefix = process.env.PREFIX;
 let token = process.env.TOKEN;
 let examDataUrl = process.env.EXAM_DATA_URL;
@@ -203,19 +202,22 @@ exports.rank = async function(message, rank) {
   if (noDashCourseRegex.test(rank))
     rank = rank.slice(0, 4) + "-" + rank.slice(4, 7);
 
-  if (wrappers[rank]) {
-    if (
-      !message.guild.roles
-        .find(role => role.name.toUpperCase() === wrappers[rank].toUpperCase())
-        .members.has(message.author.id)
-    ) {
-      message.channel.send(
-        `${rank} is a wrapper course! You'll be added to the channel that this course wraps.`
-      );
+  if(fs.existsSync("./data/wrappers.json")) {
+    const wrappers = require("./data/wrappers.json");
+    if (wrappers[rank]) {
+      if (
+        !message.guild.roles
+          .find(role => role.name.toUpperCase() === wrappers[rank].toUpperCase())
+          .members.has(message.author.id)
+      ) {
+        message.channel.send(
+          `${rank} is a wrapper course! You'll be added to the channel that this course wraps.`
+        );
+      }
+      rank = wrappers[rank];
     }
-
-    rank = wrappers[rank];
   }
+
 
   if (!socialRanks.includes(rank.toLowerCase()) && !courseRegex.test(rank)) {
     return message.channel.send(`Sorry, you cannot join ${rank}.`);
