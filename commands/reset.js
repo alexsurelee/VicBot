@@ -25,6 +25,9 @@ module.exports = {
     ) {
       return message.channel.send("Cannot find rank to reset.");
     }
+    else if (!/^[a-zA-Z]{4}-[1-4]\d\d$/.test(args[0])) {
+      return message.channel.send("This doesn't look like a course channel to me.");
+    }
     else {
       const channel = message.guild.channels.find(
         channel => channel.name === args[0]
