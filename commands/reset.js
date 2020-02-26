@@ -25,11 +25,6 @@ module.exports = {
     ) {
       return message.channel.send("Cannot find rank to reset.");
     }
-    else if (forbiddenRanks.includes(args[0])) {
-      return message.channel.send(
-        "You probably shouldn't reset this, and at the moment I'm not going to let you."
-      );
-    }
     else {
       const channel = message.guild.channels.find(
         channel => channel.name === args[0]
