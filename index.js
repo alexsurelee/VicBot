@@ -65,6 +65,7 @@ let oneCategory;
 let twoCategory;
 let threeCategory;
 let fourCategory;
+let socialCategory;
 let adminRole;
 
 client.on("ready", () => {
@@ -113,6 +114,9 @@ client.on("message", async message => {
   );
   fourCategory = message.guild.channels.find(
     category => category.name === "400-level"
+  );
+  socialCategory = message.guild.channels.find(
+    category => category.name === "Social"
   );
 
   // checking to ensure the command or an alias of the command exists
@@ -380,6 +384,34 @@ client.on("messageReactionAdd", async reaction => {
       await reaction.message.pin();
 });
 
+exports.newSocial = async function(message, args) {
+  await message.guild.roles.create({
+    data: {
+      name: args[0],
+      hoist: false,
+      mentionable: false
+    }
+  });
+  await message.guild.channels.create(args[0], {
+    type: "text",
+    permissionOverwrites: [
+      {
+        id: message.guild.id,
+        deny: ["VIEW_CHANNEL"]
+      },
+      {
+        id: message.guild.roles.find(role => role.name === args[0]).id,
+        allow: ["VIEW_CHANNEL"]
+      },
+      {
+        id: message.guild.roles.find(role => role.name === "bots").id,
+        allow: ["VIEW_CHANNEL"]
+      }
+    ],
+    parent: socialCategory
+  });
+};
+
 /**
  * Creates a role and channel for the course specified
  *  - Restricts it to the role created and bots
@@ -390,15 +422,13 @@ client.on("messageReactionAdd", async reaction => {
  * @param {string[]} args array of strings in the message
  */
 exports.newRank = async function(message, args) {
-  if (message.guild.roles.find(role => role.name === args[0]) == null) {
-    await message.guild.roles.create({
-      data: {
-        name: args[0],
-        hoist: false,
-        mentionable: false
-      }
-    });
-  }
+  await message.guild.roles.create({
+    data: {
+      name: args[0],
+      hoist: false,
+      mentionable: false
+    }
+  });
   let levelParent;
   if (args[0].charAt(5) === "1") levelParent = oneCategory;
   else if (args[0].charAt(5) === "2") levelParent = twoCategory;
