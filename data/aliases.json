@@ -1,0 +1,30 @@
+{
+  "swen-100": [
+    "engr-101",
+    "engr-110",
+    "engr-121",
+    "engr-123",
+    "comp-102",
+    "comp-103",
+    "cybr-171",
+    "cgra-151"
+  ],
+  "swen-200": [
+    "comp-261",
+    "engr-201",
+    "cybr-271",
+    "nwen-241",
+    "nwen-243",
+    "swen-221",
+    "swen-225"
+  ],
+  "swen-300": [
+    "swen-301",
+    "engr-301",
+    "engr-302",
+    "swen-303",
+    "swen-325",
+    "swen-324",
+    "swen-326"
+  ]
+}
