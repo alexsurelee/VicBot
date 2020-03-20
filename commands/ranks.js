@@ -1,4 +1,5 @@
 const Discord = require("discord.js");
+const fs = require("fs");
 const { socialRanks } = require("../config.json");
 
 module.exports = {
@@ -17,7 +18,6 @@ module.exports = {
     const aliasStringArray = [];
     const socialStringArray = [];
     const rankRegex = /^\w\w\w\w-\d\d\d$/;
-    const aliasRegex = /^\d{3}-level$/;
     roleArray.forEach(role => {
       if (rankRegex.test(role.name)) {
         const c = role.name.charAt(5);
@@ -32,13 +32,14 @@ module.exports = {
         }
         else if (c === "4") fourthYearArray.push(role.name);
       }
-      else if (aliasRegex.test(role.name)) {
-        aliasStringArray.push(role.name);
-      }
       else if (socialRanks.indexOf(role.name) !== -1) {
         socialStringArray.push(role.name);
       }
     });
+    if (fs.existsSync(__dirname + "/../data/aliases.json")) {
+      const aliases = require(__dirname + "/../data/aliases.json");
+      Object.keys(aliases).forEach(alias => aliasStringArray.push(alias));
+    }
     firstYearArray.sort();
     secondYearArray.sort();
     thirdYearArray.sort();

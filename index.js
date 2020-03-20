@@ -16,6 +16,7 @@ let examDataUrl = process.env.EXAM_DATA_URL;
 let examDataFile = process.env.EXAM_DATA_FILE;
 let examDataUpdate = process.env.EXAM_DATA_UPDATE;
 module.exports.examData = {};
+module.exports.aliasRegex = /^\w\w\w\w-\d00$/;
 
 try {
   if (fs.existsSync("./botConfig.json")) {
@@ -195,7 +196,6 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
  * @param {string} rank the rank to be added or removed
  */
 exports.rank = async function(message, rank) {
-  const aliasRegex = /^\w\w\w\w-\d\d\d\d$/;
   const noDashCourseRegex = /^[a-zA-Z]{4}[1-4]\d\d$/;
   const courseRegex = /^[a-zA-Z]{4}-[1-4]\d\d$/;
 
@@ -236,7 +236,7 @@ exports.rank = async function(message, rank) {
     await message.member.roles.add(
       message.guild.roles.find(role => role.name.toUpperCase() === rank.toUpperCase())
     );
-    if (!aliasRegex.test(rank) && !socialRanks.includes(rank)) {
+    if (!module.exports.aliasRegex.test(rank) && !socialRanks.includes(rank)) {
       const rankChannel = message.guild.channels.find(
         channel => channel.name.toUpperCase() === rank.toUpperCase()
       );
@@ -250,7 +250,7 @@ exports.rank = async function(message, rank) {
     await message.member.roles.remove(
       message.guild.roles.find(role => role.name.toUpperCase() === rank.toUpperCase())
     );
-    if (!aliasRegex.test(rank)) {
+    if (!module.exports.aliasRegex.test(rank)) {
       const rankChannel = message.guild.channels.find(
         channel => channel.name.toUpperCase() === rank.toUpperCase()
       );

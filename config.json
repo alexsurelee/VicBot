@@ -1,11 +1,5 @@
 {
-  "socialRanks": [
-    "alumni",
-    "awhina",
-    "ethics",
-    "girls-social",
-    "no-memes"
-  ],
+  "socialRanks": ["alumni", "awhina", "ethics", "girls-social", "no-memes"],
   "adminRank": "Admins",
   "username": "VicBot",
   "courseCodes": [
