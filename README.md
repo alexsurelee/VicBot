@@ -27,7 +27,7 @@ Requires two variables to be set - these can be environment variables or include
 ### Dev
 This project prefers [yarn](https://yarnpkg.com/) over npm, please use this instead to avoid package manager issues.
 
-Simply running `yarn start` will get the bot running. It uses a forever script, meaning if something causes the bot to crash, it will automatically start-up again.
+Like most JavaScript projects, install dependencies first with `yarn install`, then `yarn start` will get the bot running. It uses a forever script, meaning if something causes the bot to crash, it will automatically start-up again.
 
 If you are trying to develop this locally, you'll need to create your own bot from the link above, then simply supply the credentials in the `botConfig.json` file as specified above.
 
