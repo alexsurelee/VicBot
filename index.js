@@ -59,7 +59,8 @@ const {
   socialRanks,
   adminRank,
   username,
-  logChannel
+  logChannel,
+  deletedChannel
 } = require("./config.json");
 let oneCategory;
 let twoCategory;
@@ -901,6 +902,16 @@ function validExamURL(url) {
   );
   return pattern.test(url) && url.endsWith('.xlsx');
 }
+
+client.on("messageDelete", async message => {
+  const channel = message.guild.channels.find(channel => channel.name == deletedChannel);
+  const embed = new Discord.MessageEmbed()
+    .setAuthor("Message Deleted", message.author.displayAvatarURL())
+    .setDescription(`${message.cleanContent}`)
+    .setFooter(`ID: ${message.author.id}`)
+    .setTimestamp();
+  channel.send(embed);
+});
 
 // update and process the data before running the client
 module.exports.fetchData();

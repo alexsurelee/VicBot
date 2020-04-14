@@ -16,6 +16,7 @@
     "rese"
   ],
   "logChannel": "moderation-log",
+  "deletedChannel": "deleted-messages",
   "EXAM_DATA_URL": "https://www.wgtn.ac.nz/__data/assets/excel_doc/0005/1766759/end-of-year-exam-timetable.xlsx",
   "EXAM_DATA_FILE": "data.xlsx",
   "EXAM_DATA_UPDATE": 2419200000
