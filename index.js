@@ -907,8 +907,9 @@ client.on("messageDelete", async message => {
   const channel = message.guild.channels.find(channel => channel.name == deletedChannel);
   const embed = new Discord.MessageEmbed()
     .setAuthor("Message Deleted", message.author.displayAvatarURL())
+    .setTitle(`Message from ${message.author.tag} (<@${message.author.id}>) deleted in <#${message.channel.id}>`)
     .setDescription(`${message.cleanContent}`)
-    .setFooter(`ID: ${message.author.id}`)
+    .setFooter(`User: ${message.author.id} | Message: ${message.id}`)
     .setTimestamp();
   channel.send(embed);
 });
