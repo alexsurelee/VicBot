@@ -16,18 +16,18 @@ module.exports = {
       return message.channel.send("Please only list one rank to delete.");
     }
     else if (
-      message.guild.roles.find(role => role.name === args[0]) == null &&
-			message.guild.channels.find(channel => channel.name === args[0]) == null
+      message.guild.roles.cache.find(role => role.name === args[0]) == null &&
+			message.guild.channels.cache.find(channel => channel.name === args[0]) == null
     ) {
       return message.channel.send("Cannot find rank to delete.");
     }
     else {
-      if (message.guild.roles.find(role => role.name === args[0]) != null)
-        await message.guild.roles.find(role => role.name === args[0]).delete();
+      if (message.guild.roles.cache.find(role => role.name === args[0]) != null)
+        await message.guild.roles.cache.find(role => role.name === args[0]).delete();
       if (
-        message.guild.channels.find(channel => channel.name === args[0]) != null
+        message.guild.channels.cache.find(channel => channel.name === args[0]) != null
       )
-        await message.guild.channels
+        await message.guild.channels.cache
           .find(channel => channel.name === args[0])
           .delete();
       return message.channel.send(`Deleted ${args[0]}.`);

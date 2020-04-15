@@ -20,8 +20,8 @@ module.exports = {
       );
     }
     else if (
-      message.guild.roles.find(role => role.name === args[0]) == null &&
-      message.guild.channels.find(channel => channel.name === args[0]) == null
+      message.guild.roles.cache.find(role => role.name === args[0]) == null &&
+      message.guild.channels.cache.find(channel => channel.name === args[0]) == null
     ) {
       return message.channel.send("Cannot find rank to reset.");
     }
@@ -29,7 +29,7 @@ module.exports = {
       return message.channel.send("This doesn't look like a course channel to me.");
     }
     else {
-      const channel = message.guild.channels.find(
+      const channel = message.guild.channels.cache.find(
         channel => channel.name === args[0]
       );
       if (channel != null) await channel.delete();

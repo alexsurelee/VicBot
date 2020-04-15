@@ -9,7 +9,7 @@ module.exports = {
     // If the message is in a server
     if (message.guild) {
       let admins = "";
-      message.guild.members.array().forEach(member => {
+      message.guild.members.cache.array().forEach(member => {
         if (member.hasPermission("ADMINISTRATOR")) {
           admins += member.displayName + ", ";
         }
@@ -33,18 +33,18 @@ module.exports = {
             },
             {
               name: "Channel Count",
-              value: message.guild.channels.size
+              value: message.guild.channels.cache.size
             },
             {
               name: "Member Count",
               // Filter the members list to only include non-bots
-              value: message.guild.members.filter(member => !member.user.bot)
+              value: message.guild.members.cache.filter(member => !member.user.bot)
                 .size
             },
             {
               name: "Bot Count",
               // Filter the list to only include bots
-              value: message.guild.members.filter(member => member.user.bot)
+              value: message.guild.members.cache.filter(member => member.user.bot)
                 .size
             }
           ],

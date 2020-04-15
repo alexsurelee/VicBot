@@ -10,7 +10,7 @@ module.exports = {
   usage: "`!ranks`",
   log: false,
   execute: async function(message) {
-    const roleArray = message.guild.roles.array();
+    const roleArray = message.guild.roles.cache.array();
     const firstYearArray = [];
     const secondYearArray = [];
     const thirdYearArray = [];
