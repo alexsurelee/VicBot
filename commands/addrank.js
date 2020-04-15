@@ -32,14 +32,14 @@ module.exports = {
       );
     }
     else if (
-      message.guild.roles.find(role => role.name === args[0]) != null
+      message.guild.roles.cache.find(role => role.name === args[0]) != null
     ) {
       return message.channel.send(
         "Couldn't create class - role already exists."
       );
     }
     else if (
-      message.guild.channels.find(role => role.name === args[0]) != null
+      message.guild.channels.cache.find(role => role.name === args[0]) != null
     ) {
       return message.channel.send(
         "Couldn't create class - channel already exists."
@@ -54,7 +54,7 @@ module.exports = {
             "Classes should only be alphanumeric and contain the `-` character."
           );
       await index.newRank(message, args);
-      const rankChannel = message.guild.channels.find(
+      const rankChannel = message.guild.channels.cache.find(
         channel => channel.name === args[0]
       );
       return message.channel.send(`Created ${rankChannel} successfully.`);

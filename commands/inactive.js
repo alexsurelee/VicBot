@@ -11,7 +11,7 @@ module.exports = {
     const currentDateValue = message.createdTimestamp;
     const maximumLastMessageValue = args[0] * 86400000;
     let inactiveCount = 0;
-    await guild.members.array().forEach(member => {
+    await guild.members.cache.array().forEach(member => {
       if (
         !member.lastMessage ||
         currentDateValue - maximumLastMessageValue <

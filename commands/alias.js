@@ -7,7 +7,7 @@ module.exports = {
   args: true,
   admin: false,
   log: false,
-  usage: "`!alias <alias>`",
+  usage: "`!alias <alias> [alias]`",
   description: "Lists the papers allocated to an alias.",
   async execute(message, args) {
     for (let i = 0; i < args.length; i++) {
@@ -19,10 +19,13 @@ module.exports = {
       let count = 1;
       if (fs.existsSync(__dirname + "/../data/aliases.json")) {
         const aliases = require(__dirname + "/../data/aliases.json");
-        channels += aliases[args[i]];
-        if (count % 4 === 0) channels += "\n";
-        else channels += "\t";
-        count++;
+        const courses = aliases[args[i]];
+        for(let j = 0; j < courses.length; j++) {
+          channels += courses[j];
+          if (count % 4 === 0) channels += "\n";
+          else channels += "\t";
+          count++;
+        }
       }
       channels += "```";
       message.channel.send(

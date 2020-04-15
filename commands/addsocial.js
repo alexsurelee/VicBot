@@ -24,14 +24,14 @@ module.exports = {
       );
     }
     else if (
-      message.guild.roles.find(role => role.name === args[0]) != null
+      message.guild.roles.cache.find(role => role.name === args[0]) != null
     ) {
       return message.channel.send(
         "Couldn't create rank - role already exists."
       );
     }
     else if (
-      message.guild.channels.find(role => role.name === args[0]) != null
+      message.guild.channels.cache.find(role => role.name === args[0]) != null
     ) {
       return message.channel.send(
         "Couldn't create rank - channel already exists."
@@ -39,7 +39,7 @@ module.exports = {
     }
     else {
       await index.newSocial(message, args);
-      const rankChannel = message.guild.channels.find(
+      const rankChannel = message.guild.channels.cache.find(
         channel => channel.name === args[0]
       );
       return message.channel.send(`Created ${rankChannel} successfully.`);

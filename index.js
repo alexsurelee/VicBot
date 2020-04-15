@@ -84,7 +84,7 @@ process.on("unhandledRejection", error =>
 process.on("unhandledError", error =>
   console.error(`Unhandled Error:\n${error}`)
 );
-client.on("disconnect", error => console.error(`Disconnected! \n${error}`));
+client.on("shardDisconnected", error => console.error(`Disconnected! \n${error}`));
 client.on("error", console.error);
 
 /**
@@ -103,20 +103,20 @@ client.on("message", async message => {
   const args = message.content.slice(prefix.length).split(/ +/);
   const commandName = args.shift().toLowerCase();
 
-  adminRole = message.guild.roles.find(role => role.name === adminRank);
-  oneCategory = message.guild.channels.find(
+  adminRole = message.guild.roles.cache.find(role => role.name === adminRank);
+  oneCategory = message.guild.channels.cache.find(
     category => category.name === "100-level"
   );
-  twoCategory = message.guild.channels.find(
+  twoCategory = message.guild.channels.cache.find(
     category => category.name === "200-level"
   );
-  threeCategory = message.guild.channels.find(
+  threeCategory = message.guild.channels.cache.find(
     category => category.name === "300-level"
   );
-  fourCategory = message.guild.channels.find(
+  fourCategory = message.guild.channels.cache.find(
     category => category.name === "400-level"
   );
-  socialCategory = message.guild.channels.find(
+  socialCategory = message.guild.channels.cache.find(
     category => category.name === "Social"
   );
 
@@ -130,7 +130,7 @@ client.on("message", async message => {
 
   if (
     command.admin &&
-    (!message.member.roles.has(adminRole.id) &&
+    (!message.member.roles.cache.has(adminRole.id) &&
       !message.member.hasPermission("ADMINISTRATOR"))
   )
     return message.channel.send("This requires admin permissions.");
@@ -165,7 +165,7 @@ client.on("guildMemberAdd", async member => {
     .setFooter(`ID: ${member.user.id}`)
     .setColor("GREEN")
     .setTimestamp();
-  member.guild.channels
+  member.guild.channels.cache
     .find(channel => channel.name === logChannel)
     .send(embed);
 });
@@ -177,7 +177,7 @@ client.on("guildMemberRemove", async member => {
     .setFooter(`ID: ${member.user.id}`)
     .setColor("RED")
     .setTimestamp();
-  member.guild.channels
+  member.guild.channels.cache
     .find(channel => channel.name === logChannel)
     .send(embed);
 });
@@ -186,7 +186,7 @@ client.on("guildMemberRemove", async member => {
  *
  */
 client.on("voiceStateUpdate", async (oldState, newState) => {
-  const voiceRole = newState.guild.roles.find(role => role.name === "inVoice");
+  const voiceRole = newState.guild.roles.cache.find(role => role.name === "inVoice");
   if (newState.channel) {
     newState.member.roles.add(voiceRole);
   }
@@ -211,7 +211,7 @@ exports.rank = async function(message, rank) {
     const wrappers = require("./data/wrappers.json");
     if (wrappers[rank]) {
       if (
-        !message.guild.roles
+        !message.guild.roles.cache
           .find(role => role.name.toUpperCase() === wrappers[rank].toUpperCase())
           .members.has(message.author.id)
       ) {
@@ -228,21 +228,21 @@ exports.rank = async function(message, rank) {
     return message.channel.send(`Sorry, you cannot join ${rank}.`);
   }
 
-  else if (message.guild.roles.find(role => role.name.toUpperCase() === rank.toUpperCase()) == null) {
+  else if (message.guild.roles.cache.find(role => role.name.toUpperCase() === rank.toUpperCase()) == null) {
     return message.channel.send(
       `${rank} role doesn't exist. Consider asking an @admin to create it.`
     );
   }
   else if (
-    !message.guild.roles
+    !message.guild.roles.cache
       .find(role => role.name.toUpperCase() === rank.toUpperCase())
       .members.has(message.author.id)
   ) {
     await message.member.roles.add(
-      message.guild.roles.find(role => role.name.toUpperCase() === rank.toUpperCase())
+      message.guild.roles.cache.find(role => role.name.toUpperCase() === rank.toUpperCase())
     );
     if (!module.exports.aliasRegex.test(rank) && !socialRanks.includes(rank)) {
-      const rankChannel = message.guild.channels.find(
+      const rankChannel = message.guild.channels.cache.find(
         channel => channel.name.toUpperCase() === rank.toUpperCase()
       );
       return message.reply(`Added you to ${rankChannel} successfully.`);
@@ -253,10 +253,10 @@ exports.rank = async function(message, rank) {
   }
   else {
     await message.member.roles.remove(
-      message.guild.roles.find(role => role.name.toUpperCase() === rank.toUpperCase())
+      message.guild.roles.cache.find(role => role.name.toUpperCase() === rank.toUpperCase())
     );
     if (!module.exports.aliasRegex.test(rank)) {
-      const rankChannel = message.guild.channels.find(
+      const rankChannel = message.guild.channels.cache.find(
         channel => channel.name.toUpperCase() === rank.toUpperCase()
       );
       return message.reply(`Removed you from ${rankChannel ? rankChannel : rank} successfully.`);
@@ -273,7 +273,7 @@ exports.rank = async function(message, rank) {
  * @param {Discord.Message} message the message sent
  */
 exports.log = async function(commandName, message) {
-  const commandChannel = message.guild.channels.find(
+  const commandChannel = message.guild.channels.cache.find(
     channel => channel.name === message.channel.name
   );
   const embed = new Discord.MessageEmbed()
@@ -282,7 +282,7 @@ exports.log = async function(commandName, message) {
       `Used \`${commandName}\` command in ${commandChannel}\n${message.cleanContent}`
     )
     .setTimestamp();
-  message.guild.channels
+  message.guild.channels.cache
     .find(channel => channel.name === logChannel)
     .send(embed);
 };
@@ -298,8 +298,8 @@ exports.organise = async function(message) {
     word.charAt(5) === "3" ||
     word.charAt(5) === "4";
 
-  const channelArray = message.guild.channels.array();
-  const roles = message.guild.roles.array();
+  const channelArray = message.guild.channels.cache.array();
+  const roles = message.guild.roles.cache.array();
   roles.filter(role => isClass(role.name));
   let oneLength = 0;
   let twoLength = 0;
@@ -341,37 +341,37 @@ exports.organise = async function(message) {
   // if the channel is not in the same location as its sorted array location, move it.
   for (let i = 0; i < oneLength; i++)
     if (
-      message.guild.channels.find(channel => channel.name === oneNameArray[i])
+      message.guild.channels.cache.find(channel => channel.name === oneNameArray[i])
         .position != i
     )
-      await message.guild.channels
+      await message.guild.channels.cache
         .find(channel => channel.name === oneNameArray[i])
         .setPosition(i);
 
   for (let i = 0; i < twoLength; i++)
     if (
-      message.guild.channels.find(channel => channel.name === twoNameArray[i])
+      message.guild.channels.cache.find(channel => channel.name === twoNameArray[i])
         .position != i
     )
-      await message.guild.channels
+      await message.guild.channels.cache
         .find(channel => channel.name === twoNameArray[i])
         .setPosition(i);
 
   for (let i = 0; i < threeLength; i++)
     if (
-      message.guild.channels.find(channel => channel.name === threeNameArray[i])
+      message.guild.channels.cache.find(channel => channel.name === threeNameArray[i])
         .position != i
     )
-      await message.guild.channels
+      await message.guild.channels.cache
         .find(channel => channel.name === threeNameArray[i])
         .setPosition(i);
 
   for (let i = 0; i < fourLength; i++)
     if (
-      message.guild.channels.find(channel => channel.name === fourNameArray[i])
+      message.guild.channels.cache.find(channel => channel.name === fourNameArray[i])
         .position != i
     )
-      await message.guild.channels
+      await message.guild.channels.cache
         .find(channel => channel.name === fourNameArray[i])
         .setPosition(i);
 };
@@ -401,11 +401,11 @@ exports.newSocial = async function(message, args) {
         deny: ["VIEW_CHANNEL"]
       },
       {
-        id: message.guild.roles.find(role => role.name === args[0]).id,
+        id: message.guild.roles.cache.find(role => role.name === args[0]).id,
         allow: ["VIEW_CHANNEL"]
       },
       {
-        id: message.guild.roles.find(role => role.name === "bots").id,
+        id: message.guild.roles.cache.find(role => role.name === "bots").id,
         allow: ["VIEW_CHANNEL"]
       }
     ],
@@ -444,11 +444,11 @@ exports.newRank = async function(message, args) {
         deny: ["VIEW_CHANNEL"]
       },
       {
-        id: message.guild.roles.find(role => role.name === args[0]).id,
+        id: message.guild.roles.cache.find(role => role.name === args[0]).id,
         allow: ["VIEW_CHANNEL"]
       },
       {
-        id: message.guild.roles.find(role => role.name === "bots").id,
+        id: message.guild.roles.cache.find(role => role.name === "bots").id,
         allow: ["VIEW_CHANNEL"]
       }
     ],
@@ -476,7 +476,7 @@ exports.newRank = async function(message, args) {
         resp.on("end", () => {
           JSON.parse(data, function(key, value) {
             if (key === "title")
-              message.guild.channels
+              message.guild.channels.cache
                 .find(channel => channel.name === args[0])
                 .setTopic(value);
           });
@@ -494,10 +494,10 @@ exports.newRank = async function(message, args) {
  * @param {string[]} args array of strings in the message
  */
 exports.deleteRank = async function(message, args) {
-  if (message.guild.roles.find(role => role.name === args[0]) != null)
-    await message.guild.roles.find(role => role.name === args[0]).delete();
-  if (message.guild.channels.find(channel => channel.name === args[0]) != null)
-    await message.guild.channels
+  if (message.guild.roles.cache.find(role => role.name === args[0]) != null)
+    await message.guild.roles.cache.find(role => role.name === args[0]).delete();
+  if (message.guild.channels.cache.find(channel => channel.name === args[0]) != null)
+    await message.guild.channels.cache
       .find(channel => channel.name === args[0])
       .delete();
   return;
@@ -554,7 +554,7 @@ exports.getCourse = async function(code, i, j, k, message) {
                 value.slice(0, 4) + "-" + value.slice(4, 7);
               const arrayRank = [hyphenatedName];
               if (
-                !message.guild.channels.find(
+                !message.guild.channels.cache.find(
                   channel => channel.name === hyphenatedName
                 )
               )
@@ -782,7 +782,7 @@ exports.notifyExams = function(message, exams, displayErrors) {
       const datum = module.exports.examData[exam];
       if (datum != undefined) {
         // valid exam course code
-        const channel = client.channels.find(
+        const channel = client.channels.cache.find(
           channel => channel.name == examChannel
         );
         if (channel != undefined) {
@@ -797,14 +797,7 @@ exports.notifyExams = function(message, exams, displayErrors) {
             const embeddedMessage = module.exports.examDataEmbed(
               examDataOutput
             );
-            // delete all old exam data in the course channel
-            // channel.messages.fetch(messages => messages.filter(m => m.author.id == client.user.id)).then(messages => {
-            //   let arr = messages.array();
-            //   for (let i = 0; i < arr.length; i++) {
-            //     arr[i].delete();
-            //   }
-            // });
-            channel.send(embeddedMessage).then(msg => msg.pin()); // pin the message
+            channel.send(embeddedMessage).then(msg => msg.pin());
             notified++;
           }
         }
@@ -904,12 +897,14 @@ function validExamURL(url) {
 }
 
 client.on("messageDelete", async message => {
-  const channel = message.guild.channels.find(channel => channel.name == deletedChannel);
+  const channel = message.guild.channels.cache.find(channel => channel.name == deletedChannel);
   const embed = new Discord.MessageEmbed()
-    .setAuthor("Message Deleted", message.author.displayAvatarURL())
-    .setTitle(`Message from ${message.author.tag} (<@${message.author.id}>) deleted in <#${message.channel.id}>`)
-    .setDescription(`${message.cleanContent}`)
+    .setAuthor(`${message.author.tag}`, message.author.displayAvatarURL())
+    .setDescription(
+      `**Message from ${message.author} deleted in ${message.channel}** \n ${message.cleanContent}`
+    )
     .setFooter(`User: ${message.author.id} | Message: ${message.id}`)
+    .setColor("RED")
     .setTimestamp();
   channel.send(embed);
 });

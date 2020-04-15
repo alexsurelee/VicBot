@@ -36,7 +36,7 @@ module.exports = {
 
     // Calculate Join Position
     let joinPosition;
-    const members = message.guild.members.array();
+    const members = message.guild.members.cache.array();
     members.sort((a, b) => a.joinedAt - b.joinedAt);
     for (let i = 0; i < members.length; i++) {
       if (members[i].id == message.guild.member(message.author).id)
@@ -51,7 +51,7 @@ module.exports = {
         thumbnail: {
           url: member.user.avatarURL()
         },
-        description: `@${member.displayName}`,
+        description: `${member.displayName}`,
         fields: [
           {
             name: "Joined",
