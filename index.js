@@ -225,7 +225,7 @@ exports.rank = async function(message, rank) {
 
 
   if (!socialRanks.includes(rank.toLowerCase()) && !courseRegex.test(rank)) {
-    return message.channel.send(`Sorry, you cannot join ${rank}.`);
+    return message.channel.send(`Sorry, you cannot join ${rank} (or it doesn't exist!).`);
   }
 
   else if (message.guild.roles.cache.find(role => role.name.toUpperCase() === rank.toUpperCase()) == null) {
@@ -914,3 +914,10 @@ module.exports.fetchData();
 module.exports.processData();
 
 client.login(token);
+
+exports.warn = function(user, message) {
+  const messageString = message.toString();
+  const usernameLength = user.id.length;
+  const reason = messageString.slice(usernameLength+11, messageString.length);
+  user.send(`You've received a warning in ${message.guild.name}. \nProvided reason: ${reason}`);
+};
