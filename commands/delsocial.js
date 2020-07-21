@@ -1,3 +1,4 @@
+const index = require('../index');
 module.exports = {
   name: "delsocial",
   args: true,
@@ -30,6 +31,12 @@ module.exports = {
         await message.guild.channels.cache
           .find(channel => channel.name === args[0])
           .delete();
+      await index.db
+        .collection("servers")
+        .doc(message.guild.id)
+        .update({
+          socialRanks: index.admin.firestore.FieldValue.arrayRemove(args[0]),
+        });
       return message.channel.send(`Deleted ${args[0]}.`);
     }
   }

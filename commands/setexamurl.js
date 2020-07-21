@@ -1,5 +1,4 @@
 const index = require('../index.js');
-const { courseCodes } = require('../config.json');
 module.exports = {
   name: 'setexamurl',
   args: true,

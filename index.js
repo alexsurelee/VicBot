@@ -10,20 +10,29 @@ const commandFiles = fs
   .readdirSync("./commands")
   .filter(file => file.endsWith(".js"));
 const { Util } = require("discord.js");
-let prefix = process.env.PREFIX;
 let token = process.env.TOKEN;
 let examDataUrl = process.env.EXAM_DATA_URL;
 let examDataFile = process.env.EXAM_DATA_FILE;
 let examDataUpdate = process.env.EXAM_DATA_UPDATE;
+module.exports.admin = require("firebase-admin");
+const firebaseCredentials = {
+  project_id: "vicbot",
+  private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+  private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+  client_email: process.env.FIREBASE_CLIENT_EMAIL,
+  client_id: process.env.FIREBASE_CLIENT_ID,
+};
+this.admin.initializeApp({
+  credential: this.admin.credential.cert(firebaseCredentials)
+});
+
+module.exports.db = this.admin.firestore();
 module.exports.examData = {};
 module.exports.aliasRegex = /^\w\w\w\w-\d00$/;
 
 try {
   if (fs.existsSync("./botConfig.json")) {
-    const { PREFIX, TOKEN } = require("./botConfig.json");
-    if (PREFIX) {
-      prefix = PREFIX;
-    }
+    const { TOKEN } = require("./botConfig.json");
     if (TOKEN) {
       token = TOKEN;
     }
@@ -54,14 +63,6 @@ for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
   client.commands.set(command.name, command);
 }
-
-const {
-  socialRanks,
-  adminRank,
-  username,
-  logChannel,
-  deletedChannel
-} = require("./config.json");
 let oneCategory;
 let twoCategory;
 let threeCategory;
@@ -69,9 +70,9 @@ let fourCategory;
 let socialCategory;
 let adminRole;
 
-client.on("ready", () => {
-  client.user.setUsername(username);
-  client.user.setActivity(`${prefix}help | tinyurl.com/VicBot`, {
+client.on("ready", async () => {
+  client.user.setUsername('VicBot');
+  client.user.setActivity(`tinyurl.com/VicBot`, {
     type: "PLAYING"
   });
   console.log(`Instance started at ${new Date()}\n`);
@@ -91,6 +92,9 @@ client.on("error", console.error);
  *
  */
 client.on("message", async message => {
+  const snapshot = await this.db.collection("servers").doc(message.guild.id).get();
+  const prefix = snapshot.data().prefix;
+  const adminRank = snapshot.data().adminRank;
   // redirecting old commands
   if (
     !message.content.startsWith(prefix) &&
@@ -159,6 +163,12 @@ client.on("message", async message => {
  *
  */
 client.on("guildMemberAdd", async member => {
+  const snapshot = await index.db
+    .collection("servers")
+    .doc(member.guild.id)
+    .get();
+  const logChannel = snapshot.data().logChannel;
+
   const embed = new Discord.MessageEmbed()
     .setAuthor("Member Joined", member.user.displayAvatarURL())
     .setDescription(`${member} ${member.user.tag}`)
@@ -171,6 +181,12 @@ client.on("guildMemberAdd", async member => {
 });
 
 client.on("guildMemberRemove", async member => {
+  const snapshot = await index.db
+    .collection("servers")
+    .doc(member.guild.id)
+    .get();
+  const logChannel = snapshot.data().logChannel;
+
   const embed = new Discord.MessageEmbed()
     .setAuthor("Member Left", member.user.displayAvatarURL())
     .setDescription(`${member} ${member.user.tag}`)
@@ -223,7 +239,11 @@ exports.rank = async function(message, rank) {
     }
   }
 
-
+  const snapshot = await this.db
+    .collection("servers")
+    .doc(message.guild.id)
+    .get();
+  const socialRanks = snapshot.data().socialRanks;
   if (!socialRanks.includes(rank.toLowerCase()) && !courseRegex.test(rank)) {
     return message.channel.send(`Sorry, you cannot join ${rank} (or it doesn't exist!).`);
   }
@@ -276,6 +296,12 @@ exports.log = async function(commandName, message) {
   const commandChannel = message.guild.channels.cache.find(
     channel => channel.name === message.channel.name
   );
+  const snapshot = await index.db
+    .collection("servers")
+    .doc(message.guild.id)
+    .get();
+  const logChannel = snapshot.data().logChannel;
+
   const embed = new Discord.MessageEmbed()
     .setAuthor(message.author.tag, message.author.avatarURL())
     .setDescription(
@@ -410,6 +436,9 @@ exports.newSocial = async function(message, args) {
       }
     ],
     parent: socialCategory
+  });
+  await module.exports.db.collection('servers').doc(message.guild.id).update({
+    socialRanks: module.exports.admin.firestore.FieldValue.arrayUnion(args[0])
   });
 };
 
@@ -897,6 +926,11 @@ function validExamURL(url) {
 }
 
 client.on("messageDelete", async message => {
+  const snapshot = await index.db
+    .collection("servers")
+    .doc(message.guild.id)
+    .get();
+  const deletedChannel = snapshot.data().deletedChannel;
   const channel = message.guild.channels.cache.find(channel => channel.name == deletedChannel);
   const embed = new Discord.MessageEmbed()
     .setAuthor(`${message.author.tag}`, message.author.displayAvatarURL())

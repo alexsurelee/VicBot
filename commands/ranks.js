@@ -1,7 +1,6 @@
 const Discord = require("discord.js");
 const fs = require("fs");
-const { socialRanks } = require("../config.json");
-
+const index = require("../index");
 module.exports = {
   name: "ranks",
   args: false,
@@ -18,6 +17,11 @@ module.exports = {
     const aliasStringArray = [];
     const socialStringArray = [];
     const rankRegex = /^\w\w\w\w-\d\d\d$/;
+    const snapshot = await index.db
+      .collection("servers")
+      .doc(message.guild.id)
+      .get();
+    const socialRanks = snapshot.data().socialRanks;
     roleArray.forEach(role => {
       if (rankRegex.test(role.name)) {
         const c = role.name.charAt(5);
