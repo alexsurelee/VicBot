@@ -10,7 +10,9 @@
   "dependencies": {
     "discord.js": "^12.1.1",
     "download-file": "^0.1.5",
+    "firebase-admin": "^9.0.0",
     "forever": "^1.0.0",
+    "google-auth-library": "^6.0.5",
     "xlsx": "^0.15.4"
   },
   "devDependencies": {
