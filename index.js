@@ -9,7 +9,6 @@ client.commands = new Discord.Collection();
 const commandFiles = fs
   .readdirSync("./commands")
   .filter(file => file.endsWith(".js"));
-const { Util } = require("discord.js");
 let token = process.env.TOKEN;
 let examDataUrl = process.env.EXAM_DATA_URL;
 let examDataFile = process.env.EXAM_DATA_FILE;
@@ -70,7 +69,7 @@ let fourCategory;
 let socialCategory;
 let adminRole;
 
-client.on("ready", async () => {
+client.on("ready", () => {
   client.user.setUsername('VicBot');
   client.user.setActivity(`tinyurl.com/VicBot`, {
     type: "PLAYING"
@@ -201,7 +200,7 @@ client.on("guildMemberRemove", async member => {
 /**
  *
  */
-client.on("voiceStateUpdate", async (oldState, newState) => {
+client.on("voiceStateUpdate", async (_, newState) => {
   const voiceRole = newState.guild.roles.cache.find(role => role.name === "inVoice");
   if (newState.channel) {
     newState.member.roles.add(voiceRole);

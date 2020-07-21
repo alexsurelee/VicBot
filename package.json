@@ -15,9 +15,6 @@
     "google-auth-library": "^6.0.5",
     "xlsx": "^0.15.4"
   },
-  "devDependencies": {
-    "eslint": "^6.2.2"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "forever index.js"

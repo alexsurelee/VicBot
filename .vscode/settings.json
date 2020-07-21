@@ -1,7 +1,0 @@
-{
-    "git.ignoreLimitWarning": true,
-    "editor.insertSpaces": false,
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
-    }
-}
