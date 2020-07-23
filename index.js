@@ -162,7 +162,7 @@ client.on("message", async message => {
  *
  */
 client.on("guildMemberAdd", async member => {
-  const snapshot = await index.db
+  const snapshot = await this.db
     .collection("servers")
     .doc(member.guild.id)
     .get();
@@ -180,7 +180,7 @@ client.on("guildMemberAdd", async member => {
 });
 
 client.on("guildMemberRemove", async member => {
-  const snapshot = await index.db
+  const snapshot = await this.db
     .collection("servers")
     .doc(member.guild.id)
     .get();
@@ -238,7 +238,7 @@ exports.rank = async function(message, rank) {
     }
   }
 
-  const snapshot = await this.db
+  const snapshot = await module.exports.db
     .collection("servers")
     .doc(message.guild.id)
     .get();
@@ -295,7 +295,7 @@ exports.log = async function(commandName, message) {
   const commandChannel = message.guild.channels.cache.find(
     channel => channel.name === message.channel.name
   );
-  const snapshot = await index.db
+  const snapshot = await module.exports.db
     .collection("servers")
     .doc(message.guild.id)
     .get();
