@@ -14,7 +14,7 @@ module.exports = {
     }
     else {
       // Display info about the user specified by the first argument
-      member = message.guild.members.get(args[0]);
+      member = message.guild.member(message.mentions.users.first());
 
       // Check we were able to retrieve the member (member is undefined)
       if (!member) {
