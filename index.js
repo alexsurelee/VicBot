@@ -925,7 +925,7 @@ function validExamURL(url) {
 }
 
 client.on("messageDelete", async message => {
-  const snapshot = await index.db
+  const snapshot = await this.db
     .collection("servers")
     .doc(message.guild.id)
     .get();
