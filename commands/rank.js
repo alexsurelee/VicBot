@@ -17,6 +17,9 @@ module.exports = {
     if (args[0] === "boomer") {
       message.reply("ok boomer");
     }
+    else if (args[0].toLowerCase() === "elections") {
+      message.reply("Please use WgtnBot to join this restricted channel")
+    }
     else if (message.channel.name === "bots" || message.member.hasPermission("ADMINISTRATOR")) {
       if (index.aliasRegex.test(alias)) {
         if (fs.existsSync(__dirname + "/../data/aliases.json")) {
