@@ -218,7 +218,7 @@ client.on("voiceStateUpdate", async (_, newState) => {
 exports.rank = async function(message, rank) {
   const noDashCourseRegex = /^[a-zA-Z]{4}[1-4]\d\d$/;
   const courseRegex = /^[a-zA-Z]{4}-[1-4]\d\d$/;
-
+  rank = rank.replace(',', '')
   if (noDashCourseRegex.test(rank))
     rank = rank.slice(0, 4) + "-" + rank.slice(4, 7);
 
